@@ -7,6 +7,7 @@ import {
 } from "react-native";
 
 import BalanceCard from "@/components/home/BalanceCard";
+import BudgetStatusCard from "@/components/home/BudgetStatusCard";
 import QuickExpenseInput from "@/components/home/QuickExpenseInput";
 
 export default function HomeScreen() {
@@ -31,18 +32,8 @@ export default function HomeScreen() {
       {/* 빠른 지출 입력 */}
       <QuickExpenseInput />
 
-      {/* 예산 */}
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>이번 달 예산</Text>
-
-        <Text style={styles.budgetText}>₩ 0 중</Text>
-
-        <Text style={styles.usedText}>₩ 0 사용</Text>
-
-        <View style={styles.progressBackground}>
-          <View style={styles.progressFill} />
-        </View>
-      </View>
+      {/* 예산 카드 */}
+      <BudgetStatusCard />
 
       {/* 빠른 이동 */}
       <View style={styles.menuContainer}>
@@ -97,47 +88,6 @@ const styles = StyleSheet.create({
 
   settingIcon: {
     fontSize: 30,
-  },
-
-  card: {
-    backgroundColor: "#EEF0FF",
-    borderRadius: 24,
-    padding: 22,
-    marginBottom: 18,
-  },
-
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#111111",
-    marginBottom: 18,
-  },
-
-  budgetText: {
-    fontSize: 18,
-    color: "#333333",
-    marginBottom: 10,
-  },
-
-  usedText: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#111111",
-    marginBottom: 18,
-  },
-
-  progressBackground: {
-    width: "100%",
-    height: 12,
-    backgroundColor: "#DADDED",
-    borderRadius: 20,
-    overflow: "hidden",
-  },
-
-  progressFill: {
-    width: "0%",
-    height: "100%",
-    backgroundColor: "#3D5AFE",
   },
 
   menuContainer: {
