@@ -2,10 +2,12 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+
+import BalanceCard from "@/components/home/BalanceCard";
+import QuickExpenseInput from "@/components/home/QuickExpenseInput";
 
 export default function HomeScreen() {
   return (
@@ -19,42 +21,15 @@ export default function HomeScreen() {
         <Text style={styles.appTitle}>내 계좌</Text>
 
         <TouchableOpacity style={styles.settingButton}>
-          <Text style={styles.settingIcon}>⚙︎</Text>
+          <Text style={styles.settingIcon}>🎀</Text>
         </TouchableOpacity>
       </View>
 
       {/* 잔액 카드 */}
-      <View style={styles.card}>
-        <Text style={styles.cardLabel}>총 잔액</Text>
+      <BalanceCard />
 
-        <Text style={styles.balanceText}>₩ 0</Text>
-
-        <View style={styles.divider} />
-
-        <Text style={styles.subLabel}>이번 달 사용 금액</Text>
-
-        <Text style={styles.subAmount}>₩ 0</Text>
-      </View>
-
-      {/* 빠른 입력 */}
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>빠른 지출 입력</Text>
-
-        <TextInput
-          placeholder="금액 입력"
-          placeholderTextColor="#8A8A8A"
-          style={styles.input}
-          keyboardType="numeric"
-        />
-
-        <TouchableOpacity style={styles.categoryButton}>
-          <Text style={styles.categoryText}>카테고리 선택</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.inputButton}>
-          <Text style={styles.inputButtonText}>입력 완료</Text>
-        </TouchableOpacity>
-      </View>
+      {/* 빠른 지출 입력 */}
+      <QuickExpenseInput />
 
       {/* 예산 */}
       <View style={styles.card}>
@@ -121,8 +96,7 @@ const styles = StyleSheet.create({
   },
 
   settingIcon: {
-    fontSize: 50,
-    color: "#444444",
+    fontSize: 30,
   },
 
   card: {
@@ -132,75 +106,11 @@ const styles = StyleSheet.create({
     marginBottom: 18,
   },
 
-  cardLabel: {
-    fontSize: 15,
-    color: "#333333",
-    marginBottom: 16,
-  },
-
-  balanceText: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: "#111111",
-    marginBottom: 22,
-  },
-
-  divider: {
-    height: 1,
-    backgroundColor: "#DADDED",
-    marginBottom: 18,
-  },
-
-  subLabel: {
-    fontSize: 15,
-    color: "#333333",
-    marginBottom: 8,
-  },
-
-  subAmount: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#111111",
-  },
-
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
     color: "#111111",
     marginBottom: 18,
-  },
-
-  input: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 16,
-    fontSize: 16,
-    marginBottom: 12,
-  },
-
-  categoryButton: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-  },
-
-  categoryText: {
-    color: "#666666",
-    fontSize: 15,
-  },
-
-  inputButton: {
-    backgroundColor: "#DDE2FF",
-    borderRadius: 16,
-    padding: 16,
-    alignItems: "center",
-  },
-
-  inputButtonText: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#3D5AFE",
   },
 
   budgetText: {
