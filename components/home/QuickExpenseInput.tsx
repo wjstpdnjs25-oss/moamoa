@@ -8,7 +8,13 @@ import {
     View,
 } from "react-native";
 
-export default function QuickExpenseInput() {
+type Props = {
+  onSaveExpense: (amount: number) => void;
+};
+
+export default function QuickExpenseInput({
+  onSaveExpense,
+}: Props) {
   const [amount, setAmount] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("식비");
 
@@ -21,6 +27,8 @@ export default function QuickExpenseInput() {
       Alert.alert("입력 오류", "금액을 입력해주세요.");
       return;
     }
+
+    onSaveExpense(numericAmount);
 
     setAmount("");
   };
@@ -44,14 +52,16 @@ export default function QuickExpenseInput() {
             key={category}
             style={[
               styles.categoryChip,
-              selectedCategory === category && styles.selectedCategoryChip,
+              selectedCategory === category &&
+                styles.selectedCategoryChip,
             ]}
             onPress={() => setSelectedCategory(category)}
           >
             <Text
               style={[
                 styles.categoryChipText,
-                selectedCategory === category && styles.selectedCategoryText,
+                selectedCategory === category &&
+                  styles.selectedCategoryText,
               ]}
             >
               {category}
@@ -60,7 +70,10 @@ export default function QuickExpenseInput() {
         ))}
       </View>
 
-      <TouchableOpacity style={styles.inputButton} onPress={handleSaveExpense}>
+      <TouchableOpacity
+        style={styles.inputButton}
+        onPress={handleSaveExpense}
+      >
         <Text style={styles.inputButtonText}>입력 완료</Text>
       </TouchableOpacity>
     </View>
@@ -74,12 +87,14 @@ const styles = StyleSheet.create({
     padding: 22,
     marginBottom: 18,
   },
+
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
     color: "#111111",
     marginBottom: 18,
   },
+
   input: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
@@ -87,35 +102,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 12,
   },
+
   categoryContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
     marginBottom: 12,
   },
+
   categoryChip: {
     backgroundColor: "#FFFFFF",
     borderRadius: 16,
     paddingVertical: 10,
     paddingHorizontal: 14,
   },
+
   selectedCategoryChip: {
     backgroundColor: "#DDE2FF",
   },
+
   categoryChipText: {
     color: "#666666",
     fontSize: 14,
   },
+
   selectedCategoryText: {
     color: "#3D5AFE",
     fontWeight: "700",
   },
+
   inputButton: {
     backgroundColor: "#DDE2FF",
     borderRadius: 16,
     padding: 16,
     alignItems: "center",
   },
+
   inputButtonText: {
     fontSize: 16,
     fontWeight: "700",
