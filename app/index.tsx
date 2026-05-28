@@ -11,10 +11,6 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Pressable style={styles.shareButton} hitSlop={12}>
-          <Ionicons name="share-outline" size={34} color="#111111" />
-        </Pressable>
-
         <View style={styles.illustrationWrap}>
           <View style={[styles.backCard, styles.leftBackCard]} />
           <View style={[styles.backCard, styles.rightBackCard]} />
@@ -92,13 +88,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingTop: 14,
     paddingBottom: 34,
-  },
-  shareButton: {
-    alignItems: 'center',
-    alignSelf: 'flex-end',
-    height: 48,
-    justifyContent: 'center',
-    width: 48,
   },
   illustrationWrap: {
     alignItems: 'center',
