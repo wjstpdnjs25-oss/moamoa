@@ -23,7 +23,7 @@ export default function HomeScreen() {
         <Text style={styles.appTitle}>내 계좌</Text>
 
         <TouchableOpacity style={styles.settingButton}>
-          <Text style={styles.settingIcon}>🎀</Text>
+          <Text style={styles.settingIcon}>⚙︎</Text>
         </TouchableOpacity>
       </View>
 
@@ -73,6 +73,6 @@ const styles = StyleSheet.create({
   },
 
   settingIcon: {
-    fontSize: 30,
+    fontSize: 40,
   },
 });
