@@ -106,11 +106,12 @@ function SignupForm({
           />
           <TextInput
             keyboardType="number-pad"
-            placeholder="주민등록번호 [##### - ######]"
+            maxLength={14}
+            placeholder="주민등록번호 [######-#######]"
             placeholderTextColor="#777777"
             style={styles.input}
             value={info.residentNumber}
-            onChangeText={(value) => updateField('residentNumber', value)}
+            onChangeText={(value) => updateField('residentNumber', formatResidentNumber(value))}
           />
 
           <TextInput
@@ -332,6 +333,16 @@ function maskResidentNumber(value: string) {
   }
 
   return value || '-';
+}
+
+function formatResidentNumber(value: string) {
+  const digits = value.replace(/\D/g, '').slice(0, 13);
+
+  if (digits.length >= 6) {
+    return `${digits.slice(0, 6)}-${digits.slice(6)}`;
+  }
+
+  return digits;
 }
 
 const styles = StyleSheet.create({
