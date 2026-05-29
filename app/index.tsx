@@ -2,7 +2,6 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 
 const DEEP_PURPLE = '#261052';
 const SOFT_PURPLE = '#f3f0fa';
@@ -66,7 +65,7 @@ export default function Home() {
         </View>
 
         <View style={styles.actions}>
-          <Pressable style={styles.primaryButton} onPress={() => router.push('/login')}>
+          <Pressable style={styles.primaryButton}>
             <Text style={styles.primaryButtonText}>로그인하기</Text>
           </Pressable>
 
