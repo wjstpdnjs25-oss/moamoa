@@ -1,12 +1,41 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const DEEP_PURPLE = '#261052';
 const TEXT_BLACK = '#050505';
+const VALID_USER_ID = 'moamoa';
+const VALID_PASSWORD = '1234';
 
 export default function Home() {
+  const [userId, setUserId] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState(false);
+
+  const handleLogin = () => {
+    const isMatched = userId.trim() === VALID_USER_ID && password === VALID_PASSWORD;
+
+    if (!isMatched) {
+      setLoginError(true);
+      return;
+    }
+
+    setLoginError(false);
+    router.push('/main');
+  };
+
+  const handleChangeUserId = (value: string) => {
+    setUserId(value);
+    setLoginError(false);
+  };
+
+  const handleChangePassword = (value: string) => {
+    setPassword(value);
+    setLoginError(false);
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -29,17 +58,23 @@ export default function Home() {
           <View style={styles.inputs}>
             <TextInput
               autoCapitalize="none"
+              autoCorrect={false}
+              onChangeText={handleChangeUserId}
               placeholder="아이디 (ID)"
               placeholderTextColor="#5d5d5d"
               style={styles.input}
+              value={userId}
             />
 
             <View style={styles.passwordField}>
               <TextInput
+                autoCapitalize="none"
+                onChangeText={handleChangePassword}
                 placeholder="비밀번호 (Password)"
                 placeholderTextColor="#5d5d5d"
                 secureTextEntry
                 style={styles.passwordInput}
+                value={password}
               />
               <Pressable hitSlop={10} style={styles.eyeButton}>
                 <Ionicons name="eye-off-outline" size={28} color={DEEP_PURPLE} />
@@ -47,8 +82,12 @@ export default function Home() {
             </View>
           </View>
 
+          {loginError ? (
+            <Text style={styles.errorText}>아이디랑 비번이 일치 하지 않습니다</Text>
+          ) : null}
+
           <View style={styles.actions}>
-            <Pressable style={styles.primaryButton}>
+            <Pressable style={styles.primaryButton} onPress={handleLogin}>
               <Text style={styles.primaryButtonText}>로그인하기</Text>
             </Pressable>
 
@@ -168,7 +207,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     gap: 16,
-    marginTop: 38,
+    marginTop: 28,
   },
   primaryButton: {
     alignItems: 'center',
@@ -205,5 +244,12 @@ const styles = StyleSheet.create({
     fontSize: 21,
     fontWeight: '800',
     letterSpacing: 0,
+  },
+  errorText: {
+    color: '#d82020',
+    fontSize: 14,
+    fontWeight: '700',
+    marginTop: 12,
+    textAlign: 'center',
   },
 });
