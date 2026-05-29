@@ -73,6 +73,8 @@ function SignupForm({
   const updateField = (field: keyof SignupInfo, value: string) => {
     onChange({ ...info, [field]: value });
   };
+  const showPasswordMismatch =
+    info.confirmPassword.length > 0 && info.password !== info.confirmPassword;
 
   return (
     <ScrollView
@@ -119,6 +121,9 @@ function SignupForm({
             value={info.confirmPassword}
             onChangeText={(value) => updateField('confirmPassword', value)}
           />
+          {showPasswordMismatch ? (
+            <Text style={styles.passwordMismatchText}>비밀번호가 일치하지 않습니다</Text>
+          ) : null}
 
           <TextInput
             autoCapitalize="none"
@@ -154,17 +159,29 @@ function PasswordInput({
   value: string;
   onChangeText: (value: string) => void;
 }) {
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
   return (
     <View style={styles.passwordField}>
       <TextInput
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor="#777777"
-        secureTextEntry
+        secureTextEntry={!isPasswordVisible}
         style={styles.passwordInput}
         value={value}
       />
-      <Ionicons name="eye-off-outline" size={28} color={DEEP_PURPLE} />
+      <Pressable
+        accessibilityLabel={isPasswordVisible ? '비밀번호 가리기' : '비밀번호 보기'}
+        hitSlop={10}
+        onPress={() => setIsPasswordVisible((visible) => !visible)}
+        style={styles.eyeButton}>
+        <Ionicons
+          name={isPasswordVisible ? 'eye-outline' : 'eye-off-outline'}
+          size={28}
+          color={DEEP_PURPLE}
+        />
+      </Pressable>
     </View>
   );
 }
@@ -178,7 +195,9 @@ function ConfirmInfo({
   onBack: () => void;
   onComplete: () => void;
 }) {
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const maskedPassword = info.password ? '•'.repeat(Math.min(info.password.length, 8)) : '-';
+  const visiblePassword = info.password || '-';
   const maskedResidentNumber = maskResidentNumber(info.residentNumber);
 
   return (
@@ -194,10 +213,24 @@ function ConfirmInfo({
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>비밀번호</Text>
           <View style={styles.infoValueWrap}>
-            <Text style={styles.infoValue}>{maskedPassword}</Text>
-            <Text style={styles.infoHint}>(보안상 가림)</Text>
+            <Text style={styles.infoValue}>
+              {isPasswordVisible ? visiblePassword : maskedPassword}
+            </Text>
+            <Text style={styles.infoHint}>
+              {isPasswordVisible ? '(표시 중)' : '(보안상 가림)'}
+            </Text>
           </View>
-          <Ionicons name="eye-off-outline" size={24} color={DEEP_PURPLE} />
+          <Pressable
+            accessibilityLabel={isPasswordVisible ? '비밀번호 가리기' : '비밀번호 보기'}
+            hitSlop={10}
+            onPress={() => setIsPasswordVisible((visible) => !visible)}
+            style={styles.infoEyeButton}>
+            <Ionicons
+              name={isPasswordVisible ? 'eye-outline' : 'eye-off-outline'}
+              size={24}
+              color={DEEP_PURPLE}
+            />
+          </Pressable>
         </View>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>주민등록번호</Text>
@@ -389,6 +422,19 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     height: '100%',
   },
+  eyeButton: {
+    alignItems: 'center',
+    height: 52,
+    justifyContent: 'center',
+    width: 44,
+  },
+  passwordMismatchText: {
+    color: '#d82020',
+    fontSize: 13,
+    fontWeight: '700',
+    marginTop: -6,
+    paddingLeft: 6,
+  },
   primaryButton: {
     alignItems: 'center',
     backgroundColor: DEEP_PURPLE,
@@ -469,6 +515,12 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '500',
     marginTop: 4,
+  },
+  infoEyeButton: {
+    alignItems: 'center',
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
   },
   confirmActions: {
     flexDirection: 'row',
