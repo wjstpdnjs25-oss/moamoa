@@ -13,6 +13,7 @@ export default function Home() {
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleLogin = () => {
     const isMatched = userId.trim() === VALID_USER_ID && password === VALID_PASSWORD;
@@ -72,12 +73,20 @@ export default function Home() {
                 onChangeText={handleChangePassword}
                 placeholder="비밀번호 (Password)"
                 placeholderTextColor="#5d5d5d"
-                secureTextEntry
+                secureTextEntry={!isPasswordVisible}
                 style={styles.passwordInput}
                 value={password}
               />
-              <Pressable hitSlop={10} style={styles.eyeButton}>
-                <Ionicons name="eye-off-outline" size={28} color={DEEP_PURPLE} />
+              <Pressable
+                accessibilityLabel={isPasswordVisible ? '비밀번호 가리기' : '비밀번호 보기'}
+                hitSlop={10}
+                onPress={() => setIsPasswordVisible((visible) => !visible)}
+                style={styles.eyeButton}>
+                <Ionicons
+                  name={isPasswordVisible ? 'eye-outline' : 'eye-off-outline'}
+                  size={28}
+                  color={DEEP_PURPLE}
+                />
               </Pressable>
             </View>
           </View>
