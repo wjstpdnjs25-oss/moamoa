@@ -43,7 +43,7 @@ export default function Home() {
             onComplete={() => setStep('complete')}
           />
         ) : (
-          <CompleteSignup name={signupInfo.name} onHome={() => setStep('form')} />
+          <CompleteSignup name={signupInfo.name} onLogin={() => router.push('/login')} />
         )}
       </View>
     </SafeAreaView>
@@ -234,7 +234,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function CompleteSignup({ name, onHome }: { name: string; onHome: () => void }) {
+function CompleteSignup({ name, onLogin }: { name: string; onLogin: () => void }) {
   return (
     <View style={styles.completeScreen}>
       <Brand compact />
@@ -273,8 +273,8 @@ function CompleteSignup({ name, onHome }: { name: string; onHome: () => void }) 
         회원이 되신 것을 환영합니다.
       </Text>
 
-      <Pressable style={styles.homeButton} onPress={onHome}>
-        <Text style={styles.homeButtonText}>홈으로 가기</Text>
+      <Pressable style={styles.homeButton} onPress={onLogin}>
+        <Text style={styles.homeButtonText}>로그인 하러 가기</Text>
       </Pressable>
     </View>
   );
