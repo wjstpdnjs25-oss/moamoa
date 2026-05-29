@@ -43,7 +43,18 @@ export default function Home() {
             onComplete={() => setStep('complete')}
           />
         ) : (
-          <CompleteSignup name={signupInfo.name} onLogin={() => router.push('/login')} />
+          <CompleteSignup
+            info={signupInfo}
+            onLogin={() =>
+              router.push({
+                pathname: '/login',
+                params: {
+                  signupId: signupInfo.id,
+                  signupPassword: signupInfo.password,
+                },
+              })
+            }
+          />
         )}
       </View>
     </SafeAreaView>
@@ -267,7 +278,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function CompleteSignup({ name, onLogin }: { name: string; onLogin: () => void }) {
+function CompleteSignup({ info, onLogin }: { info: SignupInfo; onLogin: () => void }) {
   return (
     <View style={styles.completeScreen}>
       <Brand compact />
@@ -302,7 +313,7 @@ function CompleteSignup({ name, onLogin }: { name: string; onLogin: () => void }
       </View>
 
       <Text style={styles.welcomeText}>
-        [{name || '회원'}]님, W Bank의 새로운{'\n'}
+        [{info.name || '회원'}]님, W Bank의 새로운{'\n'}
         회원이 되신 것을 환영합니다.
       </Text>
 

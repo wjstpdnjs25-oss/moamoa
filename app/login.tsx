@@ -1,21 +1,31 @@
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const DEEP_PURPLE = '#261052';
 const TEXT_BLACK = '#050505';
-const VALID_ID = 'example123';
-const VALID_PASSWORD = 'password123';
+const DEFAULT_ID = 'moamoa';
+const DEFAULT_PASSWORD = '1234';
 
 export default function Login() {
+  const params = useLocalSearchParams<{
+    signupId?: string | string[];
+    signupPassword?: string | string[];
+  }>();
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [showError, setShowError] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+  const signupId = getParamValue(params.signupId);
+  const signupPassword = getParamValue(params.signupPassword);
+  const validId = signupId || DEFAULT_ID;
+  const validPassword = signupPassword || DEFAULT_PASSWORD;
 
   const handleLogin = () => {
-    if (id === VALID_ID && password === VALID_PASSWORD) {
+    if (id === validId && password === validPassword) {
       setShowError(false);
       router.push('/main');
       return;
@@ -64,12 +74,20 @@ export default function Login() {
                 }}
                 placeholder="비밀번호 (Password)"
                 placeholderTextColor="#5d5d5d"
-                secureTextEntry
+                secureTextEntry={!isPasswordVisible}
                 style={styles.passwordInput}
                 value={password}
               />
-              <Pressable hitSlop={10} style={styles.eyeButton}>
-                <Ionicons name="eye-off-outline" size={28} color={DEEP_PURPLE} />
+              <Pressable
+                accessibilityLabel={isPasswordVisible ? '비밀번호 가리기' : '비밀번호 보기'}
+                hitSlop={10}
+                onPress={() => setIsPasswordVisible((visible) => !visible)}
+                style={styles.eyeButton}>
+                <Ionicons
+                  name={isPasswordVisible ? 'eye-outline' : 'eye-off-outline'}
+                  size={28}
+                  color={DEEP_PURPLE}
+                />
               </Pressable>
             </View>
           </View>
@@ -87,6 +105,10 @@ export default function Login() {
       </View>
     </SafeAreaView>
   );
+}
+
+function getParamValue(value?: string | string[]) {
+  return Array.isArray(value) ? value[0] : value;
 }
 
 const styles = StyleSheet.create({
