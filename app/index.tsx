@@ -105,9 +105,6 @@ export default function Home() {
             </Pressable>
           </View>
 
-          <Pressable hitSlop={10} style={styles.findAccountButton}>
-            <Text style={styles.findAccountText}>아이디/비밀번호 찾기 ↗</Text>
-          </Pressable>
         </View>
       </View>
     </SafeAreaView>
@@ -243,16 +240,6 @@ const styles = StyleSheet.create({
     color: DEEP_PURPLE,
     fontSize: 23,
     fontWeight: '900',
-  },
-  findAccountButton: {
-    alignItems: 'center',
-    marginTop: 38,
-  },
-  findAccountText: {
-    color: '#140929',
-    fontSize: 21,
-    fontWeight: '800',
-    letterSpacing: 0,
   },
   errorText: {
     color: '#d82020',
