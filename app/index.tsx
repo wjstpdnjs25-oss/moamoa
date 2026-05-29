@@ -19,10 +19,10 @@ type SignupInfo = {
 };
 
 const initialSignupInfo: SignupInfo = {
-  name: '홍길동',
+  name: '',
   residentNumber: '',
-  id: 'example123',
-  email: 'email@address.com',
+  id: '',
+  email: '',
   password: '',
   confirmPassword: '',
 };
