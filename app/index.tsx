@@ -327,9 +327,9 @@ function ConfirmInfo({
             <Text style={styles.infoValue}>
               {isPasswordVisible ? visiblePassword : maskedPassword}
             </Text>
-            <Text style={styles.infoHint}>
-              {isPasswordVisible ? '(표시 중)' : '(보안상 가림)'}
-            </Text>
+            {isPasswordVisible ? null : (
+              <Text style={styles.infoHint}>(보안상 가림)</Text>
+            )}
           </View>
           <Pressable
             accessibilityLabel={isPasswordVisible ? '비밀번호 가리기' : '비밀번호 보기'}
