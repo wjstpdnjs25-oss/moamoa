@@ -347,7 +347,6 @@ function ConfirmInfo({
           <Text style={styles.infoLabel}>주민등록번호</Text>
           <View style={styles.infoValueWrap}>
             <Text style={styles.infoValue}>{maskedResidentNumber}</Text>
-            <Text style={styles.infoHint}>(뒷자리 가림)</Text>
           </View>
         </View>
       </View>
@@ -436,8 +435,8 @@ function CompleteSignup({ info, onLogin }: { info: SignupInfo; onLogin: () => vo
 function maskResidentNumber(value: string) {
   const digits = value.replace(/\D/g, '');
 
-  if (digits.length >= 7) {
-    return `${digits.slice(0, 6)}-${'*'.repeat(Math.min(digits.length - 6, 7))}`;
+  if (digits.length >= 6) {
+    return `${digits.slice(0, 6)}-*******`;
   }
 
   return value || '-';
