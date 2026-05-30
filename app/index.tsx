@@ -1,7 +1,15 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const DEEP_PURPLE = '#261052';
@@ -250,9 +258,18 @@ function ConfirmInfo({
   onComplete: () => void;
 }) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const maskedPassword = info.password ? '•'.repeat(Math.min(info.password.length, 8)) : '-';
   const visiblePassword = info.password || '-';
   const maskedResidentNumber = maskResidentNumber(info.residentNumber);
+  const handleComplete = () => {
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setTimeout(onComplete, 900);
+  };
 
   return (
     <View style={styles.confirmScreen}>
@@ -301,9 +318,18 @@ function ConfirmInfo({
           <Text style={styles.smallActionText}>→ 다시 1단계로 돌아가기</Text>
         </Pressable>
 
-        <Pressable style={styles.confirmButton} onPress={onComplete}>
-          <Text style={styles.confirmButtonText}>가입 완료</Text>
-          <Text style={styles.confirmButtonSubText}>→ 완료 화면으로 이동</Text>
+        <Pressable
+          disabled={isSubmitting}
+          style={[styles.confirmButton, isSubmitting && styles.confirmButtonDisabled]}
+          onPress={handleComplete}>
+          {isSubmitting ? (
+            <ActivityIndicator color="#ffffff" size="small" />
+          ) : (
+            <>
+              <Text style={styles.confirmButtonText}>가입 완료</Text>
+              <Text style={styles.confirmButtonSubText}>→ 완료 화면으로 이동</Text>
+            </>
+          )}
         </Pressable>
       </View>
 
@@ -625,6 +651,9 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 82,
     justifyContent: 'center',
+  },
+  confirmButtonDisabled: {
+    opacity: 0.82,
   },
   confirmButtonText: {
     color: '#ffffff',
