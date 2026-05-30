@@ -96,6 +96,7 @@ function SignupForm({
   onNext: () => void;
 }) {
   const [showRequiredErrors, setShowRequiredErrors] = useState(false);
+  const [isTermsAgreed, setIsTermsAgreed] = useState(false);
 
   const updateField = (field: keyof SignupInfo, value: string) => {
     onChange({ ...info, [field]: value });
@@ -109,7 +110,12 @@ function SignupForm({
   const handleNext = () => {
     setShowRequiredErrors(true);
 
-    if (hasEmptyField || !isValidPassword(info.password) || showPasswordMismatch) {
+    if (
+      hasEmptyField ||
+      !isValidPassword(info.password) ||
+      showPasswordMismatch ||
+      !isTermsAgreed
+    ) {
       return;
     }
 
@@ -197,6 +203,25 @@ function SignupForm({
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
           ) : null}
         </View>
+
+        <Pressable
+          accessibilityRole="checkbox"
+          accessibilityState={{ checked: isTermsAgreed }}
+          hitSlop={8}
+          style={styles.termsAgreement}
+          onPress={() => setIsTermsAgreed((agreed) => !agreed)}>
+          <View style={[styles.checkbox, isTermsAgreed && styles.checkboxChecked]}>
+            {isTermsAgreed ? <Ionicons name="checkmark" size={18} color="#ffffff" /> : null}
+          </View>
+          <Text style={styles.termsAgreementText}>이용약관/개인정보 동의</Text>
+        </Pressable>
+        <Text style={styles.termsDescription}>
+          회원가입 및 서비스 이용을 위해 이름, 주민등록번호, 아이디, 비밀번호, 이메일 정보를
+          수집하고 약관에 따라 관리합니다.
+        </Text>
+        {showRequiredErrors && !isTermsAgreed ? (
+          <Text style={styles.termsErrorText}>이용약관에 동의해주세요</Text>
+        ) : null}
 
         <Pressable style={styles.primaryButton} onPress={handleNext}>
           <Text style={styles.primaryButtonText}>다음 단계</Text>
@@ -530,6 +555,45 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '700',
     marginTop: -6,
+    paddingLeft: 6,
+  },
+  termsAgreement: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginTop: 20,
+  },
+  checkbox: {
+    alignItems: 'center',
+    borderColor: DEEP_PURPLE,
+    borderRadius: 4,
+    borderWidth: 2,
+    height: 24,
+    justifyContent: 'center',
+    marginRight: 10,
+    width: 24,
+  },
+  checkboxChecked: {
+    backgroundColor: DEEP_PURPLE,
+  },
+  termsAgreementText: {
+    color: TEXT_BLACK,
+    flex: 1,
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  termsDescription: {
+    color: '#5f5f68',
+    fontSize: 13,
+    fontWeight: '500',
+    lineHeight: 19,
+    marginTop: 8,
+    paddingLeft: 34,
+  },
+  termsErrorText: {
+    color: '#d82020',
+    fontSize: 13,
+    fontWeight: '700',
+    marginTop: 8,
     paddingLeft: 6,
   },
   primaryButton: {
