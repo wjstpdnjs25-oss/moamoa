@@ -172,6 +172,7 @@ function SignupForm({
             value={info.id}
             onChangeText={(value) => updateField('id', value)}
           />
+          <Text style={styles.fieldHintText}>영문자로 작성해주세요</Text>
           {showRequiredErrors && isFieldEmpty('id') ? (
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
           ) : null}
@@ -600,6 +601,13 @@ const styles = StyleSheet.create({
     color: '#d82020',
     fontSize: 13,
     fontWeight: '700',
+    marginTop: -6,
+    paddingLeft: 6,
+  },
+  fieldHintText: {
+    color: '#5f5f68',
+    fontSize: 13,
+    fontWeight: '600',
     marginTop: -6,
     paddingLeft: 6,
   },
