@@ -308,8 +308,14 @@ function ConfirmInfo({
   return (
     <View style={styles.confirmScreen}>
       <Brand compact />
-      <Text style={styles.confirmTitle}>가입 정보 확인</Text>
-      <Text style={styles.confirmDescription}>입력하신 정보를 확인해주세요.</Text>
+
+      <View style={styles.confirmHeader}>
+        <View style={styles.stepBadge}>
+          <Text style={styles.stepBadgeText}>STEP 2</Text>
+        </View>
+        <Text style={styles.confirmTitle}>가입 정보 확인</Text>
+        <Text style={styles.confirmDescription}>입력하신 정보가 맞는지 확인해주세요.</Text>
+      </View>
 
       <View style={styles.infoCard}>
         <InfoRow label="이름" value={info.name || '-'} />
@@ -517,6 +523,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     paddingVertical: 24,
   },
+  confirmHeader: {
+    alignItems: 'center',
+    backgroundColor: '#f1edf9',
+    borderColor: '#ded6ee',
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 34,
+    paddingHorizontal: 22,
+    paddingVertical: 24,
+  },
   stepBadge: {
     backgroundColor: DEEP_PURPLE,
     borderRadius: 999,
@@ -664,7 +680,7 @@ const styles = StyleSheet.create({
   confirmScreen: {
     flex: 1,
     paddingBottom: 28,
-    paddingTop: 88,
+    paddingTop: 58,
   },
   confirmTitle: {
     color: TEXT_BLACK,
@@ -675,11 +691,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   confirmDescription: {
-    color: TEXT_BLACK,
-    fontSize: 21,
+    color: '#5f5f68',
+    fontSize: 16,
     fontWeight: '600',
-    marginBottom: 40,
-    marginTop: 14,
+    lineHeight: 23,
+    marginTop: 8,
     textAlign: 'center',
   },
   infoCard: {
