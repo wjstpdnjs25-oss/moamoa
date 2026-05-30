@@ -27,6 +27,12 @@ const initialSignupInfo: SignupInfo = {
   confirmPassword: '',
 };
 
+const PASSWORD_REQUIREMENT_MESSAGE = '영문자+숫자포함 6글자 이상을 작성해주세요';
+
+function isValidPassword(value: string) {
+  return /^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(value);
+}
+
 export default function Home() {
   const [step, setStep] = useState<Step>('form');
   const [signupInfo, setSignupInfo] = useState<SignupInfo>(initialSignupInfo);
@@ -88,12 +94,14 @@ function SignupForm({
   };
   const isFieldEmpty = (field: keyof SignupInfo) => info[field].trim().length === 0;
   const hasEmptyField = Object.values(info).some((value) => value.trim().length === 0);
+  const showPasswordRequirement =
+    info.password.length > 0 && !isValidPassword(info.password);
   const showPasswordMismatch =
     info.confirmPassword.length > 0 && info.password !== info.confirmPassword;
   const handleNext = () => {
     setShowRequiredErrors(true);
 
-    if (hasEmptyField) {
+    if (hasEmptyField || !isValidPassword(info.password) || showPasswordMismatch) {
       return;
     }
 
@@ -152,6 +160,9 @@ function SignupForm({
           />
           {showRequiredErrors && isFieldEmpty('password') ? (
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
+          ) : null}
+          {showPasswordRequirement ? (
+            <Text style={styles.passwordMismatchText}>{PASSWORD_REQUIREMENT_MESSAGE}</Text>
           ) : null}
           <PasswordInput
             placeholder="비밀번호 확인"
