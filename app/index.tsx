@@ -129,7 +129,16 @@ function SignupForm({
       showsVerticalScrollIndicator={false}>
       <View style={styles.formScreen}>
         <Brand />
-        <Text style={styles.formTitle}>회원가입</Text>
+
+        <View style={styles.signupHeader}>
+          <View style={styles.stepBadge}>
+            <Text style={styles.stepBadgeText}>STEP 1</Text>
+          </View>
+          <Text style={styles.formTitle}>회원가입</Text>
+          <Text style={styles.formDescription}>
+            안전한 계좌 이용을 위해 회원 정보를 입력해주세요.
+          </Text>
+        </View>
 
         <View style={styles.signupFields}>
           <TextInput
@@ -495,16 +504,45 @@ const styles = StyleSheet.create({
   },
   formScreen: {
     paddingBottom: 32,
-    paddingTop: 88,
+    paddingTop: 54,
+  },
+  signupHeader: {
+    alignItems: 'center',
+    backgroundColor: '#f1edf9',
+    borderColor: '#ded6ee',
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 34,
+    marginTop: 28,
+    paddingHorizontal: 22,
+    paddingVertical: 24,
+  },
+  stepBadge: {
+    backgroundColor: DEEP_PURPLE,
+    borderRadius: 999,
+    marginBottom: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+  },
+  stepBadgeText: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '900',
   },
   formTitle: {
     color: TEXT_BLACK,
-    fontSize: 39,
+    fontSize: 34,
     fontWeight: '900',
     letterSpacing: 0,
-    lineHeight: 48,
-    marginBottom: 116,
-    marginTop: 30,
+    lineHeight: 42,
+    textAlign: 'center',
+  },
+  formDescription: {
+    color: '#5f5f68',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 23,
+    marginTop: 8,
     textAlign: 'center',
   },
   signupFields: {
