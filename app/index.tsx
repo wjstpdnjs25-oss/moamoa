@@ -1,5 +1,5 @@
-import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -8,6 +8,28 @@ const SOFT_PURPLE = '#f3f0fa';
 const LINE_PURPLE = '#c8bfd9';
 
 export default function Home() {
+  const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (showSplash) {
+    return (
+      <SafeAreaView style={styles.splashScreen}>
+        <Image
+          source={require('@/assets/images/moamoa-splash.png')}
+          style={styles.splashLogo}
+          resizeMode="contain"
+        />
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -79,6 +101,16 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
+  splashScreen: {
+    alignItems: 'center',
+    backgroundColor: '#eef6f8',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  splashLogo: {
+    height: 320,
+    width: 320,
+  },
   safeArea: {
     flex: 1,
     backgroundColor: '#f8f9fc',
