@@ -35,7 +35,11 @@ export default function Home() {
       <View style={styles.container}>
         <View style={styles.brandHeader}>
           <View style={styles.brandMark}>
-            <Text style={styles.brandMarkText}>모</Text>
+            <Image
+              source={require('@/assets/images/moamoa-splash.png')}
+              style={styles.brandLogo}
+              resizeMode="cover"
+            />
           </View>
           <View>
             <Text style={styles.brandName}>모아모아 은행</Text>
@@ -139,16 +143,18 @@ const styles = StyleSheet.create({
   },
   brandMark: {
     alignItems: 'center',
-    backgroundColor: DEEP_PURPLE,
+    backgroundColor: '#eef6f8',
     borderRadius: 18,
+    borderWidth: 1,
+    borderColor: '#d5e6ec',
+    overflow: 'hidden',
     height: 36,
     justifyContent: 'center',
     width: 36,
   },
-  brandMarkText: {
-    color: '#ffffff',
-    fontSize: 18,
-    fontWeight: '900',
+  brandLogo: {
+    height: 36,
+    width: 36,
   },
   brandName: {
     color: DEEP_PURPLE,
