@@ -33,6 +33,16 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
+        <View style={styles.brandHeader}>
+          <View style={styles.brandMark}>
+            <Text style={styles.brandMarkText}>모</Text>
+          </View>
+          <View>
+            <Text style={styles.brandName}>모아모아 은행</Text>
+            <Text style={styles.brandSubText}>MOAMOA BANK</Text>
+          </View>
+        </View>
+
         <View style={styles.illustrationWrap}>
           <View style={[styles.backCard, styles.leftBackCard]} />
           <View style={[styles.backCard, styles.rightBackCard]} />
@@ -58,9 +68,9 @@ export default function Home() {
               <View style={styles.menuLine} />
               <View style={styles.accountBox}>
                 <View style={styles.wonCircle}>
-                  <Text style={styles.wonText}>W</Text>
+                  <Text style={styles.wonText}>모</Text>
                 </View>
-                <Text style={styles.accountText}>은행 계좌</Text>
+                <Text style={styles.accountText}>모아모아 계좌</Text>
               </View>
               <View style={styles.listRow}>
                 <View style={styles.dot} />
@@ -79,10 +89,10 @@ export default function Home() {
         </View>
 
         <View style={styles.copy}>
-          <Text style={styles.title}>언제 어디서나 간편한 은행</Text>
+          <Text style={styles.title}>모아모아와 함께하는 간편한 은행</Text>
           <Text style={styles.description}>
-            지금 로그인하거나 회원가입하고,{'\n'}
-            나만의 금융 생활을 만들어보세요.
+            흩어진 금융 생활을 모아,{'\n'}
+            나만의 계좌 관리를 시작해보세요.
           </Text>
         </View>
 
@@ -118,14 +128,46 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 28,
-    paddingTop: 14,
+    paddingTop: 12,
     paddingBottom: 34,
+  },
+  brandHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 10,
+  },
+  brandMark: {
+    alignItems: 'center',
+    backgroundColor: DEEP_PURPLE,
+    borderRadius: 18,
+    height: 36,
+    justifyContent: 'center',
+    width: 36,
+  },
+  brandMarkText: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '900',
+  },
+  brandName: {
+    color: DEEP_PURPLE,
+    fontSize: 20,
+    fontWeight: '900',
+    letterSpacing: 0,
+  },
+  brandSubText: {
+    color: '#6f6680',
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 0,
+    marginTop: 1,
   },
   illustrationWrap: {
     alignItems: 'center',
-    height: 360,
+    height: 342,
     justifyContent: 'center',
-    marginTop: 28,
+    marginTop: 18,
     position: 'relative',
   },
   backCard: {
@@ -307,22 +349,22 @@ const styles = StyleSheet.create({
   },
   copy: {
     alignItems: 'center',
-    marginTop: 32,
+    marginTop: 26,
   },
   title: {
     color: '#050505',
-    fontSize: 32,
+    fontSize: 30,
     fontWeight: '900',
     letterSpacing: 0,
-    lineHeight: 40,
+    lineHeight: 39,
     textAlign: 'center',
   },
   description: {
     color: '#111111',
-    fontSize: 21,
+    fontSize: 20,
     fontWeight: '600',
-    lineHeight: 33,
-    marginTop: 22,
+    lineHeight: 31,
+    marginTop: 18,
     textAlign: 'center',
   },
   actions: {
