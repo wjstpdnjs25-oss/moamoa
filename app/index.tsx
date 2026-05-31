@@ -19,19 +19,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });*/
-import { Text, View } from 'react-native';
+import { ThemedView } from '@/components/themed-view';
+import UsageCompareCard from '@/components/UsageCompareCard';
 
 export default function Home() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'white',
-      }}
-    >
-      <Text>MOAMOA TEST</Text>
-    </View>
+    <ThemedView>
+      <UsageCompareCard />
+    </ThemedView>
   );
 }
