@@ -1,13 +1,19 @@
 import { StyleSheet, Text, View } from "react-native";
 
+const TEXT = {
+  title: "\uC774\uBC88 \uB2EC \uC608\uC0B0",
+  budget: "\u20A90 \uC911",
+  used: "\u20A90 \uC0AC\uC6A9",
+};
+
 export default function BudgetStatusCard() {
   return (
     <View style={styles.card}>
-      <Text style={styles.sectionTitle}>이번 달 예산</Text>
+      <Text style={styles.sectionTitle}>{TEXT.title}</Text>
 
-      <Text style={styles.budgetText}>₩ 0 중</Text>
+      <Text style={styles.budgetText}>{TEXT.budget}</Text>
 
-      <Text style={styles.usedText}>₩ 0 사용</Text>
+      <Text style={styles.usedText}>{TEXT.used}</Text>
 
       <View style={styles.progressBackground}>
         <View style={styles.progressFill} />
