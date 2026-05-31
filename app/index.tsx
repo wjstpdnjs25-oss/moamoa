@@ -74,4 +74,20 @@ const styles = StyleSheet.create({
   settingIcon: {
     fontSize: 38,
   },
-});
+});*/
+import { Text, View } from 'react-native';
+
+export default function Home() {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+      }}
+    >
+      <Text>MOAMOA TEST</Text>
+    </View>
+  );
+}
