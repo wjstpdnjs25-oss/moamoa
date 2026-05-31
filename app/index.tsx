@@ -12,6 +12,11 @@ import BudgetStatusCard from "@/components/home/BudgetStatusCard";
 import QuickExpenseInput from "@/components/home/QuickExpenseInput";
 import QuickMenuGrid from "@/components/home/QuickMenuGrid";
 
+const TEXT = {
+  appTitle: "\uB0B4 \uACC4\uC88C",
+  settings: "\uC124\uC815",
+};
+
 export default function HomeScreen() {
   const [balance, setBalance] = useState(0);
   const [monthlySpent, setMonthlySpent] = useState(0);
@@ -28,10 +33,10 @@ export default function HomeScreen() {
       showsVerticalScrollIndicator={false}
     >
       <View style={styles.header}>
-        <Text style={styles.appTitle}>내 계좌</Text>
+        <Text style={styles.appTitle}>{TEXT.appTitle}</Text>
 
         <TouchableOpacity style={styles.settingButton}>
-          <Text style={styles.settingIcon}>⚙︎</Text>
+          <Text style={styles.settingText}>{TEXT.settings}</Text>
         </TouchableOpacity>
       </View>
 
@@ -68,26 +73,14 @@ const styles = StyleSheet.create({
     color: "#111111",
   },
   settingButton: {
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#EEF0FF",
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
   },
-  settingIcon: {
-    fontSize: 38,
+  settingText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#3D5AFE",
   },
-});*/
-import { Text, View } from 'react-native';
-
-export default function Home() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'white',
-      }}
-    >
-      <Text>MOAMOA TEST</Text>
-    </View>
-  );
-}
+});
