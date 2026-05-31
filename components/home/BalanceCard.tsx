@@ -5,18 +5,30 @@ type Props = {
   monthlySpent: number;
 };
 
+const TEXT = {
+  balanceLabel: "\uCD1D \uC794\uC561",
+  monthlySpentLabel: "\uC774\uBC88 \uB2EC \uC0AC\uC6A9 \uAE08\uC561",
+  won: "\u20A9",
+};
+
 export default function BalanceCard({ balance, monthlySpent }: Props) {
   return (
     <View style={styles.card}>
-      <Text style={styles.cardLabel}>총 잔액</Text>
+      <Text style={styles.cardLabel}>{TEXT.balanceLabel}</Text>
 
-      <Text style={styles.balanceText}>₩{balance.toLocaleString()}</Text>
+      <Text style={styles.balanceText}>
+        {TEXT.won}
+        {balance.toLocaleString()}
+      </Text>
 
       <View style={styles.divider} />
 
-      <Text style={styles.subLabel}>이번 달 사용 금액</Text>
+      <Text style={styles.subLabel}>{TEXT.monthlySpentLabel}</Text>
 
-      <Text style={styles.subAmount}>₩{monthlySpent.toLocaleString()}</Text>
+      <Text style={styles.subAmount}>
+        {TEXT.won}
+        {monthlySpent.toLocaleString()}
+      </Text>
     </View>
   );
 }

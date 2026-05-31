@@ -12,17 +12,30 @@ type Props = {
   onSaveExpense: (amount: number) => void;
 };
 
+const TEXT = {
+  title: "\uBE60\uB978 \uC9C0\uCD9C \uC785\uB825",
+  placeholder: "\uAE08\uC561 \uC785\uB825",
+  submit: "\uC785\uB825 \uC644\uB8CC",
+  alertTitle: "\uC785\uB825 \uC624\uB958",
+  alertMessage: "\uAE08\uC561\uC744 \uC785\uB825\uD574\uC8FC\uC138\uC694.",
+};
+
+const CATEGORIES = [
+  "\uC2DD\uBE44",
+  "\uAD50\uD1B5",
+  "\uC1FC\uD551",
+  "\uCE74\uD398",
+];
+
 export default function QuickExpenseInput({ onSaveExpense }: Props) {
   const [amount, setAmount] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("식비");
-
-  const categories = ["식비", "교통", "쇼핑", "카페"];
+  const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
 
   const handleSaveExpense = () => {
     const numericAmount = Number(amount);
 
     if (!amount || numericAmount <= 0) {
-      Alert.alert("입력 오류", "금액을 입력해주세요.");
+      Alert.alert(TEXT.alertTitle, TEXT.alertMessage);
       return;
     }
 
@@ -33,10 +46,10 @@ export default function QuickExpenseInput({ onSaveExpense }: Props) {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.sectionTitle}>빠른 지출 입력</Text>
+      <Text style={styles.sectionTitle}>{TEXT.title}</Text>
 
       <TextInput
-        placeholder="금액 입력"
+        placeholder={TEXT.placeholder}
         placeholderTextColor="#8A8A8A"
         style={styles.input}
         keyboardType="numeric"
@@ -45,7 +58,7 @@ export default function QuickExpenseInput({ onSaveExpense }: Props) {
       />
 
       <View style={styles.categoryContainer}>
-        {categories.map((category) => (
+        {CATEGORIES.map((category) => (
           <TouchableOpacity
             key={category}
             style={[
@@ -67,7 +80,7 @@ export default function QuickExpenseInput({ onSaveExpense }: Props) {
       </View>
 
       <TouchableOpacity style={styles.inputButton} onPress={handleSaveExpense}>
-        <Text style={styles.inputButtonText}>입력 완료</Text>
+        <Text style={styles.inputButtonText}>{TEXT.submit}</Text>
       </TouchableOpacity>
     </View>
   );

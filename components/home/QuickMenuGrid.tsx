@@ -1,23 +1,20 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+const MENU_ITEMS = [
+  "\uC608\uC0B0 \uC124\uC815",
+  "\uC9C0\uCD9C \uC785\uB825",
+  "\uB2EC\uB825",
+  "\uB300\uC2DC\uBCF4\uB4DC",
+];
+
 export default function QuickMenuGrid() {
   return (
     <View style={styles.menuContainer}>
-      <TouchableOpacity style={styles.menuButton}>
-        <Text style={styles.menuText}>예산 설정</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.menuButton}>
-        <Text style={styles.menuText}>지출 입력</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.menuButton}>
-        <Text style={styles.menuText}>달력</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.menuButton}>
-        <Text style={styles.menuText}>대시보드</Text>
-      </TouchableOpacity>
+      {MENU_ITEMS.map((item) => (
+        <TouchableOpacity key={item} style={styles.menuButton}>
+          <Text style={styles.menuText}>{item}</Text>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 }
