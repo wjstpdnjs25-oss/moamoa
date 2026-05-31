@@ -1,4 +1,4 @@
-import React from 'react';
+/*import React from 'react';
 import { StyleSheet } from 'react-native';
 
 import { ThemedView } from '@/components/themed-view';
@@ -18,4 +18,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+});*/
+import { Text, View } from 'react-native';
+
+export default function Home() {
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'white',
+      }}
+    >
+      <Text>MOAMOA TEST</Text>
+    </View>
+  );
+}
