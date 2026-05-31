@@ -1,20 +1,18 @@
 import { useState } from "react";
 import {
-    Alert,
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 type Props = {
   onSaveExpense: (amount: number) => void;
 };
 
-export default function QuickExpenseInput({
-  onSaveExpense,
-}: Props) {
+export default function QuickExpenseInput({ onSaveExpense }: Props) {
   const [amount, setAmount] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("식비");
 
@@ -52,16 +50,14 @@ export default function QuickExpenseInput({
             key={category}
             style={[
               styles.categoryChip,
-              selectedCategory === category &&
-                styles.selectedCategoryChip,
+              selectedCategory === category && styles.selectedCategoryChip,
             ]}
             onPress={() => setSelectedCategory(category)}
           >
             <Text
               style={[
                 styles.categoryChipText,
-                selectedCategory === category &&
-                  styles.selectedCategoryText,
+                selectedCategory === category && styles.selectedCategoryText,
               ]}
             >
               {category}
@@ -70,10 +66,7 @@ export default function QuickExpenseInput({
         ))}
       </View>
 
-      <TouchableOpacity
-        style={styles.inputButton}
-        onPress={handleSaveExpense}
-      >
+      <TouchableOpacity style={styles.inputButton} onPress={handleSaveExpense}>
         <Text style={styles.inputButtonText}>입력 완료</Text>
       </TouchableOpacity>
     </View>

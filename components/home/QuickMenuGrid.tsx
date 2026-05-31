@@ -16,7 +16,7 @@ export default function QuickMenuGrid() {
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.menuButton}>
-        <Text style={styles.menuText}>위시세이브</Text>
+        <Text style={styles.menuText}>대시보드</Text>
       </TouchableOpacity>
     </View>
   );
