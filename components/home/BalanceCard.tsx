@@ -10,15 +10,13 @@ export default function BalanceCard({ balance, monthlySpent }: Props) {
     <View style={styles.card}>
       <Text style={styles.cardLabel}>총 잔액</Text>
 
-      <Text style={styles.balanceText}>₩ {balance.toLocaleString()}</Text>
+      <Text style={styles.balanceText}>₩{balance.toLocaleString()}</Text>
 
       <View style={styles.divider} />
 
       <Text style={styles.subLabel}>이번 달 사용 금액</Text>
 
-      <Text style={styles.subAmount}>
-        ₩ {monthlySpent.toLocaleString()}
-      </Text>
+      <Text style={styles.subAmount}>₩{monthlySpent.toLocaleString()}</Text>
     </View>
   );
 }

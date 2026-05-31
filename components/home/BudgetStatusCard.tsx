@@ -5,9 +5,9 @@ export default function BudgetStatusCard() {
     <View style={styles.card}>
       <Text style={styles.sectionTitle}>이번 달 예산</Text>
 
-      <Text style={styles.budgetText}>₩ 0 중</Text>
+      <Text style={styles.budgetText}>₩0 중</Text>
 
-      <Text style={styles.usedText}>₩ 0 사용</Text>
+      <Text style={styles.usedText}>₩0 사용</Text>
 
       <View style={styles.progressBackground}>
         <View style={styles.progressFill} />
