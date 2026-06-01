@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const MENU_ITEMS = [
@@ -8,10 +9,22 @@ const MENU_ITEMS = [
 ];
 
 export default function QuickMenuGrid() {
+  const router = useRouter();
+
+  const handlePressMenu = (item: string) => {
+    if (item === "\uC9C0\uCD9C \uC785\uB825") {
+      router.push("/expense-input");
+    }
+  };
+
   return (
     <View style={styles.menuContainer}>
       {MENU_ITEMS.map((item) => (
-        <TouchableOpacity key={item} style={styles.menuButton}>
+        <TouchableOpacity
+          key={item}
+          style={styles.menuButton}
+          onPress={() => handlePressMenu(item)}
+        >
           <Text style={styles.menuText}>{item}</Text>
         </TouchableOpacity>
       ))}
