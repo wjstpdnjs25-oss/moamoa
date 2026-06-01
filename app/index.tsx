@@ -41,6 +41,10 @@ function isValidPassword(value: string) {
   return /^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(value);
 }
 
+function hasEnglishLetter(value: string) {
+  return /[A-Za-z]/.test(value);
+}
+
 export default function Home() {
   const [step, setStep] = useState<Step>('form');
   const [signupInfo, setSignupInfo] = useState<SignupInfo>(initialSignupInfo);
@@ -97,6 +101,7 @@ function SignupForm({
 }) {
   const [showRequiredErrors, setShowRequiredErrors] = useState(false);
   const [isTermsAgreed, setIsTermsAgreed] = useState(false);
+  const [isIdFocused, setIsIdFocused] = useState(false);
 
   const updateField = (field: keyof SignupInfo, value: string) => {
     onChange({ ...info, [field]: value });
@@ -107,6 +112,7 @@ function SignupForm({
     info.password.length > 0 && !isValidPassword(info.password);
   const showPasswordMismatch =
     info.confirmPassword.length > 0 && info.password !== info.confirmPassword;
+  const showIdHint = isIdFocused && !hasEnglishLetter(info.id);
   const handleNext = () => {
     setShowRequiredErrors(true);
 
@@ -170,9 +176,13 @@ function SignupForm({
             placeholderTextColor="#777777"
             style={styles.input}
             value={info.id}
+            onBlur={() => setIsIdFocused(false)}
             onChangeText={(value) => updateField('id', value)}
+            onFocus={() => setIsIdFocused(true)}
           />
-          <Text style={styles.fieldHintText}>영문자로 작성해주세요</Text>
+          {showIdHint ? (
+            <Text style={styles.fieldHintText}>영문자로 작성해주세요</Text>
+          ) : null}
           {showRequiredErrors && isFieldEmpty('id') ? (
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
           ) : null}
