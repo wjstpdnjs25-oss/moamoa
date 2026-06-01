@@ -22,6 +22,14 @@ export default function BudgetScreen() {
         <TextInput placeholder="카페" style={styles.input} />
       </View>
 
+      <View style={styles.card}>
+        <Text style={styles.label}>총 예산</Text>
+
+         <Text style={styles.totalBudgetText}>
+         ₩ 0
+     </Text>
+    </View>
+
       <TouchableOpacity style={styles.saveButton}>
         <Text style={styles.saveButtonText}>저장</Text>
       </TouchableOpacity>
@@ -76,4 +84,11 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 16,
   },
+  
+totalBudgetText: {
+  fontSize: 28,
+  fontWeight: "700",
+  color: "#111111",
+  marginTop: 8,
+},
 });
