@@ -14,11 +14,18 @@ export default function BudgetScreen() {
   const [shopping, setShopping] = useState("");
   const [cafe, setCafe] = useState("");
 
+  const [savedFood, setSavedFood] = useState(0);
+  const [savedTransport, setSavedTransport] = useState(0);
+  const [savedShopping, setSavedShopping] = useState(0);
+  const [savedCafe, setSavedCafe] = useState(0);
+
+  const [foodSaved, setFoodSaved] = useState(false);
+  const [transportSaved, setTransportSaved] = useState(false);
+  const [shoppingSaved, setShoppingSaved] = useState(false);
+  const [cafeSaved, setCafeSaved] = useState(false);
+
   const totalBudget =
-    Number(food || 0) +
-    Number(transport || 0) +
-    Number(shopping || 0) +
-    Number(cafe || 0);
+    savedFood + savedTransport + savedShopping + savedCafe;
 
   return (
     <ScrollView style={styles.container}>
@@ -35,12 +42,23 @@ export default function BudgetScreen() {
             keyboardType="numeric"
             value={food}
             onChangeText={setFood}
+            editable={!foodSaved}
           />
           <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.smallButton}>
+            <TouchableOpacity
+              style={styles.smallButton}
+              onPress={() => {
+                setSavedFood(Number(food || 0));
+                setFoodSaved(true);
+              }}
+            >
               <Text style={styles.smallButtonText}>저장</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.smallButton}>
+
+            <TouchableOpacity
+              style={styles.smallButton}
+              onPress={() => setFoodSaved(false)}
+            >
               <Text style={styles.smallButtonText}>수정</Text>
             </TouchableOpacity>
           </View>
@@ -54,12 +72,23 @@ export default function BudgetScreen() {
             keyboardType="numeric"
             value={transport}
             onChangeText={setTransport}
+            editable={!transportSaved}
           />
           <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.smallButton}>
+            <TouchableOpacity
+              style={styles.smallButton}
+              onPress={() => {
+                setSavedTransport(Number(transport || 0));
+                setTransportSaved(true);
+              }}
+            >
               <Text style={styles.smallButtonText}>저장</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.smallButton}>
+
+            <TouchableOpacity
+              style={styles.smallButton}
+              onPress={() => setTransportSaved(false)}
+            >
               <Text style={styles.smallButtonText}>수정</Text>
             </TouchableOpacity>
           </View>
@@ -73,12 +102,23 @@ export default function BudgetScreen() {
             keyboardType="numeric"
             value={shopping}
             onChangeText={setShopping}
+            editable={!shoppingSaved}
           />
           <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.smallButton}>
+            <TouchableOpacity
+              style={styles.smallButton}
+              onPress={() => {
+                setSavedShopping(Number(shopping || 0));
+                setShoppingSaved(true);
+              }}
+            >
               <Text style={styles.smallButtonText}>저장</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.smallButton}>
+
+            <TouchableOpacity
+              style={styles.smallButton}
+              onPress={() => setShoppingSaved(false)}
+            >
               <Text style={styles.smallButtonText}>수정</Text>
             </TouchableOpacity>
           </View>
@@ -92,12 +132,23 @@ export default function BudgetScreen() {
             keyboardType="numeric"
             value={cafe}
             onChangeText={setCafe}
+            editable={!cafeSaved}
           />
           <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.smallButton}>
+            <TouchableOpacity
+              style={styles.smallButton}
+              onPress={() => {
+                setSavedCafe(Number(cafe || 0));
+                setCafeSaved(true);
+              }}
+            >
               <Text style={styles.smallButtonText}>저장</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.smallButton}>
+
+            <TouchableOpacity
+              style={styles.smallButton}
+              onPress={() => setCafeSaved(false)}
+            >
               <Text style={styles.smallButtonText}>수정</Text>
             </TouchableOpacity>
           </View>
@@ -120,6 +171,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F7F7FB",
     padding: 22,
   },
+
   title: {
     fontSize: 24,
     fontWeight: "700",
@@ -127,51 +179,61 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: "#111111",
   },
+
   card: {
     backgroundColor: "#EEF0FF",
     borderRadius: 24,
     padding: 20,
     marginBottom: 18,
   },
+
   label: {
     fontSize: 17,
     fontWeight: "700",
     marginBottom: 16,
     color: "#111111",
   },
+
   categoryBox: {
     backgroundColor: "#FFFFFF",
     borderRadius: 18,
     padding: 14,
     marginBottom: 14,
   },
+
   categoryLabel: {
     fontSize: 15,
     fontWeight: "700",
     marginBottom: 8,
     color: "#222222",
   },
+
   input: {
     backgroundColor: "#F7F7FB",
     borderRadius: 14,
     padding: 14,
     marginBottom: 10,
+    color: "#111111",
   },
+
   buttonRow: {
     flexDirection: "row",
     justifyContent: "flex-end",
     gap: 8,
   },
+
   smallButton: {
     backgroundColor: "#DDE2FF",
     borderRadius: 12,
     paddingVertical: 8,
     paddingHorizontal: 16,
   },
+
   smallButtonText: {
     color: "#3D5AFE",
     fontWeight: "700",
   },
+
   totalBudgetText: {
     fontSize: 28,
     fontWeight: "700",
