@@ -79,7 +79,7 @@ function Brand({ compact = false }: { compact?: boolean }) {
   return (
     <View style={[styles.brand, compact && styles.brandCompact]}>
       <View style={[styles.brandMark, compact && styles.brandMarkCompact]}>
-        <Text style={[styles.brandMarkText, compact && styles.brandMarkTextCompact]}>W</Text>
+        <Text style={[styles.brandMarkText, compact && styles.brandMarkTextCompact]}>모</Text>
       </View>
       <Text style={[styles.brandText, compact && styles.brandTextCompact]}>Bank</Text>
     </View>
@@ -494,7 +494,6 @@ const styles = StyleSheet.create({
     color: DEEP_PURPLE,
     fontSize: 30,
     fontWeight: '900',
-    textDecorationLine: 'line-through',
   },
   brandMarkTextCompact: {
     fontSize: 20,
