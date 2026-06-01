@@ -5,6 +5,8 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const DEEP_PURPLE = '#261052';
+const SOFT_PURPLE = '#f0ebff';
+const CARD_BACKGROUND = '#ffffff';
 const TEXT_BLACK = '#050505';
 const VALID_USER_ID = 'moamoa';
 const VALID_PASSWORD = '1234';
@@ -41,17 +43,19 @@ export default function Home() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.heroCopy}>
-          <Text style={styles.title}>언제 어디서나 간편한 은행</Text>
+          <View style={styles.startLogo}>
+            <Text style={styles.startLogoText}>모</Text>
+          </View>
           <Text style={styles.description}>
-            지금 로그인하거나 회원가입하고,{'\n'}
-            나만의 금융 생활을 만들어보세요.
+            오늘의 소비를 모으고,{'\n'}
+            나만의 금융 생활을 시작해보세요.
           </Text>
         </View>
 
         <View style={styles.formArea}>
           <View style={styles.brand}>
             <View style={styles.brandMark}>
-              <Text style={styles.brandMarkText}>W</Text>
+              <Text style={styles.brandMarkText}>모</Text>
             </View>
             <Text style={styles.brandText}>Bank</Text>
           </View>
@@ -114,94 +118,117 @@ export default function Home() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#f8f9fc',
+    backgroundColor: SOFT_PURPLE,
   },
   container: {
     flex: 1,
     justifyContent: 'space-between',
     paddingBottom: 42,
     paddingHorizontal: 28,
-    paddingTop: 158,
+    paddingTop: 92,
   },
   heroCopy: {
     alignItems: 'center',
   },
-  title: {
-    color: TEXT_BLACK,
-    fontSize: 32,
+  startLogo: {
+    alignItems: 'center',
+    backgroundColor: CARD_BACKGROUND,
+    borderColor: DEEP_PURPLE,
+    borderRadius: 42,
+    borderWidth: 3,
+    height: 84,
+    justifyContent: 'center',
+    marginBottom: 20,
+    shadowColor: DEEP_PURPLE,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.12,
+    shadowRadius: 14,
+    width: 84,
+    elevation: 5,
+  },
+  startLogoText: {
+    color: DEEP_PURPLE,
+    fontSize: 38,
     fontWeight: '900',
-    letterSpacing: 0,
-    lineHeight: 40,
-    textAlign: 'center',
   },
   description: {
-    color: '#111111',
-    fontSize: 22,
+    color: '#4d4268',
+    fontSize: 20,
     fontWeight: '700',
-    lineHeight: 35,
-    marginTop: 22,
+    lineHeight: 31,
+    marginTop: 16,
     textAlign: 'center',
   },
   formArea: {
-    paddingBottom: 4,
+    backgroundColor: CARD_BACKGROUND,
+    borderRadius: 28,
+    paddingBottom: 26,
+    paddingHorizontal: 22,
+    paddingTop: 28,
+    shadowColor: DEEP_PURPLE,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 22,
+    elevation: 6,
   },
   brand: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 38,
+    marginBottom: 28,
   },
   brandMark: {
     alignItems: 'center',
-    backgroundColor: '#e9e2fb',
+    backgroundColor: SOFT_PURPLE,
     borderColor: DEEP_PURPLE,
-    borderRadius: 31,
+    borderRadius: 27,
     borderWidth: 2,
-    height: 62,
+    height: 54,
     justifyContent: 'center',
-    marginRight: 12,
-    width: 62,
+    marginRight: 10,
+    width: 54,
   },
   brandMarkText: {
     color: DEEP_PURPLE,
-    fontSize: 30,
+    fontSize: 25,
     fontWeight: '900',
-    textDecorationLine: 'line-through',
   },
   brandText: {
     color: DEEP_PURPLE,
-    fontSize: 36,
+    fontSize: 28,
     fontWeight: '900',
     letterSpacing: 0,
   },
   inputs: {
-    gap: 22,
+    gap: 16,
   },
   input: {
-    borderColor: DEEP_PURPLE,
-    borderRadius: 12,
-    borderWidth: 2,
+    backgroundColor: '#fbfaff',
+    borderColor: '#d8cff5',
+    borderRadius: 16,
+    borderWidth: 1,
     color: TEXT_BLACK,
-    fontSize: 25,
+    fontSize: 21,
     fontWeight: '500',
-    height: 72,
-    paddingHorizontal: 28,
+    height: 64,
+    paddingHorizontal: 22,
   },
   passwordField: {
     alignItems: 'center',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 12,
-    borderWidth: 2,
+    backgroundColor: '#fbfaff',
+    borderColor: '#d8cff5',
+    borderRadius: 16,
+    borderWidth: 1,
     flexDirection: 'row',
-    height: 72,
+    height: 64,
   },
   passwordInput: {
     color: TEXT_BLACK,
     flex: 1,
-    fontSize: 25,
+    fontSize: 21,
     fontWeight: '500',
     height: '100%',
-    paddingLeft: 28,
+    paddingLeft: 22,
     paddingRight: 8,
   },
   eyeButton: {
@@ -212,33 +239,33 @@ const styles = StyleSheet.create({
     width: 44,
   },
   actions: {
-    gap: 16,
-    marginTop: 28,
+    gap: 12,
+    marginTop: 24,
   },
   primaryButton: {
     alignItems: 'center',
     backgroundColor: DEEP_PURPLE,
-    borderRadius: 12,
-    height: 64,
+    borderRadius: 18,
+    height: 60,
     justifyContent: 'center',
   },
   primaryButtonText: {
     color: '#ffffff',
-    fontSize: 23,
+    fontSize: 21,
     fontWeight: '900',
   },
   secondaryButton: {
     alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 12,
-    borderWidth: 2,
-    height: 64,
+    backgroundColor: SOFT_PURPLE,
+    borderColor: '#d8cff5',
+    borderRadius: 18,
+    borderWidth: 1,
+    height: 60,
     justifyContent: 'center',
   },
   secondaryButtonText: {
     color: DEEP_PURPLE,
-    fontSize: 23,
+    fontSize: 21,
     fontWeight: '900',
   },
   errorText: {
