@@ -48,7 +48,7 @@ export default function Login() {
         <View style={styles.formArea}>
           <View style={styles.brand}>
             <View style={styles.brandMark}>
-              <Text style={styles.brandMarkText}>W</Text>
+              <Text style={styles.brandMarkText}>모</Text>
             </View>
             <Text style={styles.brandText}>Bank</Text>
           </View>
@@ -166,7 +166,6 @@ const styles = StyleSheet.create({
     color: DEEP_PURPLE,
     fontSize: 30,
     fontWeight: '900',
-    textDecorationLine: 'line-through',
   },
   brandText: {
     color: DEEP_PURPLE,
