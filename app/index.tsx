@@ -1,24 +1,66 @@
-/*import React from 'react';
-import { StyleSheet } from 'react-native';
+import { useState } from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-import { ThemedView } from '@/components/themed-view';
-import { ThemedText } from '@/components/themed-text';
+import BalanceCard from "@/components/home/BalanceCard";
+import BudgetStatusCard from "@/components/home/BudgetStatusCard";
+import QuickExpenseInput from "@/components/home/QuickExpenseInput";
+import QuickMenuGrid from "@/components/home/QuickMenuGrid";
+import UsageCompareCard from "@/components/UsageCompareCard";
 
-export default function Home() {
+const TEXT = {
+  appTitle: "\uB0B4 \uACC4\uC88C",
+  settings: "\uC124\uC815",
+};
+
+export default function HomeScreen() {
+  const [balance, setBalance] = useState(0);
+  const [monthlySpent, setMonthlySpent] = useState(0);
+
+  const handleAddExpense = (amount: number) => {
+    setMonthlySpent((prev) => prev + amount);
+    setBalance((prev) => prev - amount);
+  };
+
   return (
-    <ThemedView style={styles.container}>
-      <ThemedText>Welcome — new project initialized</ThemedText>
-    </ThemedView>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.header}>
+        <Text style={styles.appTitle}>{TEXT.appTitle}</Text>
+
+        <TouchableOpacity style={styles.settingButton}>
+          <Text style={styles.settingText}>{TEXT.settings}</Text>
+        </TouchableOpacity>
+      </View>
+
+      <BalanceCard balance={balance} monthlySpent={monthlySpent} />
+
+      <QuickExpenseInput onSaveExpense={handleAddExpense} />
+
+      <BudgetStatusCard />
+
+      <UsageCompareCard />
+
+      <QuickMenuGrid />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#F7F7FB",
   },
-});*/
+/*<<<<<<< HEAD
+});
 import { ThemedView } from '@/components/themed-view';
 import UsageCompareCard from '@/components/UsageCompareCard';
 
@@ -29,3 +71,33 @@ export default function Home() {
     </ThemedView>
   );
 }
+=======*/
+  content: {
+    padding: 22,
+    paddingBottom: 40,
+  },
+  header: {
+    marginTop: 18,
+    marginBottom: 22,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  appTitle: {
+    fontSize: 22,
+    fontWeight: "700",
+    color: "#111111",
+  },
+  settingButton: {
+    backgroundColor: "#EEF0FF",
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  settingText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#3D5AFE",
+  },
+});
+//>>>>>>> ebe475a3c98fdfd01301f3753ff902a94b37ea51
