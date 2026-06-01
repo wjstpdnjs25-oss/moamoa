@@ -12,15 +12,6 @@ export default function BudgetScreen() {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>예산 설정</Text>
 
-      <View style={styles.card}>
-        <Text style={styles.label}>전체 예산</Text>
-
-        <TextInput
-          placeholder="예산 금액 입력"
-          keyboardType="numeric"
-          style={styles.input}
-        />
-      </View>
 
       <View style={styles.card}>
         <Text style={styles.label}>카테고리별 예산</Text>

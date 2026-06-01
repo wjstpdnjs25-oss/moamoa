@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const MENU_ITEMS = [
@@ -10,11 +11,25 @@ const MENU_ITEMS = [
 export default function QuickMenuGrid() {
   return (
     <View style={styles.menuContainer}>
-      {MENU_ITEMS.map((item) => (
-        <TouchableOpacity key={item} style={styles.menuButton}>
-          <Text style={styles.menuText}>{item}</Text>
-        </TouchableOpacity>
-      ))}
+      <TouchableOpacity 
+        style={styles.menuButton}
+        onPress = {() => router.push("/budget" as any)}
+        >
+
+        <Text style={styles.menuText}>예산 설정</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.menuButton}>
+        <Text style={styles.menuText}>지출 입력</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.menuButton}>
+        <Text style={styles.menuText}>달력</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.menuButton}>
+        <Text style={styles.menuText}>위시세이브</Text>
+      </TouchableOpacity>
     </View>
   );
 }
