@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
 import {
+    KeyboardAvoidingView,
+    Platform,
     ScrollView,
     StyleSheet,
     Text,
@@ -33,7 +35,15 @@ export default function BudgetScreen() {
     savedFood + savedTransport + savedShopping + savedCafe;
 
   return (
-    <ScrollView style={styles.container}>
+    <KeyboardAvoidingView
+    style={styles.wrapper}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    >
+    <ScrollView 
+    style={styles.container}
+    keyboardShouldPersistTaps="handled"
+    contentContainerStyle={{ paddingBottom: 130 }}
+        >
       <Text style={styles.title}>예산 설정</Text>
 
       <View style={styles.card}>
@@ -201,6 +211,8 @@ export default function BudgetScreen() {
         </Text>
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
+
   );
 }
 
@@ -283,4 +295,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#E5E5E5",
     color: "#777777",
   },
+  wrapper: {
+    flex: 1,
+  }
 });
