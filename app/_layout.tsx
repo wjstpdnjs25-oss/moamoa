@@ -1,18 +1,13 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Slot } from 'expo-router';
+import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import React from 'react';
 
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Slot />
+    <>
+      <Stack screenOptions={{ headerShown: false }} />
       <StatusBar style="auto" />
-    </ThemeProvider>
+    </>
   );
 }
