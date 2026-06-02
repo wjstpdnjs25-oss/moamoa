@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 const DEEP_PURPLE = '#4f287f';
 const SOFT_PURPLE = '#f5efff';
@@ -104,11 +105,11 @@ export default function Home() {
         </View>
 
         <View style={styles.actions}>
-          <Pressable style={styles.primaryButton}>
+          <Pressable style={styles.primaryButton} onPress={() => router.push('/login')}>
             <Text style={styles.primaryButtonText}>로그인하기</Text>
           </Pressable>
 
-          <Pressable style={styles.secondaryButton}>
+          <Pressable style={styles.secondaryButton} onPress={() => router.push('/signup')}>
             <Text style={styles.secondaryButtonText}>회원가입하기</Text>
           </Pressable>
         </View>
