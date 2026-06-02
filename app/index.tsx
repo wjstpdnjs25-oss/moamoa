@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const DEEP_PURPLE = '#261052';
@@ -44,7 +44,11 @@ export default function Home() {
       <View style={styles.container}>
         <View style={styles.heroCopy}>
           <View style={styles.startLogo}>
-            <Text style={styles.startLogoText}>모</Text>
+            <Image
+              source={require('@/assets/images/moamoa-bank-logo.png')}
+              style={styles.startLogoImage}
+              resizeMode="contain"
+            />
           </View>
           <Text style={styles.description}>
             오늘의 소비를 모으고,{'\n'}
@@ -55,7 +59,11 @@ export default function Home() {
         <View style={styles.formArea}>
           <View style={styles.brand}>
             <View style={styles.brandMark}>
-              <Text style={styles.brandMarkText}>모</Text>
+              <Image
+                source={require('@/assets/images/moamoa-bank-logo.png')}
+                style={styles.brandMarkImage}
+                resizeMode="contain"
+              />
             </View>
             <Text style={styles.brandText}>Bank</Text>
           </View>
@@ -146,10 +154,9 @@ const styles = StyleSheet.create({
     width: 84,
     elevation: 5,
   },
-  startLogoText: {
-    color: DEEP_PURPLE,
-    fontSize: 38,
-    fontWeight: '900',
+  startLogoImage: {
+    height: 76,
+    width: 76,
   },
   description: {
     color: '#4d4268',
@@ -188,10 +195,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
     width: 54,
   },
-  brandMarkText: {
-    color: DEEP_PURPLE,
-    fontSize: 25,
-    fontWeight: '900',
+  brandMarkImage: {
+    height: 48,
+    width: 48,
   },
   brandText: {
     color: DEEP_PURPLE,
