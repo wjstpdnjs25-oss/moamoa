@@ -116,7 +116,6 @@ export default function Home() {
               <Text style={styles.secondaryButtonText}>회원가입하기</Text>
             </Pressable>
           </View>
-
         </View>
       </View>
     </SafeAreaView>
