@@ -2,8 +2,8 @@ import BalanceCard from "@/components/home/BalanceCard";
 import BudgetStatusCard from "@/components/home/BudgetStatusCard";
 import QuickExpenseInput from "@/components/home/QuickExpenseInput";
 import QuickMenuGrid from "@/components/home/QuickMenuGrid";
+import UsageCompareCard from "@/components/home/UsageCompareCard";
 import WishSaveCard from "@/components/home/WishSaveCard";
-import UsageCompareCard from "@/components/UsageCompareCard";
 
 const TEXT = {
   appTitle: "\uB0B4 \uACC4\uC88C",
