@@ -1,7 +1,5 @@
 import { useRef, useState } from "react";
 import {
-    KeyboardAvoidingView,
-    Platform,
     ScrollView,
     StyleSheet,
     Text,
@@ -11,6 +9,11 @@ import {
 } from "react-native";
 
 export default function BudgetScreen() {
+  const foodInputRef = useRef<TextInput>(null);
+  const transportInputRef = useRef<TextInput>(null);
+  const shoppingInputRef = useRef<TextInput>(null);
+  const cafeInputRef = useRef<TextInput>(null);
+
   const [food, setFood] = useState("");
   const [transport, setTransport] = useState("");
   const [shopping, setShopping] = useState("");
@@ -26,24 +29,20 @@ export default function BudgetScreen() {
   const [shoppingSaved, setShoppingSaved] = useState(false);
   const [cafeSaved, setCafeSaved] = useState(false);
 
-  const foodInputRef = useRef<TextInput>(null);
-  const transportInputRef = useRef<TextInput>(null);
-  const shoppingInputRef = useRef<TextInput>(null);
-  const cafeInputRef = useRef<TextInput>(null);
+  const totalBudget = savedFood + savedTransport + savedShopping + savedCafe;
 
-  const totalBudget =
-    savedFood + savedTransport + savedShopping + savedCafe;
+  const focusInput = (ref: React.RefObject<TextInput | null>) => {
+    setTimeout(() => {
+      ref.current?.focus();
+    }, 50);
+  };
 
   return (
-    <KeyboardAvoidingView
-    style={styles.wrapper}
-    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ paddingBottom: 250 }}
+      keyboardShouldPersistTaps="handled"
     >
-    <ScrollView 
-    style={styles.container}
-    keyboardShouldPersistTaps="handled"
-    contentContainerStyle={{ paddingBottom: 130 }}
-        >
       <Text style={styles.title}>예산 설정</Text>
 
       <View style={styles.card}>
@@ -52,11 +51,9 @@ export default function BudgetScreen() {
         <View style={styles.categoryBox}>
           <Text style={styles.categoryLabel}>식비</Text>
           <TextInput
-          ref={foodInputRef}
+            ref={foodInputRef}
             placeholder="예산 입력"
-            style={[
-                styles.input,
-                foodSaved && styles.savedInput,]}
+            style={[styles.input, foodSaved && styles.savedInput]}
             keyboardType="numeric"
             value={food}
             onChangeText={setFood}
@@ -64,7 +61,8 @@ export default function BudgetScreen() {
           />
           <View style={styles.buttonRow}>
             <TouchableOpacity
-              style={styles.smallButton}
+              style={[styles.smallButton, foodSaved && styles.disabledButton]}
+              disabled={foodSaved}
               onPress={() => {
                 setSavedFood(Number(food || 0));
                 setFoodSaved(true);
@@ -77,25 +75,21 @@ export default function BudgetScreen() {
               style={styles.smallButton}
               onPress={() => {
                 setFoodSaved(false);
-            
-                setTimeout(() => {
-                    foodInputRef.current?.focus();
-                }, 50);
+                focusInput(foodInputRef);
               }}
             >
               <Text style={styles.smallButtonText}>수정</Text>
             </TouchableOpacity>
           </View>
+          {foodSaved && <Text style={styles.savedText}>저장됨 ✓</Text>}
         </View>
 
         <View style={styles.categoryBox}>
           <Text style={styles.categoryLabel}>교통</Text>
           <TextInput
-          ref={transportInputRef}
+            ref={transportInputRef}
             placeholder="예산 입력"
-            style={[
-                styles.input,
-                transportSaved && styles.savedInput,]}
+            style={[styles.input, transportSaved && styles.savedInput]}
             keyboardType="numeric"
             value={transport}
             onChangeText={setTransport}
@@ -103,7 +97,11 @@ export default function BudgetScreen() {
           />
           <View style={styles.buttonRow}>
             <TouchableOpacity
-              style={styles.smallButton}
+              style={[
+                styles.smallButton,
+                transportSaved && styles.disabledButton,
+              ]}
+              disabled={transportSaved}
               onPress={() => {
                 setSavedTransport(Number(transport || 0));
                 setTransportSaved(true);
@@ -115,25 +113,22 @@ export default function BudgetScreen() {
             <TouchableOpacity
               style={styles.smallButton}
               onPress={() => {
-                setTransportSaved(false)
-             setTimeout(() => {
-                    transportInputRef.current?.focus();
-                }, 50);
+                setTransportSaved(false);
+                focusInput(transportInputRef);
               }}
             >
               <Text style={styles.smallButtonText}>수정</Text>
             </TouchableOpacity>
           </View>
+          {transportSaved && <Text style={styles.savedText}>저장됨 ✓</Text>}
         </View>
 
         <View style={styles.categoryBox}>
           <Text style={styles.categoryLabel}>쇼핑</Text>
           <TextInput
-          ref={shoppingInputRef}
+            ref={shoppingInputRef}
             placeholder="예산 입력"
-            style={[
-                styles.input,
-                shoppingSaved && styles.savedInput,]}
+            style={[styles.input, shoppingSaved && styles.savedInput]}
             keyboardType="numeric"
             value={shopping}
             onChangeText={setShopping}
@@ -141,7 +136,11 @@ export default function BudgetScreen() {
           />
           <View style={styles.buttonRow}>
             <TouchableOpacity
-              style={styles.smallButton}
+              style={[
+                styles.smallButton,
+                shoppingSaved && styles.disabledButton,
+              ]}
+              disabled={shoppingSaved}
               onPress={() => {
                 setSavedShopping(Number(shopping || 0));
                 setShoppingSaved(true);
@@ -153,26 +152,22 @@ export default function BudgetScreen() {
             <TouchableOpacity
               style={styles.smallButton}
               onPress={() => {
-                setShoppingSaved(false)
-             setTimeout(() => {
-                    shoppingInputRef.current?.focus();
-                }, 50);
+                setShoppingSaved(false);
+                focusInput(shoppingInputRef);
               }}
             >
               <Text style={styles.smallButtonText}>수정</Text>
             </TouchableOpacity>
           </View>
+          {shoppingSaved && <Text style={styles.savedText}>저장됨 ✓</Text>}
         </View>
 
         <View style={styles.categoryBox}>
           <Text style={styles.categoryLabel}>카페</Text>
           <TextInput
-          ref={cafeInputRef}
+            ref={cafeInputRef}
             placeholder="예산 입력"
-            style={
-                [styles.input,
-                cafeSaved && styles.savedInput,
-            ]}
+            style={[styles.input, cafeSaved && styles.savedInput]}
             keyboardType="numeric"
             value={cafe}
             onChangeText={setCafe}
@@ -180,7 +175,8 @@ export default function BudgetScreen() {
           />
           <View style={styles.buttonRow}>
             <TouchableOpacity
-              style={styles.smallButton}
+              style={[styles.smallButton, cafeSaved && styles.disabledButton]}
+              disabled={cafeSaved}
               onPress={() => {
                 setSavedCafe(Number(cafe || 0));
                 setCafeSaved(true);
@@ -192,15 +188,14 @@ export default function BudgetScreen() {
             <TouchableOpacity
               style={styles.smallButton}
               onPress={() => {
-                setCafeSaved(false)
-             setTimeout(() => {
-                    cafeInputRef.current?.focus();
-                }, 50);
+                setCafeSaved(false);
+                focusInput(cafeInputRef);
               }}
             >
               <Text style={styles.smallButtonText}>수정</Text>
             </TouchableOpacity>
           </View>
+          {cafeSaved && <Text style={styles.savedText}>저장됨 ✓</Text>}
         </View>
       </View>
 
@@ -211,8 +206,6 @@ export default function BudgetScreen() {
         </Text>
       </View>
     </ScrollView>
-    </KeyboardAvoidingView>
-
   );
 }
 
@@ -222,7 +215,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#F7F7FB",
     padding: 22,
   },
-
   title: {
     fontSize: 24,
     fontWeight: "700",
@@ -230,35 +222,30 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: "#111111",
   },
-
   card: {
     backgroundColor: "#EEF0FF",
     borderRadius: 24,
     padding: 20,
     marginBottom: 18,
   },
-
   label: {
     fontSize: 17,
     fontWeight: "700",
     marginBottom: 16,
     color: "#111111",
   },
-
   categoryBox: {
     backgroundColor: "#FFFFFF",
     borderRadius: 18,
     padding: 14,
     marginBottom: 14,
   },
-
   categoryLabel: {
     fontSize: 15,
     fontWeight: "700",
     marginBottom: 8,
     color: "#222222",
   },
-
   input: {
     backgroundColor: "#F7F7FB",
     borderRadius: 14,
@@ -266,36 +253,39 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: "#111111",
   },
-
+  savedInput: {
+    backgroundColor: "#E5E5E5",
+    color: "#777777",
+  },
   buttonRow: {
     flexDirection: "row",
     justifyContent: "flex-end",
     gap: 8,
   },
-
   smallButton: {
     backgroundColor: "#DDE2FF",
     borderRadius: 12,
     paddingVertical: 8,
     paddingHorizontal: 16,
   },
-
+  disabledButton: {
+    opacity: 0.5,
+  },
   smallButtonText: {
     color: "#3D5AFE",
     fontWeight: "700",
   },
-
+  savedText: {
+    color: "#4CAF50",
+    fontSize: 12,
+    fontWeight: "600",
+    marginTop: 6,
+    textAlign: "right",
+  },
   totalBudgetText: {
     fontSize: 28,
     fontWeight: "700",
     color: "#111111",
     marginTop: 8,
   },
-  savedInput: {
-    backgroundColor: "#E5E5E5",
-    color: "#777777",
-  },
-  wrapper: {
-    flex: 1,
-  }
 });
