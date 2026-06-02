@@ -3,9 +3,12 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
-const DEEP_PURPLE = '#261052';
-const SOFT_PURPLE = '#f3f0fa';
-const LINE_PURPLE = '#c8bfd9';
+const DEEP_PURPLE = '#4f287f';
+const SOFT_PURPLE = '#f5efff';
+const LINE_PURPLE = '#d7c7f0';
+const SPLASH_BACKGROUND = '#f6f1ff';
+const BRAND_BORDER = '#dfd0f4';
+const SUB_TEXT_PURPLE = '#7b6a90';
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
@@ -117,7 +120,7 @@ export default function Home() {
 const styles = StyleSheet.create({
   splashScreen: {
     alignItems: 'center',
-    backgroundColor: '#eef6f8',
+    backgroundColor: SPLASH_BACKGROUND,
     flex: 1,
     justifyContent: 'center',
   },
@@ -143,10 +146,10 @@ const styles = StyleSheet.create({
   },
   brandMark: {
     alignItems: 'center',
-    backgroundColor: '#eef6f8',
+    backgroundColor: SPLASH_BACKGROUND,
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: '#d5e6ec',
+    borderColor: BRAND_BORDER,
     overflow: 'hidden',
     height: 36,
     justifyContent: 'center',
@@ -163,7 +166,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
   },
   brandSubText: {
-    color: '#6f6680',
+    color: SUB_TEXT_PURPLE,
     fontSize: 11,
     fontWeight: '800',
     letterSpacing: 0,
