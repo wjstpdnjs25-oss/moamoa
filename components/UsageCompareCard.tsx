@@ -1,6 +1,11 @@
 import { ThemedText } from '@/components/themed-text';
 import { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 function FilterButton({ text, selected, onPress }) {
   return (
@@ -34,6 +39,7 @@ export default function UsageCompareCard() {
           selected={ageGroup === '20대'}
           onPress={() => setAgeGroup('20대')}
         />
+
         <FilterButton
           text="30대"
           selected={ageGroup === '30대'}
@@ -45,19 +51,21 @@ export default function UsageCompareCard() {
       <View style={styles.card}>
         <Text style={styles.title}>소비 비교</Text>
 
-        <View style={styles.row}>
+        <View style={styles.rowBetween}>
           <Text>나의 소비</Text>
           <Text>320,000원</Text>
         </View>
 
-        <View style={styles.row}>
+        <View style={styles.rowBetween}>
           <Text>평균 소비</Text>
           <Text>410,000원</Text>
         </View>
       </View>
 
       {/* 라이프스타일 */}
-      <ThemedText style={styles.label}>라이프스타일</ThemedText>
+      <ThemedText style={styles.label}>
+        라이프스타일
+      </ThemedText>
 
       <View style={styles.row}>
         <FilterButton
@@ -89,3 +97,62 @@ export default function UsageCompareCard() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+  },
+
+  label: {
+    fontSize: 16,
+    marginBottom: 8,
+    marginTop: 16,
+    fontWeight: 'bold',
+  },
+
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 10,
+    flexWrap: 'wrap',
+  },
+
+  rowBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+
+  button: {
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    backgroundColor: '#eee',
+  },
+
+  buttonSelected: {
+    backgroundColor: '#4A90E2',
+  },
+
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 10,
+    elevation: 2,
+  },
+
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+
+  resultBox: {
+    marginTop: 20,
+    padding: 12,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 10,
+  },
+});
