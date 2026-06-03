@@ -1,35 +1,35 @@
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 
-<<<<<<< HEAD
-import BalanceCard from "@/components/home/BalanceCard";
-import BudgetStatusCard from "@/components/home/BudgetStatusCard";
-import QuickExpenseInput from "@/components/home/QuickExpenseInput";
-import QuickMenuGrid from "@/components/home/QuickMenuGrid";
-import WishSaveCard from "@/components/home/WishSaveCard";
-import UsageCompareCard from "@/components/UsageCompareCard";
-=======
+
 const DEEP_PURPLE = '#4f287f';
 const SOFT_PURPLE = '#f5efff';
 const LINE_PURPLE = '#d7c7f0';
 const SPLASH_BACKGROUND = '#f6f1ff';
 const BRAND_BORDER = '#dfd0f4';
 const SUB_TEXT_PURPLE = '#7b6a90';
->>>>>>> origin/main
+
 
 export default function Home() {
   const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
+    
     const timer = setTimeout(() => {
       setShowSplash(false);
     }, 2000);
 
     return () => clearTimeout(timer);
   }, []);
+
+  const balance = 250000;
+    const monthlySpent = 85000;
+
+    const handleAddExpense = () => {};
+    
 
   if (showSplash) {
     return (
@@ -114,6 +114,7 @@ export default function Home() {
         </View>
 
         <View style={styles.actions}>
+          <Text>테스트</Text>
           <Pressable style={styles.primaryButton} onPress={() => router.push('/login')}>
             <Text style={styles.primaryButtonText}>로그인하기</Text>
           </Pressable>
@@ -123,23 +124,18 @@ export default function Home() {
           </Pressable>
         </View>
       </View>
-<<<<<<< HEAD
 
-      <BalanceCard balance={balance} monthlySpent={monthlySpent} />
+     
 
-      <QuickExpenseInput onSaveExpense={handleAddExpense} />
+     {/* <BalanceCard balance={balance} monthlySpent={monthlySpent} /> */}
+{/* <QuickExpenseInput onSaveExpense={handleAddExpense} /> */}
+{/* <BudgetStatusCard /> */}
+{/* <QuickMenuGrid /> */}
+ 
 
-      <BudgetStatusCard />
-
-      <WishSaveCard />
-
-      <UsageCompareCard />
-
-      <QuickMenuGrid />
-    </ScrollView>
-=======
+   
     </SafeAreaView>
->>>>>>> origin/main
+
   );
 }
 
@@ -164,30 +160,18 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 34,
   },
-<<<<<<< HEAD
-/*<<<<<<< HEAD
-});
-import { ThemedView } from '@/components/themed-view';
-import UsageCompareCard from '@/components/UsageCompareCard';
 
-export default function Home() {
-  return (
-    <ThemedView>
-      <UsageCompareCard />
-    </ThemedView>
-  );
-}
-=======*/
   content: {
     padding: 22,
     paddingBottom: 40,
-=======
+  },
+
   brandHeader: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: 12,
     marginTop: 10,
->>>>>>> origin/main
+
   },
   brandMark: {
     alignItems: 'center',
@@ -452,4 +436,4 @@ export default function Home() {
     fontWeight: '900',
   },
 });
-//>>>>>>> ebe475a3c98fdfd01301f3753ff902a94b37ea51
+

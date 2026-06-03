@@ -7,8 +7,16 @@ import {
   View,
 } from 'react-native';
 
-function FilterButton({ text, selected, onPress }) {
-  return (
+function FilterButton({
+  text,
+  selected,
+  onPress,
+}: {
+  text: string;
+  selected: boolean;
+  onPress: () => void;
+}) {
+   return (
     <Pressable
       onPress={onPress}
       style={[
