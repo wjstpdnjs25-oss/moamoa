@@ -108,12 +108,21 @@ function SignupForm({
   const [showRequiredErrors, setShowRequiredErrors] = useState(false);
   const [isTermsAgreed, setIsTermsAgreed] = useState(false);
   const [isIdFocused, setIsIdFocused] = useState(false);
+  const emailParts = splitEmail(info.email);
 
   const updateField = (field: keyof SignupInfo, value: string) => {
     onChange({ ...info, [field]: value });
   };
+  const updateEmailPart = (part: 'local' | 'domain', value: string) => {
+    const nextEmail = part === 'local' ? `${value}@${emailParts.domain}` : `${emailParts.local}@${value}`;
+    updateField('email', nextEmail);
+  };
   const isFieldEmpty = (field: keyof SignupInfo) => info[field].trim().length === 0;
-  const hasEmptyField = Object.values(info).some((value) => value.trim().length === 0);
+  const isEmailIncomplete =
+    emailParts.local.trim().length === 0 || emailParts.domain.trim().length === 0;
+  const hasEmptyField =
+    Object.entries(info).some(([field, value]) => field !== 'email' && value.trim().length === 0) ||
+    isEmailIncomplete;
   const showPasswordRequirement =
     info.password.length > 0 && !isValidPassword(info.password);
   const showPasswordMismatch =
@@ -216,16 +225,28 @@ function SignupForm({
             <Text style={styles.passwordMismatchText}>비밀번호가 일치하지 않습니다</Text>
           ) : null}
 
-          <TextInput
-            autoCapitalize="none"
-            keyboardType="email-address"
-            placeholder="이메일 [email@address.com]"
-            placeholderTextColor="#777777"
-            style={styles.input}
-            value={info.email}
-            onChangeText={(value) => updateField('email', value)}
-          />
-          {showRequiredErrors && isFieldEmpty('email') ? (
+          <View style={styles.emailRow}>
+            <TextInput
+              autoCapitalize="none"
+              keyboardType="email-address"
+              placeholder="이메일"
+              placeholderTextColor="#777777"
+              style={[styles.input, styles.emailLocalInput]}
+              value={emailParts.local}
+              onChangeText={(value) => updateEmailPart('local', value)}
+            />
+            <Text style={styles.emailAtText}>@</Text>
+            <TextInput
+              autoCapitalize="none"
+              keyboardType="email-address"
+              placeholder="address.com"
+              placeholderTextColor="#777777"
+              style={[styles.input, styles.emailDomainInput]}
+              value={emailParts.domain}
+              onChangeText={(value) => updateEmailPart('domain', value)}
+            />
+          </View>
+          {showRequiredErrors && isEmailIncomplete ? (
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
           ) : null}
         </View>
@@ -469,6 +490,15 @@ function formatResidentNumber(value: string) {
   return digits;
 }
 
+function splitEmail(value: string) {
+  const [local = '', ...domainParts] = value.split('@');
+
+  return {
+    local,
+    domain: domainParts.join('@'),
+  };
+}
+
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -592,6 +622,26 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     height: 70,
     paddingHorizontal: 28,
+  },
+  emailRow: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 10,
+  },
+  emailLocalInput: {
+    flex: 1,
+    minWidth: 0,
+    paddingHorizontal: 18,
+  },
+  emailAtText: {
+    color: DEEP_PURPLE,
+    fontSize: 24,
+    fontWeight: '900',
+  },
+  emailDomainInput: {
+    flex: 1.2,
+    minWidth: 0,
+    paddingHorizontal: 18,
   },
   passwordField: {
     alignItems: 'center',
