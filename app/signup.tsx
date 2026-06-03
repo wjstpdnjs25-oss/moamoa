@@ -226,25 +226,29 @@ function SignupForm({
           ) : null}
 
           <View style={styles.emailRow}>
-            <TextInput
-              autoCapitalize="none"
-              keyboardType="email-address"
-              placeholder="이메일"
-              placeholderTextColor="#777777"
-              style={[styles.input, styles.emailLocalInput]}
-              value={emailParts.local}
-              onChangeText={(value) => updateEmailPart('local', value)}
-            />
+            <View style={styles.emailUnderlineWrap}>
+              <TextInput
+                autoCapitalize="none"
+                keyboardType="email-address"
+                placeholder="email"
+                placeholderTextColor="#777777"
+                style={styles.emailUnderlineInput}
+                value={emailParts.local}
+                onChangeText={(value) => updateEmailPart('local', value)}
+              />
+            </View>
             <Text style={styles.emailAtText}>@</Text>
-            <TextInput
-              autoCapitalize="none"
-              keyboardType="email-address"
-              placeholder="address.com"
-              placeholderTextColor="#777777"
-              style={[styles.input, styles.emailDomainInput]}
-              value={emailParts.domain}
-              onChangeText={(value) => updateEmailPart('domain', value)}
-            />
+            <View style={[styles.emailUnderlineWrap, styles.emailDomainWrap]}>
+              <TextInput
+                autoCapitalize="none"
+                keyboardType="email-address"
+                placeholder="address.com"
+                placeholderTextColor="#777777"
+                style={styles.emailUnderlineInput}
+                value={emailParts.domain}
+                onChangeText={(value) => updateEmailPart('domain', value)}
+              />
+            </View>
           </View>
           {showRequiredErrors && isEmailIncomplete ? (
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
@@ -625,23 +629,35 @@ const styles = StyleSheet.create({
   },
   emailRow: {
     alignItems: 'center',
+    borderColor: DEEP_PURPLE,
+    borderRadius: 12,
+    borderWidth: 2,
     flexDirection: 'row',
-    gap: 10,
+    height: 70,
+    paddingHorizontal: 22,
   },
-  emailLocalInput: {
+  emailUnderlineWrap: {
+    borderBottomColor: '#777777',
+    borderBottomWidth: 2,
     flex: 1,
     minWidth: 0,
-    paddingHorizontal: 18,
+  },
+  emailDomainWrap: {
+    flex: 1.25,
+  },
+  emailUnderlineInput: {
+    color: TEXT_BLACK,
+    fontSize: 22,
+    fontWeight: '500',
+    height: 48,
+    paddingHorizontal: 4,
+    paddingVertical: 0,
   },
   emailAtText: {
     color: DEEP_PURPLE,
     fontSize: 24,
     fontWeight: '900',
-  },
-  emailDomainInput: {
-    flex: 1.2,
-    minWidth: 0,
-    paddingHorizontal: 18,
+    marginHorizontal: 10,
   },
   passwordField: {
     alignItems: 'center',
