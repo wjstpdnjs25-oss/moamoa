@@ -2,18 +2,22 @@ import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const MENU_ITEMS = [
-  "\uC608\uC0B0 \uC124\uC815",
-  "\uC9C0\uCD9C \uC785\uB825",
-  "\uB2EC\uB825",
-  "\uB300\uC2DC\uBCF4\uB4DC",
+  "예산 설정",
+  "지출 입력",
+  "달력",
+  "대시보드",
 ];
 
 export default function QuickMenuGrid() {
   const router = useRouter();
 
   const handlePressMenu = (item: string) => {
-    if (item === "\uC9C0\uCD9C \uC785\uB825") {
-      router.push("/expense-input");
+    if (item === "예산 설정") {
+      router.push("/budget");
+    }
+
+    if (item === "지출 입력") {
+      router.push("/expense-input" as any);
     }
   };
 
