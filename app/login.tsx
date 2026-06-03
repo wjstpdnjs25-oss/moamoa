@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const DEEP_PURPLE = '#261052';
@@ -47,8 +47,13 @@ export default function Login() {
 
         <View style={styles.formArea}>
           <View style={styles.brand}>
-            <View style={styles.brandMark}>
-              <Text style={styles.brandMarkText}>모</Text>
+            <View style={styles.brandLogoFrame}>
+              <Image
+                accessibilityLabel="모아모아 은행 로고"
+                resizeMode="cover"
+                source={require('../assets/images/moamoa-splash.png')}
+                style={styles.brandLogo}
+              />
             </View>
             <Text style={styles.brandText}>Bank</Text>
           </View>
@@ -151,21 +156,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 38,
   },
-  brandMark: {
-    alignItems: 'center',
-    backgroundColor: '#e9e2fb',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 31,
+  brandLogoFrame: {
+    borderColor: '#d9cdef',
+    borderRadius: 34,
     borderWidth: 2,
-    height: 62,
-    justifyContent: 'center',
+    height: 68,
     marginRight: 12,
-    width: 62,
+    overflow: 'hidden',
+    width: 68,
   },
-  brandMarkText: {
-    color: DEEP_PURPLE,
-    fontSize: 30,
-    fontWeight: '900',
+  brandLogo: {
+    height: '100%',
+    width: '100%',
   },
   brandText: {
     color: DEEP_PURPLE,
