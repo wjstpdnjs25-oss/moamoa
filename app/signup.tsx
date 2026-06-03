@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -82,8 +83,13 @@ export default function Home() {
 function Brand({ compact = false }: { compact?: boolean }) {
   return (
     <View style={[styles.brand, compact && styles.brandCompact]}>
-      <View style={[styles.brandMark, compact && styles.brandMarkCompact]}>
-        <Text style={[styles.brandMarkText, compact && styles.brandMarkTextCompact]}>모</Text>
+      <View style={[styles.brandLogoFrame, compact && styles.brandLogoFrameCompact]}>
+        <Image
+          accessibilityLabel="모아모아 은행 로고"
+          resizeMode="cover"
+          source={require('../assets/images/moamoa-splash.png')}
+          style={styles.brandLogo}
+        />
       </View>
       <Text style={[styles.brandText, compact && styles.brandTextCompact]}>Bank</Text>
     </View>
@@ -483,30 +489,24 @@ const styles = StyleSheet.create({
   brandCompact: {
     marginBottom: 24,
   },
-  brandMark: {
-    alignItems: 'center',
-    backgroundColor: '#e9e2fb',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 31,
+  brandLogoFrame: {
+    borderColor: '#d9cdef',
+    borderRadius: 34,
     borderWidth: 2,
-    height: 62,
-    justifyContent: 'center',
+    height: 68,
     marginRight: 12,
-    width: 62,
+    overflow: 'hidden',
+    width: 68,
   },
-  brandMarkCompact: {
-    borderRadius: 21,
-    height: 42,
+  brandLogoFrameCompact: {
+    borderRadius: 23,
+    height: 46,
     marginRight: 8,
-    width: 42,
+    width: 46,
   },
-  brandMarkText: {
-    color: DEEP_PURPLE,
-    fontSize: 30,
-    fontWeight: '900',
-  },
-  brandMarkTextCompact: {
-    fontSize: 20,
+  brandLogo: {
+    height: '100%',
+    width: '100%',
   },
   brandText: {
     color: DEEP_PURPLE,
