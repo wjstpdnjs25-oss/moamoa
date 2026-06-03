@@ -11,6 +11,7 @@ import BalanceCard from "@/components/home/BalanceCard";
 import BudgetStatusCard from "@/components/home/BudgetStatusCard";
 import QuickExpenseInput from "@/components/home/QuickExpenseInput";
 import QuickMenuGrid from "@/components/home/QuickMenuGrid";
+import WishSaveCard from "@/components/home/WishSaveCard";
 import UsageCompareCard from "@/components/UsageCompareCard";
 
 const TEXT = {
@@ -46,6 +47,8 @@ export default function HomeScreen() {
       <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
       <BudgetStatusCard />
+
+      <WishSaveCard />
 
       <UsageCompareCard />
 
