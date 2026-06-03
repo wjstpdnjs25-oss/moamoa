@@ -24,11 +24,13 @@ export default function Home() {
   if (showSplash) {
     return (
       <SafeAreaView style={styles.splashScreen}>
-        <Image
-          source={require('@/assets/images/moamoa-splash.png')}
-          style={styles.splashLogo}
-          resizeMode="contain"
-        />
+        <View style={styles.splashLogoFrame}>
+          <Image
+            source={require('@/assets/images/moamoa-splash.png')}
+            style={styles.splashLogo}
+            resizeMode="cover"
+          />
+        </View>
       </SafeAreaView>
     );
   }
@@ -124,9 +126,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-  splashLogo: {
+  splashLogoFrame: {
+    borderRadius: 160,
     height: 320,
+    overflow: 'hidden',
     width: 320,
+  },
+  splashLogo: {
+    height: '100%',
+    width: '100%',
   },
   safeArea: {
     flex: 1,
