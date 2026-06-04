@@ -5,6 +5,26 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+const SAMPLE_EXPENSES: Record<string, { id: string; label: string; icon: string; amount: number }[]> = {
+  "2024-06-02": [{ id: "lunch", label: "점심 식사", icon: "food", amount: 15000 }],
+  "2024-06-04": [{ id: "coffee", label: "카페", icon: "coffee", amount: 12000 }],
+  "2024-06-05": [{ id: "dinner", label: "저녁 식사", icon: "food-variant", amount: 8000 }],
+  "2024-06-07": [{ id: "transport", label: "교통", icon: "bus", amount: 23000 }],
+  "2024-06-08": [{ id: "shopping", label: "의류 쇼핑", icon: "tshirt-crew-outline", amount: 10000 }],
+  "2024-06-10": [{ id: "lunch2", label: "점심 식사", icon: "food", amount: 18000 }],
+  "2024-06-12": [{ id: "market", label: "마트", icon: "cart", amount: 31500 }],
+  "2024-06-13": [{ id: "delivery", label: "배달 음식", icon: "food-variant", amount: 7000 }],
+  "2024-06-14": [{ id: "dessert", label: "디저트", icon: "cupcake", amount: 12000 }],
+  "2024-06-15": [
+    { id: "lunch3", label: "점심 식사", icon: "food", amount: 18000 },
+    { id: "coffee2", label: "카페", icon: "coffee", amount: 6000 },
+    { id: "shopping2", label: "의류 쇼핑", icon: "tshirt-crew-outline", amount: 54000 },
+  ],
+};
+
+function formatDayKey(date: Date) {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
 
 export default function CalendarScreen() {
   const router = useRouter();
@@ -31,6 +51,15 @@ export default function CalendarScreen() {
 
     return cells;
   }, [selectedMonthStart]);
+
+  const monthTotals = useMemo(() => {
+    return monthDays.reduce<Record<number, number>>((acc, day) => {
+      if (!day) return acc;
+      const key = formatDayKey(new Date(selectedMonthStart.getFullYear(), selectedMonthStart.getMonth(), day));
+      acc[day] = (SAMPLE_EXPENSES[key] || []).reduce((sum, item) => sum + item.amount, 0);
+      return acc;
+    }, {});
+  }, [monthDays, selectedMonthStart]);
 
   const handleMoveMonth = (offset: number) => {
     setSelectedDate(new Date(selectedMonthStart.getFullYear(), selectedMonthStart.getMonth() + offset, 15));
@@ -71,16 +100,24 @@ export default function CalendarScreen() {
           </View>
 
           <View style={styles.grid}>
-            {monthDays.map((day, index) => (
-              <TouchableOpacity
-                key={`${day ?? "empty"}-${index}`}
-                style={[styles.dayCell, day === null && styles.emptyCell]}
-                disabled={day === null}
-                onPress={() => typeof day === "number" && handleSelectDay(day)}
-              >
-                <Text style={styles.dayNumber}>{day ?? ""}</Text>
-              </TouchableOpacity>
-            ))}
+            {monthDays.map((day, index) => {
+              const hasExpense = typeof day === "number" && monthTotals[day] > 0;
+              const isSelected = day === selectedDate.getDate();
+
+              return (
+                <TouchableOpacity
+                  key={`${day ?? "empty"}-${index}`}
+                  style={[styles.dayCell, day === null && styles.emptyCell, isSelected && styles.dayCellSelected]}
+                  disabled={day === null}
+                  onPress={() => typeof day === "number" && handleSelectDay(day)}
+                >
+                  <Text style={[styles.dayNumber, isSelected && styles.dayNumberSelected]}>{day ?? ""}</Text>
+                  <Text style={[styles.dayAmount, hasExpense && styles.dayAmountActive]}>
+                    {day !== null ? `${monthTotals[day].toLocaleString()}원` : ""}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
       </ScrollView>
@@ -102,7 +139,11 @@ const styles = StyleSheet.create({
   weekdayRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
   weekdayText: { width: '14.28%', textAlign: 'center', color: '#777777', fontSize: 12, fontWeight: '700' },
   grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  dayCell: { width: '14.28%', minHeight: 80, borderRadius: 18, paddingVertical: 10, marginBottom: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF' },
+  dayCell: { width: '14.28%', minHeight: 84, borderRadius: 18, paddingVertical: 10, marginBottom: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF' },
   emptyCell: { backgroundColor: 'transparent' },
+  dayCellSelected: { backgroundColor: '#EEE7FF', borderWidth: 1, borderColor: '#7356E8' },
   dayNumber: { fontSize: 14, fontWeight: '700', color: '#111111' },
+  dayNumberSelected: { color: '#7356E8' },
+  dayAmount: { fontSize: 9, color: '#A0A3AD', marginTop: 4, textAlign: 'center' },
+  dayAmountActive: { color: '#111111', fontWeight: '700' },
 });
