@@ -20,6 +20,8 @@ const TEXT = {
   appTitle: '내 계좌',
   settings: '설정',
 };
+const DEEP_PURPLE = '#6C5CE7';
+const SOFT_PURPLE = '#E9E6FF';
 
 export default function MainScreen() {
   const router = useRouter();
@@ -31,6 +33,7 @@ export default function MainScreen() {
   const [targetAmount, setTargetAmount] = useState('');
 
   const [wishList, setWishList] = useState<any[]>([]);
+  
 
   const addWish = () => {
     if (!title || !targetAmount) return;
@@ -77,28 +80,28 @@ export default function MainScreen() {
       <BudgetStatusCard />
 
       {/* INPUT */}
-      <View style={styles.inputCard}>
-        <Text style={styles.cardTitle}>저축 목표</Text>
+<View style={styles.inputCard}>
+  <Text style={styles.cardTitle}>나의 위시</Text>
 
-        <TextInput
-          placeholder="사고 싶은 것 (예: 에어팟)"
-          value={title}
-          onChangeText={setTitle}
-          style={styles.input}
-        />
+  <TextInput
+    placeholder="사고 싶은 것 (예: 에어팟)"
+    value={title}
+    onChangeText={setTitle}
+    style={styles.input}
+  />
 
-        <TextInput
-          placeholder="목표 금액"
-          value={targetAmount}
-          onChangeText={setTargetAmount}
-          keyboardType="numeric"
-          style={styles.input}
-        />
+  <TextInput
+    placeholder="목표 금액"
+    value={targetAmount}
+    onChangeText={setTargetAmount}
+    keyboardType="numeric"
+    style={styles.input}
+  />
 
-        <TouchableOpacity onPress={addWish} style={styles.addButton}>
-          <Text style={styles.addButtonText}>추가</Text>
-        </TouchableOpacity>
-    </View>  
+  <TouchableOpacity onPress={addWish} style={styles.addButton}>
+    <Text style={styles.addButtonText}>추가</Text>
+  </TouchableOpacity>
+</View>
 
 
      {/* WISH LIST */}
@@ -141,10 +144,25 @@ const styles = StyleSheet.create({
     marginTop: 18,
   },
   appTitle: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: '700',
     color: '#111',
   },
+  
+  cardTitle: {
+  fontSize: 24,
+  fontWeight: '800',
+  color: DEEP_PURPLE,
+  marginBottom: 10,
+},
+inputCard: {
+  backgroundColor: '#f5efff',
+  borderRadius: 16,
+  padding: 16,
+  marginTop: 10,
+  marginBottom: 16,
+},
+
   settingButton: {
     backgroundColor: '#EEF0FF',
     paddingHorizontal: 14,
@@ -156,14 +174,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#3D5AFE',
   },
-
-  inputCard: {
-  backgroundColor: '#F8F9FF', 
-  borderRadius: 20,
-  padding: 16,
-  marginTop: 16,
-  marginBottom: 16,
-},
 
   input: {
     backgroundColor: '#fff',

@@ -1,5 +1,8 @@
 import { StyleSheet, Text, View } from 'react-native';
 
+const SOFT_PURPLE = '#f5efff';
+const DEEP_PURPLE = '#4f287f';
+
 export default function WishSaveCard({
   title,
   targetAmount = 0,
@@ -12,6 +15,7 @@ export default function WishSaveCard({
     safeTarget > 0 ? (safeSaved / safeTarget) * 100 : 0;
 
   const remaining = safeTarget - safeSaved;
+  
 
   return (
     <View style={styles.card}>
@@ -34,10 +38,17 @@ export default function WishSaveCard({
 
 const styles = StyleSheet.create({
  inputCard: {
-  backgroundColor: 'red', 
+  backgroundColor: SOFT_PURPLE, 
   borderRadius: 12,
   padding: 16,
   marginTop: 10,
+},
+
+cardTitle: {
+  fontSize: 28,
+  fontWeight: '800',
+  color: DEEP_PURPLE,
+  marginBottom: 12,
 },
 
 input: {
