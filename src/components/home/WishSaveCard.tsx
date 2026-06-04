@@ -56,6 +56,9 @@ export default function WishSaveCard({
       value={inputAmount}
       onChangeText={setInputAmount}
       />
+      <TouchableOpacity style={styles.saveSubmitButton} activeOpacity={0.8}>
+        <Text style={styles.saveSubmitButtonText}>저축하기</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -153,5 +156,18 @@ amountInput: {
   marginTop: 12,
   fontSize: 14,
   color: '#000000',
+},
+saveSubmitButton: {
+  backgroundColor: DEEP_PURPLE,
+  padding: 12,
+  borderRadius: 10,
+  marginTop: 8,
+  alignItems: 'center',
+  justifyContent: 'center',
+},
+saveSubmitButtonText: {
+  color: '#FFFFFF',
+  fontSize: 15,
+  fontWeight: '700',
 },
 });
