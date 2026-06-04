@@ -119,6 +119,7 @@ export default function CalendarScreen() {
                   <Text style={[styles.dayAmount, hasExpense && styles.dayAmountActive]}>
                     {day !== null ? `${monthTotals[day].toLocaleString()}원` : ""}
                   </Text>
+                  {day !== null && <View style={[styles.dot, hasExpense ? styles.dotActive : styles.dotInactive]} />}
                 </TouchableOpacity>
               );
             })}
@@ -185,6 +186,9 @@ const styles = StyleSheet.create({
   dayNumberSelected: { color: '#7356E8' },
   dayAmount: { fontSize: 9, color: '#A0A3AD', marginTop: 4, textAlign: 'center' },
   dayAmountActive: { color: '#111111', fontWeight: '700' },
+  dot: { width: 6, height: 6, borderRadius: 3, marginTop: 6 },
+  dotActive: { backgroundColor: '#7356E8' },
+  dotInactive: { backgroundColor: '#D9D9E3' },
   legendRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 },
   legendItem: { flexDirection: 'row', alignItems: 'center' },
   legendDot: { width: 10, height: 10, borderRadius: 5, marginRight: 6 },
