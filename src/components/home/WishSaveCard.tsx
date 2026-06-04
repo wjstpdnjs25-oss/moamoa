@@ -25,19 +25,22 @@ export default function WishSaveCard({
         {safeSaved.toLocaleString()}원 / {safeTarget.toLocaleString()}원
       </Text>
 
+      <Text style={styles.percent}>
+        {Math.round(progress)}%
+      </Text>
       
       <View style={styles.progressBarBackground}>
         <View style={[styles.progressBarFill, { width: `${Math.min(Math.round(progress), 100)}%` }]} />
       </View>
 
 
-      <Text style={styles.percent}>
-        {Math.round(progress)}%
-      </Text>
-
-      <Text style={styles.remaining}>
-        {remaining.toLocaleString()}원 남았어요
-      </Text>
+      
+      {remaining <= 0 ? (
+        <Text style={styles.achievedText}>
+        🎉 축하합니다! 목표 금액을 전액 모았습니다!</Text>
+        ) : (
+        <Text style={styles.remaining}>{remaining.toLocaleString()}원 남았어요</Text>
+      )}
     </View>
   );
 }
@@ -89,9 +92,9 @@ amount: {
   },
 percent: {
     marginTop: 8,
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#4A90E2',
+    fontSize: 18,
+    fontWeight: '800',
+    color: DEEP_PURPLE,
   },
   remaining: {
     fontSize: 15,
