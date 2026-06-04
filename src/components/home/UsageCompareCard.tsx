@@ -28,7 +28,8 @@ function FilterButton({
     </Pressable>
   );
 }
-const AVERAGE_SPENDING = {
+const AVERAGE_SPENDING : Record<string, Record<string, number>> = {
+  
   '20대': {
     대학생: 550000,
     자취생: 1450000,
@@ -47,6 +48,7 @@ export default function UsageCompareCard() {
   const [ageGroup, setAgeGroup] = useState('20대');
   const [jobType, setJobType] = useState('자취생');
 
+  const [isAgeOpen, setIsAgeOpen] = useState(false);
   const [isLifestyleOpen, setIsLifestyleOpen] = useState(false);
 
   const averageSpending =
@@ -57,40 +59,7 @@ export default function UsageCompareCard() {
   return (
     <View style={styles.container}>
 
-      {/* 연령 필터 */}
-      <Text style={styles.label}>연령</Text>
-      <View style={styles.row}>
-        <FilterButton
-          text="20대"
-          selected={ageGroup === '20대'}
-          onPress={() => setAgeGroup('20대')}
-        />
-
-        <FilterButton
-          text="30대"
-          selected={ageGroup === '30대'}
-          onPress={() => setAgeGroup('30대')}
-        />
-        <View style={styles.filterRow}>
-          <FilterButton
-          text="대학생"
-          selected={jobType === '대학생'}
-          onPress={() => setJobType('대학생')}
-        />
-          
-        <FilterButton
-          text="자취생"
-          selected={jobType === '자취생'}
-          onPress={() => setJobType('자취생')}
-        />
-
-        <FilterButton
-          text="회사원"
-          selected={jobType === '회사원'}
-          onPress={() => setJobType('회사원')}
-        />
-      </View>
-      </View>
+    
 
   
       {/* 소비 비교 카드 */}
@@ -107,10 +76,41 @@ export default function UsageCompareCard() {
           <Text>{averageSpending.toLocaleString()}원</Text>
         </View>
 
-      {/* 라이프스타일 */}
-<Text style={styles.label}>
-  라이프스타일
-</Text>
+{/* 연령 */}
+<Text style={styles.label}>연령</Text>
+
+<Pressable
+  style={styles.dropdownHeader}
+  onPress={() => setIsAgeOpen(!isAgeOpen)}
+>
+  <Text>{ageGroup}</Text>
+  <Text>{isAgeOpen ? '▲' : '▼'}</Text>
+</Pressable>
+
+{isAgeOpen && (
+  <View style={styles.dropdownContent}>
+    <FilterButton
+      text="20대"
+      selected={ageGroup === '20대'}
+      onPress={() => {
+        setAgeGroup('20대');
+        setIsAgeOpen(false);
+      }}
+    />
+
+    <FilterButton
+      text="30대"
+      selected={ageGroup === '30대'}
+      onPress={() => {
+        setAgeGroup('30대');
+        setIsAgeOpen(false);
+      }}
+    />
+  </View>
+)}
+
+{/* 사용자 유형 */}
+<Text style={styles.label}>사용자 유형</Text>
 
 <Pressable
   style={styles.dropdownHeader}
@@ -150,20 +150,23 @@ export default function UsageCompareCard() {
     />
   </View>
 )}
-      {/* 선택 결과 */}
-      <View style={styles.resultBox}>
-        <Text>
-          선택: {ageGroup} / {jobType}
-        </Text>
-      </View>
-    </View>
-    </View>
-  );
+
+{/* 선택 결과 */}
+<View style={styles.resultBox}>
+  <Text>
+    선택: {ageGroup} / {jobType}
+  </Text>
+</View>
+</View>
+  </View>
+);
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+    backgroundColor: '#F8F9FA',
+    flex: 1,
   },
 
   label: {
@@ -238,10 +241,11 @@ dropdownHeader: {
   alignItems: 'center',
   marginTop: 8,
 },
-
 dropdownContent: {
-  marginTop: 10,
-  gap: 8,
-},
+    marginTop: 8,
+    flexDirection: 'row',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
 });
 
