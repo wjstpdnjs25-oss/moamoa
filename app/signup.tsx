@@ -64,6 +64,10 @@ function isValidPassword(value: string) {
   return /^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(value);
 }
 
+function isValidResidentNumber(value: string) {
+  return value.replace(/\D/g, '').length === 13;
+}
+
 function hasEnglishLetter(value: string) {
   return /[A-Za-z]/.test(value);
 }
@@ -146,6 +150,8 @@ function SignupForm({
   const hasEmptyField =
     Object.entries(info).some(([field, value]) => field !== 'email' && value.trim().length === 0) ||
     isEmailIncomplete;
+  const showResidentNumberFormatError =
+    showRequiredErrors && !isFieldEmpty('residentNumber') && !isValidResidentNumber(info.residentNumber);
   const showPasswordRequirement =
     info.password.length > 0 && !isValidPassword(info.password);
   const showPasswordMismatch =
@@ -156,6 +162,7 @@ function SignupForm({
 
     if (
       hasEmptyField ||
+      !isValidResidentNumber(info.residentNumber) ||
       !isValidPassword(info.password) ||
       showPasswordMismatch ||
       !isTermsAgreed
@@ -206,6 +213,9 @@ function SignupForm({
           />
           {showRequiredErrors && isFieldEmpty('residentNumber') ? (
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
+          ) : null}
+          {showResidentNumberFormatError ? (
+            <Text style={styles.requiredText}>주민등록번호 13자리를 입력해주세요</Text>
           ) : null}
 
           <TextInput
