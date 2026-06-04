@@ -20,8 +20,8 @@ const TEXT = {
   appTitle: '내 계좌',
   settings: '설정',
 };
-const DEEP_PURPLE = '#6C5CE7';
-const SOFT_PURPLE = '#E9E6FF';
+const SOFT_PURPLE = '#f5efff';
+const DEEP_PURPLE = '#4f287f';
 
 export default function MainScreen() {
   const router = useRouter();
@@ -111,7 +111,11 @@ export default function MainScreen() {
       key={item.id}
       title={item.title}
       targetAmount={item.targetAmount}
-      savedAmount={item.savedAmount}
+
+      savedAmount={currentSavedAmount} 
+      onSave={handleSaveAmount}       
+  
+      onDelete={() => handleDelete(item.id)}
     />
   ))}
 </View>
