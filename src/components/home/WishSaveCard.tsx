@@ -28,6 +28,10 @@ export default function WishSaveCard({
         />
       </View>
 
+      <Text style={styles.percent}>
+      {Math.round(progress)}%
+      </Text>
+
       <Text style={styles.remaining}>
         {remaining.toLocaleString()}원 남았어요
       </Text>
@@ -69,4 +73,10 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#666',
   },
+  percent: {
+  marginTop: 8,
+  fontSize: 14,
+  fontWeight: '600',
+  color: '#4A90E2',
+},
 });

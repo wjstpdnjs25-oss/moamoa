@@ -6,6 +6,7 @@ import BalanceCard from '@/src/components/home/BalanceCard';
 import BudgetStatusCard from '@/src/components/home/BudgetStatusCard';
 import QuickExpenseInput from '@/src/components/home/QuickExpenseInput';
 import QuickMenuGrid from '@/src/components/home/QuickMenuGrid';
+import WishSaveCard from "@/src/components/home/WishSaveCard";
 
 const TEXT = {
   appTitle: '내 계좌',
@@ -56,6 +57,12 @@ export default function MainScreen() {
       <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
       <BudgetStatusCard />
+
+      <WishSaveCard
+      title="위시세이브"
+      targetAmount={500000}
+      savedAmount={120000}
+/>
 
       <QuickMenuGrid />
     </ScrollView>
