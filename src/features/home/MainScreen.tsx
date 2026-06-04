@@ -46,7 +46,9 @@ export default function MainScreen() {
       <View style={styles.header}>
         <Text style={styles.appTitle}>{TEXT.appTitle}</Text>
 
-        <TouchableOpacity style={styles.settingButton}>
+        <TouchableOpacity style={styles.settingButton}
+        onPress={() => router.push("/settings" as any)}
+        >
           <Text style={styles.settingText}>{TEXT.settings}</Text>
         </TouchableOpacity>
       </View>
