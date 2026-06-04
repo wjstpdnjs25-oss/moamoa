@@ -1,3 +1,5 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
@@ -14,12 +16,16 @@ import {
   DEFAULT_CATEGORIES,
   useBudget,
 } from "../../../contexts/BudgetContext";
+import { useExpense } from "../../../contexts/ExpenseContext";
 
 const PURPLE = "#7356E8";
+const LIGHT_PURPLE = "#F4F1FF";
 const BORDER = "#E7E7EF";
 
 export default function BudgetScreen() {
+  const router = useRouter();
   const { budgets, setBudgetAmount } = useBudget();
+  const { expenses } = useExpense();
 
   const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORIES[0]);
   const [draftAmount, setDraftAmount] = useState("");
@@ -28,6 +34,15 @@ export default function BudgetScreen() {
 
   const selectedBudget =
     budgets.find((item) => item.category === selectedCategory)?.amount ?? 0;
+
+  const categorySpent = expenses
+    .filter((expense) => expense.category === selectedCategory)
+    .reduce((sum, expense) => sum + expense.amount, 0);
+
+  const usageRate =
+    selectedBudget === 0
+      ? 0
+      : Math.round((categorySpent / selectedBudget) * 100);
 
   const handleSelectCategory = (category: string) => {
     const currentAmount =
@@ -42,93 +57,17 @@ export default function BudgetScreen() {
 
     Alert.alert(
       "저장 완료",
-      '예산이 저장되었습니다.'
+      `${selectedCategory} 예산이 저장되었습니다.`
     );
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-    >
-      <Text style={styles.title}>예산 설정</Text>
-      <Text style={styles.subtitle}>
-        카테고리별 예산을 설정해주세요.
-      </Text>
-
-        <View style={styles.illustrationWrap}>
-          <View style={[styles.backCard, styles.leftBackCard]} />
-          <View style={[styles.backCard, styles.rightBackCard]} />
-
-          <View style={styles.bankCard}>
-            <MaterialCommunityIcons name="credit-card-outline" size={38} color={DEEP_PURPLE} />
-          </View>
-
-          <View style={styles.moneyCard}>
-            <MaterialCommunityIcons name="sack" size={56} color={DEEP_PURPLE} />
-            <View style={styles.coin}>
-              <Text style={styles.coinText}>$</Text>
-            </View>
-          </View>
-
-          <View style={styles.securityCard}>
-            <MaterialCommunityIcons name="shield-lock-outline" size={58} color={DEEP_PURPLE} />
-          </View>
-
-          <View style={styles.phone}>
-            <View style={styles.phoneTop} />
-            <View style={styles.phoneScreen}>
-              <View style={styles.menuLine} />
-              <View style={styles.accountBox}>
-                <View style={styles.wonCircle}>
-                  <Text style={styles.wonText}>모</Text>
-                </View>
-                <Text style={styles.accountText}>모아모아 계좌</Text>
-              </View>
-              <View style={styles.listRow}>
-                <View style={styles.dot} />
-                <View style={styles.longLine} />
-              </View>
-              <View style={styles.listRow}>
-                <View style={styles.dot} />
-                <View style={styles.midLine} />
-              </View>
-              <View style={styles.sendButton}>
-                <Ionicons name="arrow-forward" size={17} color="#ffffff" />
-                <Text style={styles.sendText}>전송</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.copy}>
-          <Text style={styles.title}>모아모아와 함께하는 간편한 은행</Text>
-          <Text style={styles.description}>
-            흩어진 금융 생활을 모아, 나만의 계좌 관리를 시작해보세요.
-          </Text>
-        </View>
-
-        <View style={styles.actions}>
-          <Pressable style={styles.primaryButton} onPress={() => router.push('/login')}>
-            <Text style={styles.primaryButtonText}>로그인하기</Text>
-          </Pressable>
-
-          <Pressable style={styles.secondaryButton} onPress={() => router.push('/signup')}>
-            <Text style={styles.secondaryButtonText}>회원가입하기</Text>
-          </Pressable>
-
-      <KeyboardAvoidingView
-      style={{ flex:1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-d9bdc48 (fix: prevent keyboard from covering budget input)
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         <View style={styles.header}>
           <TouchableOpacity
@@ -145,28 +84,27 @@ d9bdc48 (fix: prevent keyboard from covering budget input)
           <Text style={styles.title}>예산 설정</Text>
         </View>
 
-        <View style={styles.copy}>
-          <Text style={styles.title}>모아모아와 함께하는 간편한 은행</Text>
-          <Text style={styles.description}>
-            흩어진 금융 생활을 모아, 나만의 계좌 관리를 시작해보세요.
+        <Text style={styles.subtitle}>카테고리별 예산을 설정해주세요.</Text>
+
+        <View style={styles.summaryCard}>
+          <Text style={styles.summaryLabel}>이번 달 총 예산</Text>
+          <Text style={styles.summaryAmount}>
+            ₩ {totalBudget.toLocaleString()}
           </Text>
         </View>
 
-        <View style={styles.actions}>
-          <Pressable style={styles.primaryButton} onPress={() => router.push('/login')}>
-            <Text style={styles.primaryButtonText}>로그인하기</Text>
-          </Pressable>
-
-          <Pressable style={styles.secondaryButton} onPress={() => router.push('/signup')}>
-            <Text style={styles.secondaryButtonText}>회원가입하기</Text>
-          </Pressable>
-        </View>
-
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>카테고리별 예산</Text>
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>카테고리별 예산</Text>
 
           {budgets.map((item) => {
             const selected = selectedCategory === item.category;
+
+            const spent = expenses
+            .filter((expenses) => expenses.category === item.category)
+            .reduce((sum, expense) => sum + expense.amount, 0);
+
+            const rate =
+            item.amount === 0 ? 0 : Math.round((spent / item.amount) * 100);
 
             return (
               <TouchableOpacity
@@ -174,65 +112,53 @@ d9bdc48 (fix: prevent keyboard from covering budget input)
                 style={[styles.budgetRow, selected && styles.selectedBudgetRow]}
                 onPress={() => handleSelectCategory(item.category)}
               >
-                <View style={styles.rowLeft}>
-                  <View
-                    style={[
-                      styles.categoryDot,
-                      selected && styles.selectedCategoryDot,
-                    ]}
-                  />
-                  <Text
-                    style={[
-                      styles.categoryName,
-                      selected && styles.selectedCategoryName,
-                    ]}
-                  >
-                    {item.category}
-                  </Text>
-                </View>
+                <View style={styles.rowTop}>
+  <View style={styles.rowLeft}>
+    <View
+      style={[
+        styles.categoryDot,
+        selected && styles.selectedCategoryDot,
+      ]}
+    />
+    <Text
+      style={[
+        styles.categoryName,
+        selected && styles.selectedCategoryName,
+      ]}
+    >
+      {item.category}
+    </Text>
+  </View>
 
-                <Text
-                  style={[
-                    styles.categoryAmount,
-                    selected && styles.selectedCategoryAmount,
-                  ]}
-                >
-                  ₩ {item.amount.toLocaleString()}
-                </Text>
+  <Text
+    style={[
+      styles.categoryAmount,
+      selected && styles.selectedCategoryAmount,
+    ]}
+  >
+    ₩ {item.amount.toLocaleString()}
+  </Text>
+</View>
+
+<Text style={styles.rowUsageText}>
+  사용 ₩ {spent.toLocaleString()} · {rate}%
+</Text>
+
+<View style={styles.progressBackground}>
+  <View
+    style={[
+      styles.progressBar,
+      { width: `${Math.min(rate, 100)}%` as any },
+    ]}
+  />
+</View>
               </TouchableOpacity>
             );
           })}
- 6a78f52 (style:: update budget category UI)
         </View>
 
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>카테고리별 예산</Text>
-
-        {budgets.map((item) => (
-          <TouchableOpacity
-            key={item.category}
-            style={[
-              styles.categoryRow,
-              selectedCategory === item.category && styles.selectedRow,
-            ]}
-            onPress={() => handleSelectCategory(item.category)}
-          >
-            <Text style={styles.categoryName}>{item.category}</Text>
-
-            <View style={styles.rowRight}>
-              <Text style={styles.categoryAmount}>
-                ₩ {item.amount.toLocaleString()}
-              </Text>
-              <Text style={styles.arrow}>›</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <View style={styles.card}>
-        <Text style={styles.sectionTitle}>
-          {selectedCategory} 예산 설정
-        </Text>
+        <View style={styles.editCard}>
+          <Text style={styles.editTitle}>{selectedCategory} 예산</Text>
 
           <View style={styles.inputBox}>
             <Text style={styles.currency}>₩</Text>
@@ -270,89 +196,139 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   content: {
-    padding: 22,
-    paddingBottom: 60,
+    paddingHorizontal: 20,
+    paddingTop: 12,
+    paddingBottom: 42,
+  },
+  header: {
+    minHeight: 52,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 18,
+  },
+  backButton: {
+    position: "absolute",
+    left: -10,
+    width: 52,
+    height: 52,
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 24,
     fontWeight: "800",
     color: "#101014",
-    marginTop: 20,
-    marginBottom: 12,
   },
   subtitle: {
-    fontSize: 16,
+    marginBottom: 26,
     color: "#747783",
-    marginBottom: 24,
+    fontSize: 17,
+    lineHeight: 25,
+    textAlign: "center",
   },
   summaryCard: {
     borderWidth: 1,
     borderColor: BORDER,
-    borderRadius: 16,
+    borderRadius: 14,
     padding: 20,
     marginBottom: 20,
     backgroundColor: "#FFFFFF",
   },
   summaryLabel: {
-    fontSize: 16,
-    fontWeight: "700",
+    fontSize: 18,
+    fontWeight: "800",
     color: "#111111",
     marginBottom: 12,
   },
   summaryAmount: {
-    fontSize: 34,
+    fontSize: 36,
     fontWeight: "800",
     color: PURPLE,
   },
   card: {
     borderWidth: 1,
     borderColor: BORDER,
-    borderRadius: 16,
+    borderRadius: 14,
     padding: 18,
     marginBottom: 20,
     backgroundColor: "#FFFFFF",
   },
   sectionTitle: {
-    fontSize: 18,
-    fontWeight: "800",
     color: "#111111",
-    marginBottom: 16,
+    fontSize: 19,
+    fontWeight: "800",
+    marginBottom: 12,
   },
-  categoryRow: {
-    minHeight: 58,
+  budgetRow: {
     borderRadius: 12,
-    paddingHorizontal: 14,
-    marginBottom: 8,
+    padding: 14,
+    marginTop: 8,
     backgroundColor: "#F8F7FC",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
   },
-  selectedRow: {
+  selectedBudgetRow: {
+    backgroundColor: LIGHT_PURPLE,
     borderWidth: 1.5,
     borderColor: PURPLE,
   },
-  categoryName: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#222222",
-  },
-  rowRight: {
+  rowLeft: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 10,
   },
-  categoryAmount: {
-    fontSize: 15,
+  rowTop:{
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  rowUsageText:{
+    fontSize: 12,
+    color: "#666666",
+    marginBlock: 6,
+  },
+  categoryDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: "#D7D3E8",
+  },
+  selectedCategoryDot: {
+    width: 10,
+    height: 10,
+    backgroundColor: PURPLE,
+  },
+  categoryName: {
+    color: "#333333",
+    fontSize: 16,
     fontWeight: "700",
+  },
+  selectedCategoryName: {
     color: PURPLE,
   },
-  arrow: {
-    fontSize: 26,
-    color: "#A0A3AD",
+  categoryAmount: {
+    color: "#747783",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  selectedCategoryAmount: {
+    color: PURPLE,
+  },
+  editCard: {
+    borderWidth: 1,
+    borderColor: BORDER,
+    borderRadius: 14,
+    padding: 20,
+    marginBottom: 20,
+    backgroundColor: "#FFFFFF",
+  },
+  editTitle: {
+    color: "#111111",
+    fontSize: 19,
+    fontWeight: "800",
+    marginBottom: 18,
   },
   inputBox: {
-    height: 64,
+    height: 50,
     borderWidth: 1,
     borderColor: "#E3E3EB",
     borderRadius: 12,
@@ -360,35 +336,49 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#FDFDFF",
-    marginBottom: 12,
+    marginBottom: 16,
   },
   currency: {
-    fontSize: 24,
-    fontWeight: "800",
-    color: "#C7C9D1",
-    marginRight: 8,
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#A0A0A0",
+    marginRight: 4,
   },
   input: {
     flex: 1,
-    fontSize: 22,
-    fontWeight: "800",
-    color: PURPLE,
+    color: "#111111",
+    fontSize: 18,
+    fontWeight: "500",
+  },
+  progressBackground: {
+    width: "100%",
+    height: 8,
+    backgroundColor: "#EAEAEA",
+    borderRadius: 999,
+    overflow: "hidden",
+    marginBottom: 8,
+  },
+  progressBar: {
+    height: "100%",
+    backgroundColor: PURPLE,
   },
   currentText: {
-    fontSize: 14,
     color: "#747783",
-    marginBottom: 18,
+    fontSize: 13,
+    fontWeight: "500",
+    marginBottom: 6,
   },
   saveButton: {
     minHeight: 56,
-    borderRadius: 12,
+    borderRadius: 10,
     backgroundColor: PURPLE,
     alignItems: "center",
     justifyContent: "center",
+    marginTop: 12,
   },
   saveButtonText: {
     color: "#FFFFFF",
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: "800",
   },
 });
