@@ -224,7 +224,8 @@ export default function BudgetScreen() {
             <Text style={styles.currency}>₩</Text>
             <TextInput
               style={styles.input}
-              placeholder="0"
+              placeholder="예:100000"
+              placeholderTextColor="#B8B8B8"
               keyboardType="numeric"
               value={draftAmount}
               onChangeText={(text) =>
@@ -409,7 +410,11 @@ const styles = StyleSheet.create({
 >>>>>>> 6a78f52 (style:: update budget category UI)
   },
   inputBox: {
+<<<<<<< HEAD
     height: 64,
+=======
+    height: 50,
+>>>>>>> cfbff36 (style: improve budget input section)
     borderWidth: 1,
     borderColor: "#E3E3EB",
     borderRadius: 12,
@@ -420,6 +425,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   currency: {
+<<<<<<< HEAD
     fontSize: 24,
     fontWeight: "800",
     color: "#C7C9D1",
@@ -430,6 +436,18 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "800",
     color: PURPLE,
+=======
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#A0A0A0",
+    marginRight: 4,
+  },
+  input: {
+    flex: 1,
+    color: "#111111",
+    fontSize: 18,
+    fontWeight: "500",
+>>>>>>> cfbff36 (style: improve budget input section)
   },
   currentText: {
     fontSize: 14,
