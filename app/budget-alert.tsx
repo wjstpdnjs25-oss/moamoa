@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const TEXT = {
@@ -8,6 +8,8 @@ const TEXT = {
   budget: "예산",
   spent: "지출",
   exceeded: "초과 금액",
+  checkSpending: "지출 내역 확인하기",
+  changeBudget: "예산 설정 변경하기",
   won: "원",
 };
 
@@ -49,6 +51,16 @@ export default function BudgetAlertScreen() {
           {TEXT.exceeded}{" "}
           <Text style={styles.exceededAmount}>{formatWon(exceededAmount)}</Text>
         </Text>
+
+        <View style={styles.buttonGroup}>
+          <TouchableOpacity activeOpacity={0.86} style={styles.primaryButton}>
+            <Text style={styles.primaryButtonText}>{TEXT.checkSpending}</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity activeOpacity={0.86} style={styles.secondaryButton}>
+            <Text style={styles.secondaryButtonText}>{TEXT.changeBudget}</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -136,6 +148,36 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   exceededAmount: {
+    fontWeight: "800",
+  },
+  buttonGroup: {
+    marginTop: 52,
+    gap: 26,
+  },
+  primaryButton: {
+    minHeight: 73,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 9,
+    backgroundColor: "#7C5CE6",
+  },
+  primaryButtonText: {
+    color: "#FFFFFF",
+    fontSize: 20,
+    fontWeight: "800",
+  },
+  secondaryButton: {
+    minHeight: 73,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1.2,
+    borderColor: "#7C5CE6",
+    borderRadius: 9,
+    backgroundColor: "#FFFFFF",
+  },
+  secondaryButtonText: {
+    color: "#7C5CE6",
+    fontSize: 20,
     fontWeight: "800",
   },
 });
