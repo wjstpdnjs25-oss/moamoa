@@ -68,6 +68,10 @@ function isValidResidentNumber(value: string) {
   return value.replace(/\D/g, '').length === 13;
 }
 
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
 function hasEnglishLetter(value: string) {
   return /[A-Za-z]/.test(value);
 }
@@ -152,10 +156,16 @@ function SignupForm({
     isEmailIncomplete;
   const showResidentNumberFormatError =
     showRequiredErrors && !isFieldEmpty('residentNumber') && !isValidResidentNumber(info.residentNumber);
+  const showEmailFormatError =
+    showRequiredErrors && !isEmailIncomplete && !isValidEmail(info.email);
   const showPasswordRequirement =
     info.password.length > 0 && !isValidPassword(info.password);
   const showPasswordMismatch =
     info.confirmPassword.length > 0 && info.password !== info.confirmPassword;
+  const showPasswordMatched =
+    info.confirmPassword.length > 0 &&
+    isValidPassword(info.password) &&
+    info.password === info.confirmPassword;
   const showIdHint = isIdFocused && !hasEnglishLetter(info.id);
   const handleNext = () => {
     setShowRequiredErrors(true);
@@ -163,6 +173,7 @@ function SignupForm({
     if (
       hasEmptyField ||
       !isValidResidentNumber(info.residentNumber) ||
+      !isValidEmail(info.email) ||
       !isValidPassword(info.password) ||
       showPasswordMismatch ||
       !isTermsAgreed
@@ -257,6 +268,9 @@ function SignupForm({
           {showPasswordMismatch ? (
             <Text style={styles.passwordMismatchText}>비밀번호가 일치하지 않습니다</Text>
           ) : null}
+          {showPasswordMatched ? (
+            <Text style={styles.passwordMatchedText}>비밀번호가 일치합니다</Text>
+          ) : null}
 
           <View style={styles.emailRow}>
             <View style={styles.emailUnderlineWrap}>
@@ -286,6 +300,9 @@ function SignupForm({
           {showRequiredErrors && isEmailIncomplete ? (
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
           ) : null}
+          {showEmailFormatError ? (
+            <Text style={styles.requiredText}>이메일 형식을 확인해주세요</Text>
+          ) : null}
         </View>
 
         <Pressable
@@ -298,11 +315,14 @@ function SignupForm({
             {isTermsAgreed ? <Ionicons name="checkmark" size={18} color="#ffffff" /> : null}
           </View>
           <Text style={styles.termsAgreementText}>이용약관/개인정보 동의</Text>
+          <View style={styles.requiredBadge}>
+            <Text style={styles.requiredBadgeText}>필수</Text>
+          </View>
         </Pressable>
         <View style={styles.termsSummaryRow}>
           <Text style={styles.termsDescription}>
             회원가입 및 서비스 이용을 위해 이름, 주민등록번호, 아이디, 비밀번호, 이메일 정보를
-            수집하고 약관에 따라 관리합니다.
+            수집하고 약관에 따라 관리합니다. 동의 후 다음 단계로 진행할 수 있습니다.
           </Text>
           <Pressable
             accessibilityRole="button"
@@ -475,7 +495,7 @@ function ConfirmInfo({
         </Pressable>
       </View>
 
-      <Text style={styles.footer}>₩ Bank © 2024. All rights reserved.</Text>
+      <Text style={styles.footer}>모아모아 은행 © 2024. All rights reserved.</Text>
     </View>
   );
 }
@@ -524,12 +544,12 @@ function CompleteSignup({ info, onLogin }: { info: SignupInfo; onLogin: () => vo
       </View>
 
       <Text style={styles.welcomeText}>
-        [{info.name || '회원'}]님, W Bank의 새로운{'\n'}
-        회원이 되신 것을 환영합니다.
+        [{info.name || '회원'}]님, 모아모아 은행의{'\n'}
+        새로운 회원이 되신 것을 환영합니다.
       </Text>
 
       <Pressable style={styles.homeButton} onPress={onLogin}>
-        <Text style={styles.homeButtonText}>로그인 하러 가기</Text>
+        <Text style={styles.homeButtonText}>로그인하러 가기</Text>
       </Pressable>
     </View>
   );
@@ -750,6 +770,13 @@ const styles = StyleSheet.create({
     marginTop: -6,
     paddingLeft: 6,
   },
+  passwordMatchedText: {
+    color: '#2f9e44',
+    fontSize: 13,
+    fontWeight: '700',
+    marginTop: -6,
+    paddingLeft: 6,
+  },
   fieldHintText: {
     color: '#5f5f68',
     fontSize: 13,
@@ -787,6 +814,17 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 18,
     fontWeight: '700',
+  },
+  requiredBadge: {
+    backgroundColor: '#f1edf9',
+    borderRadius: 999,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+  },
+  requiredBadgeText: {
+    color: DEEP_PURPLE,
+    fontSize: 12,
+    fontWeight: '900',
   },
   termsSummaryRow: {
     alignItems: 'flex-start',
