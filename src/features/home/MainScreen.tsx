@@ -25,7 +25,7 @@ export default function MainScreen() {
 
       if (prev <= MONTHLY_BUDGET && nextSpent > MONTHLY_BUDGET) {
         router.push({
-          pathname: '/budget-alert',
+          pathname: '/budget-alert' as any,
           params: {
             budget: String(MONTHLY_BUDGET),
             spent: String(nextSpent),

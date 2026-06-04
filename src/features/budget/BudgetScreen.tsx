@@ -1,57 +1,54 @@
-import React, { useEffect, useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { useState } from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-const DEEP_PURPLE = '#4f287f';
-const SOFT_PURPLE = '#f5efff';
-const LINE_PURPLE = '#d7c7f0';
-const SPLASH_BACKGROUND = '#f6f1ff';
-const BRAND_BORDER = '#dfd0f4';
-const SUB_TEXT_PURPLE = '#7b6a90';
+import {
+  DEFAULT_CATEGORIES,
+  useBudget,
+} from "../../../contexts/BudgetContext";
+
+const PURPLE = "#7356E8";
+const BORDER = "#E7E7EF";
 
 export default function BudgetScreen() {
-  const [showSplash, setShowSplash] = useState(true);
+  const { budgets, setBudgetAmount } = useBudget();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2000);
+  const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORIES[0]);
+  const [draftAmount, setDraftAmount] = useState("");
 
-    return () => clearTimeout(timer);
-  }, []);
+  const totalBudget = budgets.reduce((sum, item) => sum + item.amount, 0);
 
-  if (showSplash) {
-    return (
-      <SafeAreaView style={styles.splashScreen}>
-        <View style={styles.splashLogoFrame}>
-          <Image
-            source={require('@/assets/images/moamoa-splash.png')}
-            style={styles.splashLogo}
-            resizeMode="cover"
-          />
-        </View>
-      </SafeAreaView>
-    );
-  }
+  const selectedBudget =
+    budgets.find((item) => item.category === selectedCategory)?.amount ?? 0;
+
+  const handleSelectCategory = (category: string) => {
+    const currentAmount =
+      budgets.find((item) => item.category === category)?.amount ?? 0;
+
+    setSelectedCategory(category);
+    setDraftAmount(currentAmount ? String(currentAmount) : "");
+  };
+
+  const handleSaveBudget = () => {
+    setBudgetAmount(selectedCategory, Number(draftAmount || 0));
+  };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.brandHeader}>
-          <View style={styles.brandMark}>
-            <Image
-              source={require('@/assets/images/moamoa-splash.png')}
-              style={styles.brandLogo}
-              resizeMode="cover"
-            />
-          </View>
-          <View>
-            <Text style={styles.brandName}>모아모아 은행</Text>
-            <Text style={styles.brandSubText}>MOAMOA BANK</Text>
-          </View>
-        </View>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      showsVerticalScrollIndicator={false}
+    >
+      <Text style={styles.title}>예산 설정</Text>
+      <Text style={styles.subtitle}>
+        카테고리별 예산을 설정해주세요.
+      </Text>
 
         <View style={styles.illustrationWrap}>
           <View style={[styles.backCard, styles.leftBackCard]} />
@@ -115,296 +112,184 @@ export default function BudgetScreen() {
           </Pressable>
         </View>
       </View>
-    </SafeAreaView>
+
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>카테고리별 예산</Text>
+
+        {budgets.map((item) => (
+          <TouchableOpacity
+            key={item.category}
+            style={[
+              styles.categoryRow,
+              selectedCategory === item.category && styles.selectedRow,
+            ]}
+            onPress={() => handleSelectCategory(item.category)}
+          >
+            <Text style={styles.categoryName}>{item.category}</Text>
+
+            <View style={styles.rowRight}>
+              <Text style={styles.categoryAmount}>
+                ₩ {item.amount.toLocaleString()}
+              </Text>
+              <Text style={styles.arrow}>›</Text>
+            </View>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>
+          {selectedCategory} 예산 설정
+        </Text>
+
+        <View style={styles.inputBox}>
+          <Text style={styles.currency}>₩</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="예산 금액 입력"
+            keyboardType="numeric"
+            value={draftAmount}
+            onChangeText={(text) => setDraftAmount(text.replace(/[^0-9]/g, ""))}
+          />
+        </View>
+
+        <Text style={styles.currentText}>
+          현재 예산: ₩ {selectedBudget.toLocaleString()}
+        </Text>
+
+        <TouchableOpacity style={styles.saveButton} onPress={handleSaveBudget}>
+          <Text style={styles.saveButtonText}>저장</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  splashScreen: {
-    alignItems: 'center',
-    backgroundColor: SPLASH_BACKGROUND,
-    flex: 1,
-    justifyContent: 'center',
-  },
-  splashLogoFrame: {
-    borderRadius: 160,
-    height: 320,
-    overflow: 'hidden',
-    width: 320,
-  },
-  splashLogo: {
-    height: '100%',
-    width: '100%',
-  },
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#f8f9fc',
-  },
   container: {
     flex: 1,
-    paddingHorizontal: 28,
-    paddingTop: 12,
-    paddingBottom: 34,
+    backgroundColor: "#FFFFFF",
   },
-  brandHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 10,
-  },
-  brandMark: {
-    alignItems: 'center',
-    backgroundColor: SPLASH_BACKGROUND,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: BRAND_BORDER,
-    overflow: 'hidden',
-    height: 36,
-    justifyContent: 'center',
-    width: 36,
-  },
-  brandLogo: {
-    height: 36,
-    width: 36,
-  },
-  brandName: {
-    color: DEEP_PURPLE,
-    fontSize: 20,
-    fontWeight: '900',
-    letterSpacing: 0,
-  },
-  brandSubText: {
-    color: SUB_TEXT_PURPLE,
-    fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 0,
-    marginTop: 1,
-  },
-  illustrationWrap: {
-    alignItems: 'center',
-    height: 342,
-    justifyContent: 'center',
-    marginTop: 18,
-    position: 'relative',
-  },
-  backCard: {
-    borderColor: LINE_PURPLE,
-    borderRadius: 10,
-    borderWidth: 2,
-    height: 162,
-    opacity: 0.85,
-    position: 'absolute',
-    width: 168,
-  },
-  leftBackCard: {
-    left: 36,
-    top: 80,
-  },
-  rightBackCard: {
-    right: 28,
-    top: 112,
-  },
-  bankCard: {
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 10,
-    borderWidth: 2,
-    bottom: 54,
-    height: 70,
-    justifyContent: 'center',
-    left: 8,
-    position: 'absolute',
-    shadowColor: DEEP_PURPLE,
-    shadowOffset: { height: 6, width: 0 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    width: 92,
-  },
-  moneyCard: {
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 10,
-    borderWidth: 2,
-    height: 102,
-    justifyContent: 'center',
-    position: 'absolute',
-    right: 42,
-    top: 48,
-    width: 102,
-  },
-  coin: {
-    alignItems: 'center',
-    backgroundColor: SOFT_PURPLE,
-    borderColor: DEEP_PURPLE,
-    borderRadius: 18,
-    borderWidth: 2,
-    bottom: 22,
-    height: 36,
-    justifyContent: 'center',
-    position: 'absolute',
-    right: 14,
-    width: 36,
-  },
-  coinText: {
-    color: DEEP_PURPLE,
-    fontSize: 22,
-    fontWeight: '800',
-  },
-  securityCard: {
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 10,
-    borderWidth: 2,
-    height: 118,
-    justifyContent: 'center',
-    position: 'absolute',
-    bottom: 18,
-    left: 56,
-    width: 118,
-  },
-  phone: {
-    alignItems: 'center',
-    borderRadius: 34,
-    borderWidth: 2,
-    borderColor: '#e9dff8',
-    height: 180,
-    justifyContent: 'center',
-    marginTop: 16,
-    overflow: 'hidden',
-    width: 140,
-  },
-  phoneTop: {
-    backgroundColor: '#f1edf9',
-    height: 12,
-    marginTop: -18,
-    width: '100%',
-  },
-  phoneScreen: {
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderRadius: 26,
-    height: 154,
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-    width: 122,
-  },
-  menuLine: {
-    backgroundColor: '#e4d9f5',
-    borderRadius: 4,
-    height: 5,
-    marginBottom: 10,
-    width: 42,
-  },
-  accountBox: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 12,
-  },
-  wonCircle: {
-    alignItems: 'center',
-    backgroundColor: '#f7f0ff',
-    borderRadius: 12,
-    height: 28,
-    justifyContent: 'center',
-    width: 28,
-  },
-  wonText: {
-    color: DEEP_PURPLE,
-    fontSize: 15,
-    fontWeight: '900',
-  },
-  accountText: {
-    color: '#111111',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  listRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 6,
-    width: '100%',
-  },
-  dot: {
-    backgroundColor: '#d9cff5',
-    borderRadius: 999,
-    height: 8,
-    width: 8,
-  },
-  longLine: {
-    backgroundColor: '#f0eafc',
-    borderRadius: 999,
-    flex: 1,
-    height: 8,
-  },
-  midLine: {
-    backgroundColor: '#f0eafc',
-    borderRadius: 999,
-    flex: 0.7,
-    height: 8,
-  },
-  sendButton: {
-    alignItems: 'center',
-    backgroundColor: DEEP_PURPLE,
-    borderRadius: 999,
-    flexDirection: 'row',
-    gap: 8,
-    height: 38,
-    justifyContent: 'center',
-    marginTop: 10,
-    paddingHorizontal: 10,
-  },
-  sendText: {
-    color: '#ffffff',
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  copy: {
-    marginTop: 22,
+  content: {
+    padding: 22,
+    paddingBottom: 60,
   },
   title: {
-    color: '#111111',
     fontSize: 24,
-    fontWeight: '800',
+    fontWeight: "800",
+    color: "#101014",
+    marginTop: 20,
+    marginBottom: 12,
   },
-  description: {
-    color: '#7b6a90',
+  subtitle: {
     fontSize: 16,
-    marginTop: 14,
-    lineHeight: 24,
+    color: "#747783",
+    marginBottom: 24,
   },
-  actions: {
-    gap: 14,
-    marginTop: 18,
-  },
-  primaryButton: {
-    alignItems: 'center',
-    backgroundColor: DEEP_PURPLE,
-    borderRadius: 16,
-    height: 64,
-    justifyContent: 'center',
-  },
-  primaryButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  secondaryButton: {
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
+  summaryCard: {
     borderWidth: 1,
-    borderColor: BRAND_BORDER,
-    height: 64,
-    justifyContent: 'center',
+    borderColor: BORDER,
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    backgroundColor: "#FFFFFF",
   },
-  secondaryButtonText: {
-    color: DEEP_PURPLE,
+  summaryLabel: {
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
+    color: "#111111",
+    marginBottom: 12,
+  },
+  summaryAmount: {
+    fontSize: 34,
+    fontWeight: "800",
+    color: PURPLE,
+  },
+  card: {
+    borderWidth: 1,
+    borderColor: BORDER,
+    borderRadius: 16,
+    padding: 18,
+    marginBottom: 20,
+    backgroundColor: "#FFFFFF",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#111111",
+    marginBottom: 16,
+  },
+  categoryRow: {
+    minHeight: 58,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    marginBottom: 8,
+    backgroundColor: "#F8F7FC",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  selectedRow: {
+    borderWidth: 1.5,
+    borderColor: PURPLE,
+  },
+  categoryName: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "#222222",
+  },
+  rowRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  categoryAmount: {
+    fontSize: 15,
+    fontWeight: "700",
+    color: PURPLE,
+  },
+  arrow: {
+    fontSize: 26,
+    color: "#A0A3AD",
+  },
+  inputBox: {
+    height: 64,
+    borderWidth: 1,
+    borderColor: "#E3E3EB",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FDFDFF",
+    marginBottom: 12,
+  },
+  currency: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: "#C7C9D1",
+    marginRight: 8,
+  },
+  input: {
+    flex: 1,
+    fontSize: 22,
+    fontWeight: "800",
+    color: PURPLE,
+  },
+  currentText: {
+    fontSize: 14,
+    color: "#747783",
+    marginBottom: 18,
+  },
+  saveButton: {
+    minHeight: 56,
+    borderRadius: 12,
+    backgroundColor: PURPLE,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  saveButtonText: {
+    color: "#FFFFFF",
+    fontSize: 18,
+    fontWeight: "800",
   },
 });
