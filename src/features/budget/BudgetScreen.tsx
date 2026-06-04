@@ -101,8 +101,7 @@ export default function BudgetScreen() {
         <View style={styles.copy}>
           <Text style={styles.title}>모아모아와 함께하는 간편한 은행</Text>
           <Text style={styles.description}>
-            흩어진 금융 생활을 모아,{'
-'}            나만의 계좌 관리를 시작해보세요.
+            흩어진 금융 생활을 모아, 나만의 계좌 관리를 시작해보세요.
           </Text>
         </View>
 
