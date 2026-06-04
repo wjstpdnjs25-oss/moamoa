@@ -5,9 +5,19 @@ const TEXT = {
   title: "예산이 초과되었어요",
   subtitleFirst: "설정해둔 예산을 초과했어요.",
   subtitleSecond: "지출 내역을 확인해보세요.",
+  budget: "예산",
+  spent: "지출",
+  won: "원",
 };
 
+function formatWon(value: number) {
+  return `${Math.max(0, value).toLocaleString()}${TEXT.won}`;
+}
+
 export default function BudgetAlertScreen() {
+  const budget = 500000;
+  const spent = 562300;
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
