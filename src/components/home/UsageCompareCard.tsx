@@ -32,6 +32,8 @@ export default function UsageCompareCard() {
   const [ageGroup, setAgeGroup] = useState('20대');
   const [jobType, setJobType] = useState('자취생');
 
+  const [isLifestyleOpen, setIsLifestyleOpen] = useState(false);
+
   return (
     <View style={styles.container}>
 
@@ -49,7 +51,31 @@ export default function UsageCompareCard() {
           selected={ageGroup === '30대'}
           onPress={() => setAgeGroup('30대')}
         />
+        <View style={styles.filterRow}>
+          <FilterButton
+  text="대학생"
+  selected={jobType === '대학생'}
+  onPress={() => setJobType('대학생')}
+/>
+          
+
+
+  < FilterButton
+  text="자취생"
+  selected={jobType === '자취생'}
+  onPress={() => setJobType('자취생')}
+/>
+
+<FilterButton
+  text="회사원"
+  selected={jobType === '회사원'}
+  onPress={() => setJobType('회사원')}
+/>
       </View>
+      </View>
+
+    
+
 
       {/* 소비 비교 카드 */}
       <View style={styles.card}>
@@ -65,31 +91,51 @@ export default function UsageCompareCard() {
           <Text>410,000원</Text>
         </View>
       </View>
-
       {/* 라이프스타일 */}
-      <Text style={styles.label}>
-        라이프스타일
-      </Text>
+<Text style={styles.label}>
+  라이프스타일
+</Text>
 
-      <View style={styles.row}>
-        <FilterButton
-          text="자취생"
-          selected={jobType === '자취생'}
-          onPress={() => setJobType('자취생')}
-        />
+<Pressable
+  style={styles.dropdownHeader}
+  onPress={() => setIsLifestyleOpen(!isLifestyleOpen)}
+>
+  <Text>{jobType}</Text>
+  <Text>{isLifestyleOpen ? '▲' : '▼'}</Text>
+</Pressable>
 
-        <FilterButton
-          text="대학생"
-          selected={jobType === '대학생'}
-          onPress={() => setJobType('대학생')}
-        />
+{isLifestyleOpen && (
+  <View style={styles.dropdownContent}>
+    <FilterButton
+      text="자취생"
+      selected={jobType === '자취생'}
+      onPress={() => {
+        setJobType('자취생');
+        setIsLifestyleOpen(false);
+      }}
+    />
 
-        <FilterButton
-          text="회사원"
-          selected={jobType === '회사원'}
-          onPress={() => setJobType('회사원')}
-        />
-      </View>
+    <FilterButton
+      text="대학생"
+      selected={jobType === '대학생'}
+      onPress={() => {
+        setJobType('대학생');
+        setIsLifestyleOpen(false);
+      }}
+    />
+
+    <FilterButton
+      text="회사원"
+      selected={jobType === '회사원'}
+      onPress={() => {
+        setJobType('회사원');
+        setIsLifestyleOpen(false);
+      }}
+    />
+  </View>
+)}
+
+      
 
       {/* 선택 결과 */}
       <View style={styles.resultBox}>
@@ -159,5 +205,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     borderRadius: 10,
   },
+
+  button: {
+  paddingHorizontal: 12,
+  paddingVertical: 8,
+  borderRadius: 10,
+  backgroundColor: '#F2F2F2',
+},
+
+  buttonSelected: {
+  backgroundColor: '#6C5CE7',
+},
+dropdownHeader: {
+  backgroundColor: '#fff',
+  borderRadius: 12,
+  padding: 14,
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginTop: 8,
+},
+
+dropdownContent: {
+  marginTop: 10,
+  gap: 8,
+},
 });
 
