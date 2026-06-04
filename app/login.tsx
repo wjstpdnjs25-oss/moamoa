@@ -16,7 +16,7 @@ export default function Login() {
   }>();
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
-  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const signupId = getParamValue(params.signupId);
@@ -25,13 +25,18 @@ export default function Login() {
   const validPassword = signupPassword || DEFAULT_PASSWORD;
 
   const handleLogin = () => {
+    if (id.trim().length === 0 || password.trim().length === 0) {
+      setErrorMessage('아이디와 비밀번호를 입력해주세요');
+      return;
+    }
+
     if (id === validId && password === validPassword) {
-      setShowError(false);
+      setErrorMessage('');
       router.push('/main');
       return;
     }
 
-    setShowError(true);
+    setErrorMessage('아이디와 비밀번호가 일치하지 않습니다');
   };
 
   return (
@@ -63,7 +68,7 @@ export default function Login() {
               autoCapitalize="none"
               onChangeText={(value) => {
                 setId(value);
-                setShowError(false);
+                setErrorMessage('');
               }}
               placeholder="아이디 (ID)"
               placeholderTextColor="#5d5d5d"
@@ -75,7 +80,7 @@ export default function Login() {
               <TextInput
                 onChangeText={(value) => {
                   setPassword(value);
-                  setShowError(false);
+                  setErrorMessage('');
                 }}
                 placeholder="비밀번호 (Password)"
                 placeholderTextColor="#5d5d5d"
@@ -97,8 +102,8 @@ export default function Login() {
             </View>
           </View>
 
-          {showError ? (
-            <Text style={styles.errorText}>아이디와 비밀번호가 일치하지 않습니다</Text>
+          {errorMessage ? (
+            <Text style={styles.errorText}>{errorMessage}</Text>
           ) : null}
 
           <View style={styles.actions}>
