@@ -50,6 +50,32 @@ app.post('/api/auth/login', (req, res) => {
   });
 });
 
+app.post('/api/expenses', (req, res) => {
+  const { userId, amount, category, date } = req.body;
+  if (!userId || amount == null || !category || !date) {
+    return res.status(400).json({ error: 'userId, amount, category, date are required' });
+  }
+
+  const sql = `INSERT INTO expenses (user_id, amount, category, date) VALUES (?, ?, ?, ?)`;
+  db.run(sql, [userId, amount, category, date], function (err) {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to create expense' });
+    }
+
+    res.status(201).json({ id: this.lastID, userId, amount, category, date, created_at: new Date().toISOString() });
+  });
+});
+
+app.get('/api/expenses', (req, res) => {
+  const sql = `SELECT * FROM expenses ORDER BY date DESC, id DESC`;
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to retrieve expenses' });
+    }
+    res.json({ expenses: rows });
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Moamoa backend running on http://localhost:${PORT}`);
 });
