@@ -45,8 +45,8 @@ export default function Login() {
         <View style={styles.heroCopy}>
           <Text style={styles.title}>언제 어디서나 간편한 은행</Text>
           <Text style={styles.description}>
-            지금 로그인하거나 회원가입하고,{'\n'}
-            나만의 금융 생활을 만들어보세요.
+            지금 로그인하고,{'\n'}
+            나만의 금융 생활을 이어가세요.
           </Text>
           <View style={styles.securityNotice}>
             <Ionicons name="shield-checkmark-outline" size={18} color={DEEP_PURPLE} />
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '700',
     lineHeight: 35,
-    marginTop: 22,
+    marginTop: 20,
     textAlign: 'center',
   },
   securityNotice: {
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f1edf9',
     borderRadius: 999,
     flexDirection: 'row',
-    marginTop: 18,
+    marginTop: 16,
     paddingHorizontal: 14,
     paddingVertical: 8,
   },
