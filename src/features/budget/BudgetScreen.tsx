@@ -42,6 +42,7 @@ export default function BudgetScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+<<<<<<< HEAD
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
@@ -112,9 +113,80 @@ export default function BudgetScreen() {
           <Pressable style={styles.secondaryButton} onPress={() => router.push('/signup')}>
             <Text style={styles.secondaryButtonText}>회원가입하기</Text>
           </Pressable>
-        </View>
-      </View>
+=======
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <MaterialCommunityIcons
+              name="chevron-left"
+              size={42}
+              color="#111111"
+            />
+          </TouchableOpacity>
 
+          <Text style={styles.title}>예산 설정</Text>
+        </View>
+
+        <Text style={styles.subtitle}>카테고리별 예산을 설정해주세요.</Text>
+
+        <View style={styles.summaryCard}>
+          <Text style={styles.summaryLabel}>이번 달 총 예산</Text>
+          <Text style={styles.summaryAmount}>
+            ₩ {totalBudget.toLocaleString()}
+          </Text>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>카테고리별 예산</Text>
+
+          {budgets.map((item) => {
+            const selected = selectedCategory === item.category;
+
+            return (
+              <TouchableOpacity
+                key={item.category}
+                style={[styles.budgetRow, selected && styles.selectedBudgetRow]}
+                onPress={() => handleSelectCategory(item.category)}
+              >
+                <View style={styles.rowLeft}>
+                  <View
+                    style={[
+                      styles.categoryDot,
+                      selected && styles.selectedCategoryDot,
+                    ]}
+                  />
+                  <Text
+                    style={[
+                      styles.categoryName,
+                      selected && styles.selectedCategoryName,
+                    ]}
+                  >
+                    {item.category}
+                  </Text>
+                </View>
+
+                <Text
+                  style={[
+                    styles.categoryAmount,
+                    selected && styles.selectedCategoryAmount,
+                  ]}
+                >
+                  ₩ {item.amount.toLocaleString()}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+>>>>>>> 6a78f52 (style:: update budget category UI)
+        </View>
+
+<<<<<<< HEAD
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>카테고리별 예산</Text>
 
@@ -143,32 +215,42 @@ export default function BudgetScreen() {
         <Text style={styles.sectionTitle}>
           {selectedCategory} 예산 설정
         </Text>
+=======
+        <View style={styles.editCard}>
+          <Text style={styles.editTitle}>{selectedCategory} 예산</Text>
+>>>>>>> 6a78f52 (style:: update budget category UI)
 
-        <View style={styles.inputBox}>
-          <Text style={styles.currency}>₩</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="예산 금액 입력"
-            keyboardType="numeric"
-            value={draftAmount}
-            onChangeText={(text) => setDraftAmount(text.replace(/[^0-9]/g, ""))}
-          />
+          <View style={styles.inputBox}>
+            <Text style={styles.currency}>₩</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="0"
+              keyboardType="numeric"
+              value={draftAmount}
+              onChangeText={(text) =>
+                setDraftAmount(text.replace(/[^0-9]/g, ""))
+              }
+            />
+          </View>
+
+          <Text style={styles.currentText}>
+            현재 설정 금액 ₩ {selectedBudget.toLocaleString()}
+          </Text>
+
+          <TouchableOpacity style={styles.saveButton} onPress={handleSaveBudget}>
+            <Text style={styles.saveButtonText}>저장하기</Text>
+          </TouchableOpacity>
         </View>
-
-        <Text style={styles.currentText}>
-          현재 예산: ₩ {selectedBudget.toLocaleString()}
-        </Text>
-
-        <TouchableOpacity style={styles.saveButton} onPress={handleSaveBudget}>
-          <Text style={styles.saveButtonText}>저장</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
   container: {
     flex: 1,
     backgroundColor: "#FFFFFF",
@@ -185,7 +267,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   subtitle: {
+<<<<<<< HEAD
     fontSize: 16,
+=======
+    marginBottom: 26,
+>>>>>>> 6a78f52 (style:: update budget category UI)
     color: "#747783",
     marginBottom: 24,
   },
@@ -211,7 +297,11 @@ const styles = StyleSheet.create({
   card: {
     borderWidth: 1,
     borderColor: BORDER,
+<<<<<<< HEAD
     borderRadius: 16,
+=======
+    borderRadius: 14,
+>>>>>>> 6a78f52 (style:: update budget category UI)
     padding: 18,
     marginBottom: 20,
     backgroundColor: "#FFFFFF",
@@ -219,6 +309,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "800",
+<<<<<<< HEAD
     color: "#111111",
     marginBottom: 16,
   },
@@ -227,11 +318,21 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 14,
     marginBottom: 8,
+=======
+    marginBottom: 12,
+  },
+  budgetRow: {
+    minHeight: 56,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    marginTop: 8,
+>>>>>>> 6a78f52 (style:: update budget category UI)
     backgroundColor: "#F8F7FC",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
   },
+<<<<<<< HEAD
   selectedRow: {
     borderWidth: 1.5,
     borderColor: PURPLE,
@@ -254,6 +355,58 @@ const styles = StyleSheet.create({
   arrow: {
     fontSize: 26,
     color: "#A0A3AD",
+=======
+  selectedBudgetRow: {
+    backgroundColor: LIGHT_PURPLE,
+    borderWidth: 1.5,
+    borderColor: PURPLE,
+  },
+  rowLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  categoryDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: "#D7D3E8",
+  },
+  selectedCategoryDot: {
+    width: 10,
+    height: 10,
+    backgroundColor: PURPLE,
+  },
+  categoryName: {
+    color: "#333333",
+    fontSize: 16,
+    fontWeight: "700",
+  },
+  selectedCategoryName: {
+    color: PURPLE,
+  },
+  categoryAmount: {
+    color: "#747783",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  selectedCategoryAmount: {
+    color: PURPLE,
+  },
+  editCard: {
+    borderWidth: 1,
+    borderColor: BORDER,
+    borderRadius: 14,
+    padding: 20,
+    marginBottom: 20,
+    backgroundColor: "#FFFFFF",
+  },
+  editTitle: {
+    color: "#111111",
+    fontSize: 19,
+    fontWeight: "800",
+    marginBottom: 18,
+>>>>>>> 6a78f52 (style:: update budget category UI)
   },
   inputBox: {
     height: 64,
@@ -295,8 +448,4 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "800",
   },
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-  }
 });
