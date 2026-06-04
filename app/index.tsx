@@ -17,6 +17,8 @@ const TEXT = {
   settings: "\uC124\uC815",
 };
 
+const MONTHLY_BUDGET = 500000;
+
 export default function HomeScreen() {
   const [balance, setBalance] = useState(0);
   const [monthlySpent, setMonthlySpent] = useState(0);
