@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -14,14 +14,26 @@ const TEXT = {
   won: "원",
 };
 
+function toNumber(value: string | string[] | undefined, fallback: number) {
+  const normalized = Array.isArray(value) ? value[0] : value;
+  const parsed = Number(normalized);
+
+  return Number.isFinite(parsed) ? parsed : fallback;
+}
+
 function formatWon(value: number) {
   return `${Math.max(0, value).toLocaleString()}${TEXT.won}`;
 }
 
 export default function BudgetAlertScreen() {
   const router = useRouter();
-  const budget = 500000;
-  const spent = 562300;
+  const params = useLocalSearchParams<{
+    budget?: string;
+    spent?: string;
+  }>();
+
+  const budget = toNumber(params.budget, 500000);
+  const spent = toNumber(params.spent, 562300);
   const exceededAmount = Math.max(0, spent - budget);
 
   return (
