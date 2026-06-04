@@ -155,6 +155,10 @@ export default function CalendarScreen() {
             ))
           )}
         </View>
+
+        <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
+          <Text style={styles.closeButtonText}>닫기</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -196,4 +200,6 @@ const styles = StyleSheet.create({
   iconCircle: { width: 42, height: 42, borderRadius: 16, backgroundColor: '#EEF0FF', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
   transactionLabel: { flex: 1, fontSize: 15, color: '#111111' },
   transactionAmount: { fontSize: 15, fontWeight: '700', color: '#111111' },
+  closeButton: { height: 58, borderRadius: 18, backgroundColor: '#7356E8', justifyContent: 'center', alignItems: 'center', marginBottom: 24 },
+  closeButtonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '700' },
 });
