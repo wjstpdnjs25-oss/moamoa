@@ -25,6 +25,11 @@ export default function WishSaveCard({
         {safeSaved.toLocaleString()}원 / {safeTarget.toLocaleString()}원
       </Text>
 
+      
+      <View style={styles.progressBarBackground}>
+      </View>
+
+
       <Text style={styles.percent}>
         {Math.round(progress)}%
       </Text>
@@ -92,4 +97,13 @@ percent: {
     color: '#666',
     marginBottom: 16,
   },
+
+progressBarBackground: {
+  height: 12,
+  backgroundColor: '#EFEFEF',
+  borderRadius: 6,
+  overflow: 'hidden',
+  marginTop: 10,
+  marginBottom: 4,
+},
 });
