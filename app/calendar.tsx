@@ -61,6 +61,10 @@ export default function CalendarScreen() {
     }, {});
   }, [monthDays, selectedMonthStart]);
 
+  const selectedDayKey = formatDayKey(selectedDate);
+  const selectedExpenses = SAMPLE_EXPENSES[selectedDayKey] || [];
+  const selectedTotal = selectedExpenses.reduce((sum, item) => sum + item.amount, 0);
+
   const handleMoveMonth = (offset: number) => {
     setSelectedDate(new Date(selectedMonthStart.getFullYear(), selectedMonthStart.getMonth() + offset, 15));
   };
@@ -120,6 +124,37 @@ export default function CalendarScreen() {
             })}
           </View>
         </View>
+
+        <View style={styles.legendRow}>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, styles.dotActive]} />
+            <Text style={styles.legendText}>지출 있음</Text>
+          </View>
+          <View style={styles.legendItem}>
+            <View style={[styles.legendDot, styles.dotInactive]} />
+            <Text style={styles.legendText}>지출 없음</Text>
+          </View>
+        </View>
+
+        <View style={styles.summaryCard}>
+          <View style={styles.summaryHeader}>
+            <Text style={styles.summaryTitle}>{`${selectedDate.getMonth() + 1}월 ${selectedDate.getDate()}일 지출 내역`}</Text>
+            <Text style={styles.summaryTotal}>{selectedTotal.toLocaleString()}원</Text>
+          </View>
+          {selectedExpenses.length === 0 ? (
+            <Text style={styles.emptyText}>선택한 날짜에 지출 내역이 없습니다.</Text>
+          ) : (
+            selectedExpenses.map((item) => (
+              <View key={item.id} style={styles.transactionRow}>
+                <View style={styles.iconCircle}>
+                  <MaterialCommunityIcons name={item.icon} size={20} color="#7356E8" />
+                </View>
+                <Text style={styles.transactionLabel}>{item.label}</Text>
+                <Text style={styles.transactionAmount}>{item.amount.toLocaleString()}원</Text>
+              </View>
+            ))
+          )}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -146,4 +181,19 @@ const styles = StyleSheet.create({
   dayNumberSelected: { color: '#7356E8' },
   dayAmount: { fontSize: 9, color: '#A0A3AD', marginTop: 4, textAlign: 'center' },
   dayAmountActive: { color: '#111111', fontWeight: '700' },
+  legendRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 },
+  legendItem: { flexDirection: 'row', alignItems: 'center' },
+  legendDot: { width: 10, height: 10, borderRadius: 5, marginRight: 6 },
+  dotActive: { backgroundColor: '#7356E8' },
+  dotInactive: { backgroundColor: '#D9D9E3' },
+  legendText: { color: '#6B6B7E', fontSize: 12 },
+  summaryCard: { backgroundColor: '#FFFFFF', borderRadius: 28, padding: 20, marginBottom: 18 },
+  summaryHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 },
+  summaryTitle: { fontSize: 16, fontWeight: '700', color: '#111111' },
+  summaryTotal: { fontSize: 16, fontWeight: '700', color: '#7356E8' },
+  emptyText: { color: '#777777', fontSize: 14, textAlign: 'center', paddingVertical: 20 },
+  transactionRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#F0F0F5' },
+  iconCircle: { width: 42, height: 42, borderRadius: 16, backgroundColor: '#EEF0FF', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
+  transactionLabel: { flex: 1, fontSize: 15, color: '#111111' },
+  transactionAmount: { fontSize: 15, fontWeight: '700', color: '#111111' },
 });
