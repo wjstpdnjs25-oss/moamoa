@@ -27,12 +27,28 @@ function FilterButton({
     </Pressable>
   );
 }
+const AVERAGE_SPENDING = {
+  '20대': {
+    대학생: 550000,
+    자취생: 1450000,
+    회사원: 165000,
+  },
+
+  '30대': {
+    자취생: 1800000,
+    회사원: 2200000,
+  },
+};
+
+  
 
 export default function UsageCompareCard() {
   const [ageGroup, setAgeGroup] = useState('20대');
   const [jobType, setJobType] = useState('자취생');
 
   const [isLifestyleOpen, setIsLifestyleOpen] = useState(false);
+
+  
 
   return (
     <View style={styles.container}>
