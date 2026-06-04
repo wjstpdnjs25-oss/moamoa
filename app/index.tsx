@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   ScrollView,
@@ -20,6 +21,7 @@ const TEXT = {
 const MONTHLY_BUDGET = 500000;
 
 export default function HomeScreen() {
+  const router = useRouter();
   const [balance, setBalance] = useState(0);
   const [monthlySpent, setMonthlySpent] = useState(0);
 
