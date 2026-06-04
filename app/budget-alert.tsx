@@ -7,6 +7,7 @@ const TEXT = {
   subtitleSecond: "지출 내역을 확인해보세요.",
   budget: "예산",
   spent: "지출",
+  exceeded: "초과 금액",
   won: "원",
 };
 
@@ -17,6 +18,7 @@ function formatWon(value: number) {
 export default function BudgetAlertScreen() {
   const budget = 500000;
   const spent = 562300;
+  const exceededAmount = Math.max(0, spent - budget);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -42,6 +44,11 @@ export default function BudgetAlertScreen() {
             <Text style={styles.spentAmount}>{formatWon(spent)}</Text>
           </View>
         </View>
+
+        <Text style={styles.exceededText}>
+          {TEXT.exceeded}{" "}
+          <Text style={styles.exceededAmount}>{formatWon(exceededAmount)}</Text>
+        </Text>
       </View>
     </SafeAreaView>
   );
@@ -119,5 +126,16 @@ const styles = StyleSheet.create({
     height: 1,
     marginVertical: 29,
     backgroundColor: "#ECECF2",
+  },
+  exceededText: {
+    marginTop: 30,
+    color: "#7C5CE6",
+    fontSize: 18,
+    fontWeight: "700",
+    lineHeight: 28,
+    textAlign: "center",
+  },
+  exceededAmount: {
+    fontWeight: "800",
   },
 });
