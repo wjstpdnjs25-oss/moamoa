@@ -68,6 +68,10 @@ function isValidResidentNumber(value: string) {
   return value.replace(/\D/g, '').length === 13;
 }
 
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
 function hasEnglishLetter(value: string) {
   return /[A-Za-z]/.test(value);
 }
@@ -152,6 +156,8 @@ function SignupForm({
     isEmailIncomplete;
   const showResidentNumberFormatError =
     showRequiredErrors && !isFieldEmpty('residentNumber') && !isValidResidentNumber(info.residentNumber);
+  const showEmailFormatError =
+    showRequiredErrors && !isEmailIncomplete && !isValidEmail(info.email);
   const showPasswordRequirement =
     info.password.length > 0 && !isValidPassword(info.password);
   const showPasswordMismatch =
@@ -167,6 +173,7 @@ function SignupForm({
     if (
       hasEmptyField ||
       !isValidResidentNumber(info.residentNumber) ||
+      !isValidEmail(info.email) ||
       !isValidPassword(info.password) ||
       showPasswordMismatch ||
       !isTermsAgreed
@@ -292,6 +299,9 @@ function SignupForm({
           </View>
           {showRequiredErrors && isEmailIncomplete ? (
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
+          ) : null}
+          {showEmailFormatError ? (
+            <Text style={styles.requiredText}>이메일 형식을 확인해주세요</Text>
           ) : null}
         </View>
 
