@@ -492,7 +492,7 @@ function ConfirmInfo({
         </Pressable>
       </View>
 
-      <Text style={styles.footer}>₩ Bank © 2024. All rights reserved.</Text>
+      <Text style={styles.footer}>모아모아 은행 © 2024. All rights reserved.</Text>
     </View>
   );
 }
@@ -541,12 +541,12 @@ function CompleteSignup({ info, onLogin }: { info: SignupInfo; onLogin: () => vo
       </View>
 
       <Text style={styles.welcomeText}>
-        [{info.name || '회원'}]님, W Bank의 새로운{'\n'}
-        회원이 되신 것을 환영합니다.
+        [{info.name || '회원'}]님, 모아모아 은행의{'\n'}
+        새로운 회원이 되신 것을 환영합니다.
       </Text>
 
       <Pressable style={styles.homeButton} onPress={onLogin}>
-        <Text style={styles.homeButtonText}>로그인 하러 가기</Text>
+        <Text style={styles.homeButtonText}>로그인하러 가기</Text>
       </Pressable>
     </View>
   );
