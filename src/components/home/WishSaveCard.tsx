@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+
 
 const SOFT_PURPLE = '#f5efff';
 const DEEP_PURPLE = '#4f287f';
@@ -20,6 +21,9 @@ export default function WishSaveCard({
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{title}</Text>
+      <TouchableOpacity style={styles.deleteButton} activeOpacity={0.7}>
+        <Text style={styles.deleteButtonText}>삭제</Text>
+      </TouchableOpacity>
 
       <Text style={styles.amount}>
         {safeSaved.toLocaleString()}원 / {safeTarget.toLocaleString()}원
@@ -114,5 +118,19 @@ progressBarFill: {
   height: '100%',
   backgroundColor: DEEP_PURPLE,
   borderRadius: 6,
+},
+deleteButton: {
+  position: 'absolute',
+  top: 16,
+  right: 16,
+  backgroundColor: '#FF3B30', 
+  paddingHorizontal: 10,
+  paddingVertical: 5,
+  borderRadius: 6,
+},
+deleteButtonText: {
+  color: '#fff',
+  fontSize: 12,
+  fontWeight: '600',
 },
 });
