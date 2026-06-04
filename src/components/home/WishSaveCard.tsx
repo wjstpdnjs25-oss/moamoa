@@ -1,5 +1,5 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
+import { useState } from 'react';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const SOFT_PURPLE = '#f5efff';
 const DEEP_PURPLE = '#4f287f';
@@ -12,6 +12,7 @@ export default function WishSaveCard({
 }) {
   const safeTarget = Number(targetAmount) || 0;
   const safeSaved = Number(savedAmount) || 0;
+  const [inputAmount, setInputAmount] = useState('');
 
   const progress =
     safeTarget > 0 ? (safeSaved / safeTarget) * 100 : 0;
@@ -48,6 +49,13 @@ export default function WishSaveCard({
         ) : (
         <Text style={styles.remaining}>{remaining.toLocaleString()}원 남았어요</Text>
       )}
+      <TextInput
+      style={styles.amountInput}
+      placeholder="오늘 저축할 금액 입력"
+      keyboardType="numeric"
+      value={inputAmount}
+      onChangeText={setInputAmount}
+      />
     </View>
   );
 }
@@ -135,5 +143,15 @@ deleteButtonText: {
   color: '#fff',
   fontSize: 12,
   fontWeight: '600',
+},
+amountInput: {
+  backgroundColor: '#FFFFFF',
+  borderWidth: 1,
+  borderColor: '#E5E5EA',
+  borderRadius: 10,
+  padding: 12,
+  marginTop: 12,
+  fontSize: 14,
+  color: '#000000',
 },
 });
