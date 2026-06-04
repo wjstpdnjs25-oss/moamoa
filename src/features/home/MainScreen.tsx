@@ -76,37 +76,46 @@ export default function MainScreen() {
       <BudgetStatusCard />
 
       {/* INPUT */}
-      <TextInput
-        placeholder="사고 싶은 것 (예: 에어팟)"
-        value={title}
-        onChangeText={setTitle}
-        style={styles.input}
-      />
-
-      <TextInput
-        placeholder="목표 금액"
-        value={targetAmount}
-        onChangeText={setTargetAmount}
-        keyboardType="numeric"
-        style={styles.input}
-      />
-
-      <TouchableOpacity onPress={addWish} style={styles.addButton}>
-        <Text style={styles.addButtonText}>추가</Text>
-      </TouchableOpacity>
-
-      {/* WISH LIST */}
-      {wishList.map(item => (
-        <WishSaveCard
-          key={item.id}
-          title={item.title}
-          targetAmount={item.targetAmount}
-          savedAmount={item.savedAmount}
+      <View style={styles.inputCard}>
+        <TextInput
+          placeholder="사고 싶은 것 (예: 에어팟)"
+          value={title}
+          onChangeText={setTitle}
+          style={styles.input}
         />
-      ))}
 
-      <QuickMenuGrid />
+        <TextInput
+          placeholder="목표 금액"
+          value={targetAmount}
+          onChangeText={setTargetAmount}
+          keyboardType="numeric"
+          style={styles.input}
+        />
+
+        <TouchableOpacity onPress={addWish} style={styles.addButton}>
+          <Text style={styles.addButtonText}>추가</Text>
+        </TouchableOpacity>
+    </View>  
+
+
+     {/* WISH LIST */}
+<View style={{ marginBottom: 24 }}>
+  {wishList.map(item => (
+    <WishSaveCard
+      key={item.id}
+      title={item.title}
+      targetAmount={item.targetAmount}
+      savedAmount={item.savedAmount}
+    />
+  ))}
+</View>
+
+{/* QUICK MENU */}
+<View style={{ marginTop: 24 }}>
+  <QuickMenuGrid />
+</View>
     </ScrollView>
+    
   );
 }
 
