@@ -1,11 +1,7 @@
-
-import { ThemedText } from '@/components/themed-text';
 import { useState } from 'react';
 import {
   Pressable,
-  StyleSheet,
-  Text,
-  View,
+  StyleSheet, Text, View
 } from 'react-native';
 
 function FilterButton({
@@ -40,8 +36,7 @@ export default function UsageCompareCard() {
     <View style={styles.container}>
 
       {/* 연령 필터 */}
-      <ThemedText style={styles.label}>연령</ThemedText>
-
+      <Text style={styles.label}>연령</Text>
       <View style={styles.row}>
         <FilterButton
           text="20대"
@@ -72,9 +67,9 @@ export default function UsageCompareCard() {
       </View>
 
       {/* 라이프스타일 */}
-      <ThemedText style={styles.label}>
+      <Text style={styles.label}>
         라이프스타일
-      </ThemedText>
+      </Text>
 
       <View style={styles.row}>
         <FilterButton
@@ -165,9 +160,4 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
-
-
-export default function UsageCompareCard() {
-  return <View />;
-}
 

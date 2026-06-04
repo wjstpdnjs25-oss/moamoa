@@ -13,6 +13,7 @@ import BalanceCard from '@/src/components/home/BalanceCard';
 import BudgetStatusCard from '@/src/components/home/BudgetStatusCard';
 import QuickExpenseInput from '@/src/components/home/QuickExpenseInput';
 import QuickMenuGrid from '@/src/components/home/QuickMenuGrid';
+import UsageCompareCard from '@/src/components/home/UsageCompareCard';
 import WishSaveCard from '@/src/components/home/WishSaveCard';
 
 const TEXT = {
@@ -109,6 +110,8 @@ export default function MainScreen() {
     />
   ))}
 </View>
+
+<UsageCompareCard />
 
 {/* QUICK MENU */}
 <View style={{ marginTop: 24 }}>
