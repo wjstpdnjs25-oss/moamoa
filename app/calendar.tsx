@@ -22,8 +22,16 @@ const SAMPLE_EXPENSES: Record<string, { id: string; label: string; icon: string;
   ],
 };
 
+function formatMonthLabel(date: Date) {
+  return `${date.getFullYear()}년 ${String(date.getMonth() + 1).padStart(2, "0")}월`;
+}
+
 function formatDayKey(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function formatCurrency(amount: number) {
+  return `${amount.toLocaleString()}원`;
 }
 
 export default function CalendarScreen() {
@@ -91,7 +99,7 @@ export default function CalendarScreen() {
             <TouchableOpacity onPress={() => handleMoveMonth(-1)} style={styles.monthArrow}>
               <MaterialCommunityIcons name="chevron-left" size={24} color="#7356E8" />
             </TouchableOpacity>
-            <Text style={styles.monthLabel}>{`${selectedMonthStart.getFullYear()}년 ${String(selectedMonthStart.getMonth() + 1).padStart(2, "0")}월`}</Text>
+            <Text style={styles.monthLabel}>{formatMonthLabel(selectedMonthStart)}</Text>
             <TouchableOpacity onPress={() => handleMoveMonth(1)} style={styles.monthArrow}>
               <MaterialCommunityIcons name="chevron-right" size={24} color="#7356E8" />
             </TouchableOpacity>
@@ -117,7 +125,7 @@ export default function CalendarScreen() {
                 >
                   <Text style={[styles.dayNumber, isSelected && styles.dayNumberSelected]}>{day ?? ""}</Text>
                   <Text style={[styles.dayAmount, hasExpense && styles.dayAmountActive]}>
-                    {day !== null ? `${monthTotals[day].toLocaleString()}원` : ""}
+                    {day !== null ? formatCurrency(monthTotals[day]) : ""}
                   </Text>
                   {day !== null && <View style={[styles.dot, hasExpense ? styles.dotActive : styles.dotInactive]} />}
                 </TouchableOpacity>
@@ -140,7 +148,7 @@ export default function CalendarScreen() {
         <View style={styles.summaryCard}>
           <View style={styles.summaryHeader}>
             <Text style={styles.summaryTitle}>{`${selectedDate.getMonth() + 1}월 ${selectedDate.getDate()}일 지출 내역`}</Text>
-            <Text style={styles.summaryTotal}>{selectedTotal.toLocaleString()}원</Text>
+            <Text style={styles.summaryTotal}>{formatCurrency(selectedTotal)}</Text>
           </View>
           {selectedExpenses.length === 0 ? (
             <Text style={styles.emptyText}>선택한 날짜에 지출 내역이 없습니다.</Text>
@@ -151,7 +159,7 @@ export default function CalendarScreen() {
                   <MaterialCommunityIcons name={item.icon} size={20} color="#7356E8" />
                 </View>
                 <Text style={styles.transactionLabel}>{item.label}</Text>
-                <Text style={styles.transactionAmount}>{item.amount.toLocaleString()}원</Text>
+                <Text style={styles.transactionAmount}>{formatCurrency(item.amount)}</Text>
               </View>
             ))
           )}
