@@ -315,11 +315,14 @@ function SignupForm({
             {isTermsAgreed ? <Ionicons name="checkmark" size={18} color="#ffffff" /> : null}
           </View>
           <Text style={styles.termsAgreementText}>이용약관/개인정보 동의</Text>
+          <View style={styles.requiredBadge}>
+            <Text style={styles.requiredBadgeText}>필수</Text>
+          </View>
         </Pressable>
         <View style={styles.termsSummaryRow}>
           <Text style={styles.termsDescription}>
             회원가입 및 서비스 이용을 위해 이름, 주민등록번호, 아이디, 비밀번호, 이메일 정보를
-            수집하고 약관에 따라 관리합니다.
+            수집하고 약관에 따라 관리합니다. 동의 후 다음 단계로 진행할 수 있습니다.
           </Text>
           <Pressable
             accessibilityRole="button"
@@ -811,6 +814,17 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 18,
     fontWeight: '700',
+  },
+  requiredBadge: {
+    backgroundColor: '#f1edf9',
+    borderRadius: 999,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+  },
+  requiredBadgeText: {
+    color: DEEP_PURPLE,
+    fontSize: 12,
+    fontWeight: '900',
   },
   termsSummaryRow: {
     alignItems: 'flex-start',
