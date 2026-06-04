@@ -3,6 +3,7 @@ import {
   Pressable,
   StyleSheet, Text, View
 } from 'react-native';
+const mySpending = 320000;
 
 function FilterButton({
   text,
@@ -48,7 +49,10 @@ export default function UsageCompareCard() {
 
   const [isLifestyleOpen, setIsLifestyleOpen] = useState(false);
 
-  
+  const averageSpending =
+    AVERAGE_SPENDING[ageGroup]?.[jobType] ?? 0;
+
+  const diff = mySpending - averageSpending;
 
   return (
     <View style={styles.container}>
@@ -69,44 +73,40 @@ export default function UsageCompareCard() {
         />
         <View style={styles.filterRow}>
           <FilterButton
-  text="대학생"
-  selected={jobType === '대학생'}
-  onPress={() => setJobType('대학생')}
-/>
+          text="대학생"
+          selected={jobType === '대학생'}
+          onPress={() => setJobType('대학생')}
+        />
           
+        <FilterButton
+          text="자취생"
+          selected={jobType === '자취생'}
+          onPress={() => setJobType('자취생')}
+        />
 
-
-  < FilterButton
-  text="자취생"
-  selected={jobType === '자취생'}
-  onPress={() => setJobType('자취생')}
-/>
-
-<FilterButton
-  text="회사원"
-  selected={jobType === '회사원'}
-  onPress={() => setJobType('회사원')}
-/>
+        <FilterButton
+          text="회사원"
+          selected={jobType === '회사원'}
+          onPress={() => setJobType('회사원')}
+        />
       </View>
       </View>
 
-    
-
-
+  
       {/* 소비 비교 카드 */}
       <View style={styles.card}>
         <Text style={styles.title}>소비 비교</Text>
 
         <View style={styles.rowBetween}>
           <Text>나의 소비</Text>
-          <Text>320,000원</Text>
+          <Text>{mySpending.toLocaleString()}원</Text>
         </View>
 
         <View style={styles.rowBetween}>
           <Text>평균 소비</Text>
-          <Text>410,000원</Text>
+          <Text>{averageSpending.toLocaleString()}원</Text>
         </View>
-      </View>
+
       {/* 라이프스타일 */}
 <Text style={styles.label}>
   라이프스타일
@@ -150,16 +150,13 @@ export default function UsageCompareCard() {
     />
   </View>
 )}
-
-      
-
       {/* 선택 결과 */}
       <View style={styles.resultBox}>
         <Text>
           선택: {ageGroup} / {jobType}
         </Text>
       </View>
-
+    </View>
     </View>
   );
 }
