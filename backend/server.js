@@ -21,8 +21,11 @@ app.post('/api/auth/signup', (req, res) => {
   const sql = `INSERT INTO users (email, password, nickname) VALUES (?, ?, ?)`;
   db.run(sql, [email, password, nickname], function (err) {
     if (err) {
-      if (err.message.includes('UNIQUE constraint failed')) {
+      if (err.message.includes('UNIQUE constraint failed: users.email')) {
         return res.status(409).json({ error: 'Email already exists' });
+      }
+      if (err.message.includes('UNIQUE constraint failed: users.nickname')) {
+        return res.status(409).json({ error: 'ID already exists' });
       }
       return res.status(500).json({ error: 'Failed to create user' });
     }
@@ -32,18 +35,18 @@ app.post('/api/auth/signup', (req, res) => {
 });
 
 app.post('/api/auth/login', (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.status(400).json({ error: 'email and password are required' });
+  const { identifier, password } = req.body;
+  if (!identifier || !password) {
+    return res.status(400).json({ error: 'identifier and password are required' });
   }
 
-  const sql = `SELECT id, email, nickname, created_at FROM users WHERE email = ? AND password = ?`;
-  db.get(sql, [email, password], (err, user) => {
+  const sql = `SELECT id, email, nickname, created_at FROM users WHERE (email = ? OR nickname = ?) AND password = ?`;
+  db.get(sql, [identifier, identifier, password], (err, user) => {
     if (err) {
       return res.status(500).json({ error: 'Failed to login' });
     }
     if (!user) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(401).json({ error: 'Invalid identifier or password' });
     }
 
     res.json({ user });

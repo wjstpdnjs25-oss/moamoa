@@ -1,16 +1,18 @@
 // API utilities and client wrappers for Moamoa.
 import Constants from 'expo-constants';
 
+function getDebuggerHost() {
+  const manifest = (Constants as any).manifest || (Constants as any).manifest2;
+  return manifest?.debuggerHost || (Constants as any).expoGoHost || null;
+}
+
 function getBackendBaseUrl() {
-  // If running in Expo, derive the host from debuggerHost so mobile devices
-  // connected to the same LAN will use the developer machine IP automatically.
-  const debuggerHost = (Constants.manifest as any)?.debuggerHost;
+  const debuggerHost = getDebuggerHost();
   if (debuggerHost) {
     const host = debuggerHost.split(':')[0];
     return `http://${host}:4000`;
   }
 
-  // Fallback to localhost for web / simulator environments.
   return 'http://localhost:4000';
 }
 

@@ -20,6 +20,8 @@ db.serialize(() => {
     )
   `);
 
+  db.run(`CREATE UNIQUE INDEX IF NOT EXISTS idx_users_nickname ON users(nickname)`);
+
   db.run(`
     CREATE TABLE IF NOT EXISTS expenses (
       id INTEGER PRIMARY KEY AUTOINCREMENT,

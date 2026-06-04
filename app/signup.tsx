@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-import SignupScreen from "@/src/features/auth/SignupScreen";
-export default SignupScreen;
-=======
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
@@ -16,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import apiClient from '@/src/api';
 
 const DEEP_PURPLE = '#261052';
 const TEXT_BLACK = '#050505';
@@ -41,6 +38,7 @@ const initialSignupInfo: SignupInfo = {
 };
 
 const PASSWORD_REQUIREMENT_MESSAGE = '영문자+숫자포함 6글자 이상을 작성해주세요';
+
 const TERMS_ITEMS = [
   {
     title: '제1조 목적',
@@ -80,7 +78,7 @@ function hasEnglishLetter(value: string) {
   return /[A-Za-z]/.test(value);
 }
 
-export default function Home() {
+export default function Signup() {
   const [step, setStep] = useState<Step>('form');
   const [signupInfo, setSignupInfo] = useState<SignupInfo>(initialSignupInfo);
 
@@ -148,29 +146,39 @@ function SignupForm({
   const updateField = (field: keyof SignupInfo, value: string) => {
     onChange({ ...info, [field]: value });
   };
+
   const updateEmailPart = (part: 'local' | 'domain', value: string) => {
     const nextEmail = part === 'local' ? `${value}@${emailParts.domain}` : `${emailParts.local}@${value}`;
     updateField('email', nextEmail);
   };
+
   const isFieldEmpty = (field: keyof SignupInfo) => info[field].trim().length === 0;
   const isEmailIncomplete =
     emailParts.local.trim().length === 0 || emailParts.domain.trim().length === 0;
+
   const hasEmptyField =
     Object.entries(info).some(([field, value]) => field !== 'email' && value.trim().length === 0) ||
     isEmailIncomplete;
+
   const showResidentNumberFormatError =
     showRequiredErrors && !isFieldEmpty('residentNumber') && !isValidResidentNumber(info.residentNumber);
+
   const showEmailFormatError =
     showRequiredErrors && !isEmailIncomplete && !isValidEmail(info.email);
+
   const showPasswordRequirement =
     info.password.length > 0 && !isValidPassword(info.password);
+
   const showPasswordMismatch =
     info.confirmPassword.length > 0 && info.password !== info.confirmPassword;
+
   const showPasswordMatched =
     info.confirmPassword.length > 0 &&
     isValidPassword(info.password) &&
     info.password === info.confirmPassword;
+
   const showIdHint = isIdFocused && !hasEnglishLetter(info.id);
+
   const handleNext = () => {
     setShowRequiredErrors(true);
 
@@ -192,7 +200,8 @@ function SignupForm({
     <ScrollView
       contentContainerStyle={styles.formScrollContent}
       keyboardShouldPersistTaps="handled"
-      showsVerticalScrollIndicator={false}>
+      showsVerticalScrollIndicator={false}
+    >
       <View style={styles.formScreen}>
         <Brand />
 
@@ -217,6 +226,7 @@ function SignupForm({
           {showRequiredErrors && isFieldEmpty('name') ? (
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
           ) : null}
+
           <TextInput
             keyboardType="number-pad"
             maxLength={14}
@@ -243,9 +253,7 @@ function SignupForm({
             onChangeText={(value) => updateField('id', value)}
             onFocus={() => setIsIdFocused(true)}
           />
-          {showIdHint ? (
-            <Text style={styles.fieldHintText}>영문자로 작성해주세요</Text>
-          ) : null}
+          {showIdHint ? <Text style={styles.fieldHintText}>영문자로 작성해주세요</Text> : null}
           {showRequiredErrors && isFieldEmpty('id') ? (
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
           ) : null}
@@ -261,6 +269,7 @@ function SignupForm({
           {showPasswordRequirement ? (
             <Text style={styles.passwordMismatchText}>{PASSWORD_REQUIREMENT_MESSAGE}</Text>
           ) : null}
+
           <PasswordInput
             placeholder="비밀번호 확인"
             value={info.confirmPassword}
@@ -314,7 +323,8 @@ function SignupForm({
           accessibilityState={{ checked: isTermsAgreed }}
           hitSlop={8}
           style={styles.termsAgreement}
-          onPress={() => setIsTermsAgreed((agreed) => !agreed)}>
+          onPress={() => setIsTermsAgreed((agreed) => !agreed)}
+        >
           <View style={[styles.checkbox, isTermsAgreed && styles.checkboxChecked]}>
             {isTermsAgreed ? <Ionicons name="checkmark" size={18} color="#ffffff" /> : null}
           </View>
@@ -323,6 +333,7 @@ function SignupForm({
             <Text style={styles.requiredBadgeText}>필수</Text>
           </View>
         </Pressable>
+
         <View style={styles.termsSummaryRow}>
           <Text style={styles.termsDescription}>
             회원가입 및 서비스 이용을 위해 이름, 주민등록번호, 아이디, 비밀번호, 이메일 정보를
@@ -333,7 +344,8 @@ function SignupForm({
             accessibilityState={{ expanded: isTermsExpanded }}
             hitSlop={10}
             style={styles.termsToggleButton}
-            onPress={() => setIsTermsExpanded((expanded) => !expanded)}>
+            onPress={() => setIsTermsExpanded((expanded) => !expanded)}
+          >
             <Text style={styles.termsToggleText}>
               {isTermsExpanded ? '접기' : '전문 보기'}
             </Text>
@@ -344,6 +356,7 @@ function SignupForm({
             />
           </Pressable>
         </View>
+
         {isTermsExpanded ? (
           <View style={styles.termsDetailBox}>
             <Text style={styles.termsDetailTitle}>이용약관 및 개인정보 수집 이용 동의서</Text>
@@ -355,6 +368,7 @@ function SignupForm({
             ))}
           </View>
         ) : null}
+
         {showRequiredErrors && !isTermsAgreed ? (
           <Text style={styles.termsErrorText}>이용약관에 동의해주세요</Text>
         ) : null}
@@ -398,7 +412,8 @@ function PasswordInput({
         accessibilityLabel={isPasswordVisible ? '비밀번호 가리기' : '비밀번호 보기'}
         hitSlop={10}
         onPress={() => setIsPasswordVisible((visible) => !visible)}
-        style={styles.eyeButton}>
+        style={styles.eyeButton}
+      >
         <Ionicons
           name={isPasswordVisible ? 'eye-outline' : 'eye-off-outline'}
           size={28}
@@ -420,16 +435,28 @@ function ConfirmInfo({
 }) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const maskedPassword = info.password ? '•'.repeat(Math.min(info.password.length, 8)) : '-';
   const visiblePassword = info.password || '-';
   const maskedResidentNumber = maskResidentNumber(info.residentNumber);
-  const handleComplete = () => {
-    if (isSubmitting) {
-      return;
-    }
 
+  const handleComplete = async () => {
+    if (isSubmitting) return;
+
+    setErrorMessage('');
     setIsSubmitting(true);
-    setTimeout(onComplete, 900);
+
+    try {
+      await apiClient.post('/api/auth/signup', {
+        email: info.email,
+        password: info.password,
+        nickname: info.id,
+      });
+      onComplete();
+    } catch (error: any) {
+      setErrorMessage(error.message ?? '회원가입에 실패했습니다.');
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -448,21 +475,21 @@ function ConfirmInfo({
         <InfoRow label="이름" value={info.name || '-'} />
         <InfoRow label="아이디" value={info.id || '-'} />
         <InfoRow label="이메일" value={info.email || '-'} />
+
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>비밀번호</Text>
           <View style={styles.infoValueWrap}>
             <Text style={styles.infoValue}>
               {isPasswordVisible ? visiblePassword : maskedPassword}
             </Text>
-            {isPasswordVisible ? null : (
-              <Text style={styles.infoHint}>(보안상 가림)</Text>
-            )}
+            {isPasswordVisible ? null : <Text style={styles.infoHint}>(보안상 가림)</Text>}
           </View>
           <Pressable
             accessibilityLabel={isPasswordVisible ? '비밀번호 가리기' : '비밀번호 보기'}
             hitSlop={10}
             onPress={() => setIsPasswordVisible((visible) => !visible)}
-            style={styles.infoEyeButton}>
+            style={styles.infoEyeButton}
+          >
             <Ionicons
               name={isPasswordVisible ? 'eye-outline' : 'eye-off-outline'}
               size={24}
@@ -470,6 +497,7 @@ function ConfirmInfo({
             />
           </Pressable>
         </View>
+
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>주민등록번호</Text>
           <View style={styles.infoValueWrap}>
@@ -487,7 +515,8 @@ function ConfirmInfo({
         <Pressable
           disabled={isSubmitting}
           style={[styles.confirmButton, isSubmitting && styles.confirmButtonDisabled]}
-          onPress={handleComplete}>
+          onPress={handleComplete}
+        >
           {isSubmitting ? (
             <ActivityIndicator color="#ffffff" size="small" />
           ) : (
@@ -498,6 +527,8 @@ function ConfirmInfo({
           )}
         </Pressable>
       </View>
+
+      {errorMessage ? <Text style={styles.requestErrorText}>{errorMessage}</Text> : null}
 
       <Text style={styles.footer}>모아모아 은행 © 2024. All rights reserved.</Text>
     </View>
@@ -1204,4 +1235,3 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
 });
->>>>>>> origin/main

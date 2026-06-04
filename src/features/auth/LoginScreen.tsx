@@ -1,42 +1,50 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import apiClient from '@/src/api';
 
 const DEEP_PURPLE = '#261052';
 const TEXT_BLACK = '#050505';
-const DEFAULT_ID = 'moamoa';
-const DEFAULT_PASSWORD = '1234';
 
 export default function LoginScreen() {
   const params = useLocalSearchParams<{
     signupId?: string | string[];
     signupPassword?: string | string[];
   }>();
-  const [id, setId] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-
   const signupId = getParamValue(params.signupId);
   const signupPassword = getParamValue(params.signupPassword);
-  const validId = signupId || DEFAULT_ID;
-  const validPassword = signupPassword || DEFAULT_PASSWORD;
+  const [id, setId] = useState(signupId || '');
+  const [password, setPassword] = useState(signupPassword || '');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (id.trim().length === 0 || password.trim().length === 0) {
       setErrorMessage('아이디와 비밀번호를 입력해주세요');
       return;
     }
 
-    if (id === validId && password === validPassword) {
-      setErrorMessage('');
-      router.push('/main');
-      return;
-    }
+    setErrorMessage('');
+    setIsSubmitting(true);
 
-    setErrorMessage('아이디와 비밀번호가 일치하지 않습니다');
+    try {
+      await apiClient.post('/api/auth/login', {
+        identifier: id,
+        password,
+      });
+      router.push('/main');
+    } catch (error: any) {
+      setErrorMessage(
+        error?.message?.includes('401')
+          ? '아이디와 비밀번호가 일치하지 않습니다'
+          : '로그인에 실패했습니다. 다시 시도해주세요.',
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -111,9 +119,17 @@ export default function LoginScreen() {
           ) : null}
 
           <View style={styles.actions}>
-            <Pressable style={styles.primaryButton} onPress={handleLogin}>
+            <Pressable
+            disabled={isSubmitting}
+            style={[styles.primaryButton, isSubmitting && styles.primaryButtonDisabled]}
+            onPress={handleLogin}
+          >
+            {isSubmitting ? (
+              <ActivityIndicator color="#ffffff" size="small" />
+            ) : (
               <Text style={styles.primaryButtonText}>로그인하기</Text>
-            </Pressable>
+            )}
+          </Pressable>
           </View>
         </View>
       </View>
@@ -256,6 +272,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     height: 64,
     justifyContent: 'center',
+  },
+  primaryButtonDisabled: {
+    opacity: 0.65,
   },
   primaryButtonText: {
     color: '#ffffff',
