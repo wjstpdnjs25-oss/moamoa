@@ -1,5 +1,6 @@
 import { useState } from "react";
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -38,6 +39,11 @@ export default function BudgetScreen() {
 
   const handleSaveBudget = () => {
     setBudgetAmount(selectedCategory, Number(draftAmount || 0));
+
+    Alert.alert(
+      "저장 완료",
+      '예산이 저장되었습니다.'
+    );
   };
 
   return (
