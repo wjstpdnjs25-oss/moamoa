@@ -26,6 +26,22 @@ export default function BudgetAlertScreen() {
           <Text style={styles.subtitle}>{TEXT.subtitleFirst}</Text>
           <Text style={styles.subtitle}>{TEXT.subtitleSecond}</Text>
         </View>
+
+        <View style={styles.summaryCard}>
+          <View style={styles.summaryRow}>
+            <Text style={styles.summaryLabel}>{TEXT.budget}</Text>
+            <Text style={styles.budgetAmount}>{formatWon(budget)}</Text>
+          </View>
+
+          <View style={styles.divider} />
+
+          <View style={styles.summaryRow}>
+            <Text style={[styles.summaryLabel, styles.spentLabel]}>
+              {TEXT.spent}
+            </Text>
+            <Text style={styles.spentAmount}>{formatWon(spent)}</Text>
+          </View>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -61,5 +77,47 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     lineHeight: 30,
     textAlign: "center",
+  },
+  summaryCard: {
+    borderWidth: 1,
+    borderColor: "#ECECF2",
+    borderRadius: 10,
+    paddingHorizontal: 28,
+    paddingVertical: 35,
+    backgroundColor: "#FFFFFF",
+  },
+  summaryRow: {
+    minHeight: 38,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 16,
+  },
+  summaryLabel: {
+    color: "#666671",
+    fontSize: 18,
+    fontWeight: "700",
+  },
+  spentLabel: {
+    color: "#7C5CE6",
+  },
+  budgetAmount: {
+    flexShrink: 1,
+    color: "#2E2E35",
+    fontSize: 28,
+    fontWeight: "800",
+    textAlign: "right",
+  },
+  spentAmount: {
+    flexShrink: 1,
+    color: "#7C5CE6",
+    fontSize: 28,
+    fontWeight: "800",
+    textAlign: "right",
+  },
+  divider: {
+    height: 1,
+    marginVertical: 29,
+    backgroundColor: "#ECECF2",
   },
 });
