@@ -14,8 +14,30 @@ export default function CalendarScreen() {
     return new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
   }, [selectedDate]);
 
+  const monthDays = useMemo(() => {
+    const year = selectedMonthStart.getFullYear();
+    const month = selectedMonthStart.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
+    const cells: (number | null)[] = Array.from({ length: firstDay }, () => null);
+
+    for (let day = 1; day <= lastDate; day += 1) {
+      cells.push(day);
+    }
+
+    while (cells.length % 7 !== 0) {
+      cells.push(null);
+    }
+
+    return cells;
+  }, [selectedMonthStart]);
+
   const handleMoveMonth = (offset: number) => {
     setSelectedDate(new Date(selectedMonthStart.getFullYear(), selectedMonthStart.getMonth() + offset, 15));
+  };
+
+  const handleSelectDay = (day: number) => {
+    setSelectedDate(new Date(selectedMonthStart.getFullYear(), selectedMonthStart.getMonth(), day));
   };
 
   return (
@@ -47,6 +69,19 @@ export default function CalendarScreen() {
               <Text key={day} style={styles.weekdayText}>{day}</Text>
             ))}
           </View>
+
+          <View style={styles.grid}>
+            {monthDays.map((day, index) => (
+              <TouchableOpacity
+                key={`${day ?? "empty"}-${index}`}
+                style={[styles.dayCell, day === null && styles.emptyCell]}
+                disabled={day === null}
+                onPress={() => typeof day === "number" && handleSelectDay(day)}
+              >
+                <Text style={styles.dayNumber}>{day ?? ""}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -66,4 +101,8 @@ const styles = StyleSheet.create({
   monthArrow: { width: 40, height: 40, borderRadius: 14, backgroundColor: '#EEF0FF', justifyContent: 'center', alignItems: 'center' },
   weekdayRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
   weekdayText: { width: '14.28%', textAlign: 'center', color: '#777777', fontSize: 12, fontWeight: '700' },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  dayCell: { width: '14.28%', minHeight: 80, borderRadius: 18, paddingVertical: 10, marginBottom: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF' },
+  emptyCell: { backgroundColor: 'transparent' },
+  dayNumber: { fontSize: 14, fontWeight: '700', color: '#111111' },
 });
