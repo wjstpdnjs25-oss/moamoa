@@ -81,6 +81,10 @@ export default function CalendarScreen() {
     setSelectedDate(new Date(selectedMonthStart.getFullYear(), selectedMonthStart.getMonth(), day));
   };
 
+  const handleGoToday = () => {
+    setSelectedDate(new Date());
+  };
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container} contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -89,7 +93,7 @@ export default function CalendarScreen() {
             <MaterialCommunityIcons name="chevron-left" size={28} color="#111111" />
           </TouchableOpacity>
           <Text style={styles.title}>소비 달력</Text>
-          <TouchableOpacity style={styles.headerButton}>
+          <TouchableOpacity style={styles.headerButton} onPress={handleGoToday}>
             <MaterialCommunityIcons name="calendar-month-outline" size={26} color="#111111" />
           </TouchableOpacity>
         </View>
