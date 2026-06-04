@@ -156,6 +156,10 @@ function SignupForm({
     info.password.length > 0 && !isValidPassword(info.password);
   const showPasswordMismatch =
     info.confirmPassword.length > 0 && info.password !== info.confirmPassword;
+  const showPasswordMatched =
+    info.confirmPassword.length > 0 &&
+    isValidPassword(info.password) &&
+    info.password === info.confirmPassword;
   const showIdHint = isIdFocused && !hasEnglishLetter(info.id);
   const handleNext = () => {
     setShowRequiredErrors(true);
@@ -256,6 +260,9 @@ function SignupForm({
           ) : null}
           {showPasswordMismatch ? (
             <Text style={styles.passwordMismatchText}>비밀번호가 일치하지 않습니다</Text>
+          ) : null}
+          {showPasswordMatched ? (
+            <Text style={styles.passwordMatchedText}>비밀번호가 일치합니다</Text>
           ) : null}
 
           <View style={styles.emailRow}>
@@ -745,6 +752,13 @@ const styles = StyleSheet.create({
   },
   passwordMismatchText: {
     color: '#d82020',
+    fontSize: 13,
+    fontWeight: '700',
+    marginTop: -6,
+    paddingLeft: 6,
+  },
+  passwordMatchedText: {
+    color: '#2f9e44',
     fontSize: 13,
     fontWeight: '700',
     marginTop: -6,
