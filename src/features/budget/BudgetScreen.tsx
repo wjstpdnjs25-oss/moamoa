@@ -165,37 +165,59 @@ export default function BudgetScreen() {
           {budgets.map((item) => {
             const selected = selectedCategory === item.category;
 
+            const spent = expenses
+            .filter((expenses) => expenses.category === item.category)
+            .reduce((sum, expense) => sum + expense.amount, 0);
+
+            const rate =
+            item.amount === 0 ? 0 : Math.round((spent / item.amount) * 100);
+
             return (
               <TouchableOpacity
                 key={item.category}
                 style={[styles.budgetRow, selected && styles.selectedBudgetRow]}
                 onPress={() => handleSelectCategory(item.category)}
               >
-                <View style={styles.rowLeft}>
-                  <View
-                    style={[
-                      styles.categoryDot,
-                      selected && styles.selectedCategoryDot,
-                    ]}
-                  />
-                  <Text
-                    style={[
-                      styles.categoryName,
-                      selected && styles.selectedCategoryName,
-                    ]}
-                  >
-                    {item.category}
-                  </Text>
-                </View>
+                <View style={styles.rowTop}>
+  <View style={styles.rowLeft}>
+    <View
+      style={[
+        styles.categoryDot,
+        selected && styles.selectedCategoryDot,
+      ]}
+    />
+    <Text
+      style={[
+        styles.categoryName,
+        selected && styles.selectedCategoryName,
+      ]}
+    >
+      {item.category}
+    </Text>
+  </View>
 
-                <Text
-                  style={[
-                    styles.categoryAmount,
-                    selected && styles.selectedCategoryAmount,
-                  ]}
-                >
-                  ₩ {item.amount.toLocaleString()}
-                </Text>
+  <Text
+    style={[
+      styles.categoryAmount,
+      selected && styles.selectedCategoryAmount,
+    ]}
+  >
+    ₩ {item.amount.toLocaleString()}
+  </Text>
+</View>
+
+<Text style={styles.rowUsageText}>
+  사용 ₩ {spent.toLocaleString()} · {rate}%
+</Text>
+
+<View style={styles.progressBackground}>
+  <View
+    style={[
+      styles.progressBar,
+      { width: `${Math.min(rate, 100)}%` as any },
+    ]}
+  />
+</View>
               </TouchableOpacity>
             );
           })}
@@ -340,15 +362,11 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   budgetRow: {
-    minHeight: 56,
     borderRadius: 12,
-    paddingHorizontal: 14,
+    padding: 14,
     marginTop: 8,
 >>>>>>> 6a78f52 (style:: update budget category UI)
     backgroundColor: "#F8F7FC",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
   },
 <<<<<<< HEAD
   selectedRow: {
@@ -383,6 +401,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
+  },
+  rowTop:{
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  rowUsageText:{
+    fontSize: 12,
+    color: "#666666",
+    marginBlock: 6,
   },
   categoryDot: {
     width: 8,
@@ -464,7 +493,22 @@ const styles = StyleSheet.create({
     color: "#111111",
     fontSize: 18,
     fontWeight: "500",
+<<<<<<< HEAD
 >>>>>>> cfbff36 (style: improve budget input section)
+=======
+  },
+  progressBackground: {
+    width: "100%",
+    height: 8,
+    backgroundColor: "#EAEAEA",
+    borderRadius: 999,
+    overflow: "hidden",
+    marginBottom: 8,
+  },
+  progressBar: {
+    height: "100%",
+    backgroundColor: PURPLE,
+>>>>>>> 433b5fd (feat: add category budget usage bar)
   },
   currentText: {
     fontSize: 14,
