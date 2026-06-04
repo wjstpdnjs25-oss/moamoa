@@ -87,6 +87,33 @@ app.get('/api/expenses/month/:month', (req, res) => {
   });
 });
 
+app.post('/api/budgets', (req, res) => {
+  const { userId, month, amount } = req.body;
+  if (!userId || !month || amount == null) {
+    return res.status(400).json({ error: 'userId, month, amount are required' });
+  }
+
+  const sql = `INSERT INTO budgets (user_id, month, amount) VALUES (?, ?, ?)
+    ON CONFLICT(user_id, month) DO UPDATE SET amount = excluded.amount`;
+  db.run(sql, [userId, month, amount], function (err) {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to set budget' });
+    }
+    res.status(201).json({ userId, month, amount });
+  });
+});
+
+app.get('/api/budgets/:month', (req, res) => {
+  const { month } = req.params;
+  const sql = `SELECT * FROM budgets WHERE month = ? ORDER BY id DESC`;
+  db.all(sql, [month], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to retrieve budgets' });
+    }
+    res.json({ budgets: rows });
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Moamoa backend running on http://localhost:${PORT}`);
 });
