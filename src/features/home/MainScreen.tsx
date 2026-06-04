@@ -1,7 +1,7 @@
-import { useBudget } from '@/contexts/BudgetContext';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useBudget } from '../../../contexts/BudgetContext';
 
 import BalanceCard from '@/src/components/home/BalanceCard';
 import BudgetStatusCard from '@/src/components/home/BudgetStatusCard';
