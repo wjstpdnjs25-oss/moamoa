@@ -3,7 +3,6 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
-  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -497,7 +496,8 @@ function CompleteSignup({ info, onLogin }: { info: SignupInfo; onLogin: () => vo
     <View style={styles.completeScreen}>
       <Brand compact />
       <Text style={styles.completeTitle}>
-        회원가입이{"\n"}        완료되었습니다!
+        회원가입이{'
+'}        완료되었습니다!
       </Text>
 
       <View style={styles.completeIllustration}>
@@ -526,7 +526,8 @@ function CompleteSignup({ info, onLogin }: { info: SignupInfo; onLogin: () => vo
       </View>
 
       <Text style={styles.welcomeText}>
-        [{info.name || '회원'}]님, W Bank의 새로운{"\n"}        회원이 되신 것을 환영합니다.
+        [{info.name || '회원'}]님, W Bank의 새로운{'
+'}        회원이 되신 것을 환영합니다.
       </Text>
 
       <Pressable style={styles.homeButton} onPress={onLogin}>
