@@ -8,6 +8,7 @@ export default function WishSaveCard({
   title,
   targetAmount = 0,
   savedAmount = 0,
+  onDelete,
 }) {
   const safeTarget = Number(targetAmount) || 0;
   const safeSaved = Number(savedAmount) || 0;
@@ -21,7 +22,9 @@ export default function WishSaveCard({
   return (
     <View style={styles.card}>
       <Text style={styles.title}>{title}</Text>
-      <TouchableOpacity style={styles.deleteButton} activeOpacity={0.7}>
+      <TouchableOpacity style={styles.deleteButton} activeOpacity={0.7}
+        onPress={onDelete}
+        >
         <Text style={styles.deleteButtonText}>삭제</Text>
       </TouchableOpacity>
 
