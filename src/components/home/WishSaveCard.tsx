@@ -9,6 +9,7 @@ export default function WishSaveCard({
   targetAmount = 0,
   savedAmount = 0,
   onDelete,
+  onSave,
 }) {
   const safeTarget = Number(targetAmount) || 0;
   const safeSaved = Number(savedAmount) || 0;
@@ -56,7 +57,16 @@ export default function WishSaveCard({
       value={inputAmount}
       onChangeText={setInputAmount}
       />
-      <TouchableOpacity style={styles.saveSubmitButton} activeOpacity={0.8}>
+      <TouchableOpacity 
+      style={styles.saveSubmitButton} 
+      activeOpacity={0.8}
+       onPress={() => {
+        if (inputAmount) {
+          onSave(Number(inputAmount));
+          setInputAmount(''); 
+          }
+        }}
+      > 
         <Text style={styles.saveSubmitButtonText}>저축하기</Text>
       </TouchableOpacity>
     </View>
