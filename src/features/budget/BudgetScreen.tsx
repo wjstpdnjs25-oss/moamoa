@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
   DEFAULT_CATEGORIES,
@@ -40,6 +41,7 @@ export default function BudgetScreen() {
   };
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
@@ -162,6 +164,7 @@ export default function BudgetScreen() {
         </TouchableOpacity>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -292,4 +295,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "800",
   },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  }
 });
