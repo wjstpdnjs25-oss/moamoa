@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -18,6 +19,7 @@ function formatWon(value: number) {
 }
 
 export default function BudgetAlertScreen() {
+  const router = useRouter();
   const budget = 500000;
   const spent = 562300;
   const exceededAmount = Math.max(0, spent - budget);
@@ -53,11 +55,19 @@ export default function BudgetAlertScreen() {
         </Text>
 
         <View style={styles.buttonGroup}>
-          <TouchableOpacity activeOpacity={0.86} style={styles.primaryButton}>
+          <TouchableOpacity
+            activeOpacity={0.86}
+            style={styles.primaryButton}
+            onPress={() => router.push("/expense-input")}
+          >
             <Text style={styles.primaryButtonText}>{TEXT.checkSpending}</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={0.86} style={styles.secondaryButton}>
+          <TouchableOpacity
+            activeOpacity={0.86}
+            style={styles.secondaryButton}
+            onPress={() => router.push("/budget")}
+          >
             <Text style={styles.secondaryButtonText}>{TEXT.changeBudget}</Text>
           </TouchableOpacity>
         </View>
