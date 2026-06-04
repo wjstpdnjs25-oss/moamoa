@@ -51,9 +51,9 @@ export default function LoginScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.heroCopy}>
-          <Text style={styles.title}>언제 어디서나 간편한 은행</Text>
+          <Text style={styles.title}>Simple banking anytime</Text>
           <Text style={styles.description}>
-            지금 로그인하고,{"\n"}나만의 금융 생활을 이어가세요.
+            Log in now,{"\u000A"}and continue your financial life.
           </Text>
           <View style={styles.securityNotice}>
             <Ionicons name="shield-checkmark-outline" size={18} color={DEEP_PURPLE} />

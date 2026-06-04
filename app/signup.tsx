@@ -1066,6 +1066,13 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     marginTop: 5,
   },
+  requestErrorText: {
+    color: '#d82020',
+    fontSize: 15,
+    fontWeight: '700',
+    marginTop: 18,
+    textAlign: 'center',
+  },
   footer: {
     color: TEXT_BLACK,
     fontSize: 14,

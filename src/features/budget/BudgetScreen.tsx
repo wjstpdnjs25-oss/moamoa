@@ -99,9 +99,9 @@ export default function BudgetScreen() {
         </View>
 
         <View style={styles.copy}>
-          <Text style={styles.title}>모아모아와 함께하는 간편한 은행</Text>
+          <Text style={styles.title}>Moamoa — Simple banking</Text>
           <Text style={styles.description}>
-            흩어진 금융 생활을 모아,{"\n"}나만의 계좌 관리를 시작해보세요.
+            Gather your finances,{"\u000A"}and start managing your accounts.
           </Text>
         </View>
 
