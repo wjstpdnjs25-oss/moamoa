@@ -37,6 +37,28 @@ const initialSignupInfo: SignupInfo = {
 };
 
 const PASSWORD_REQUIREMENT_MESSAGE = '영문자+숫자포함 6글자 이상을 작성해주세요';
+const TERMS_ITEMS = [
+  {
+    title: '제1조 목적',
+    body: '본 약관은 모아모아 은행 회원가입 및 서비스 이용에 필요한 권리, 의무, 책임사항과 개인정보 처리 기준을 정합니다.',
+  },
+  {
+    title: '제2조 수집 항목',
+    body: '회원 식별과 서비스 제공을 위해 이름, 주민등록번호, 아이디, 비밀번호, 이메일 정보를 수집합니다.',
+  },
+  {
+    title: '제3조 이용 목적',
+    body: '수집한 정보는 본인 확인, 계정 생성, 로그인 인증, 고객 안내, 부정 이용 방지 및 서비스 품질 개선에 사용합니다.',
+  },
+  {
+    title: '제4조 보관 및 파기',
+    body: '개인정보는 회원 탈퇴 또는 목적 달성 시 지체 없이 파기하며, 관계 법령에 따라 보관이 필요한 경우 해당 기간 동안 안전하게 보관합니다.',
+  },
+  {
+    title: '제5조 동의 철회',
+    body: '회원은 언제든지 개인정보 수집 및 이용 동의를 철회할 수 있으며, 철회 시 일부 서비스 이용이 제한될 수 있습니다.',
+  },
+];
 
 function isValidPassword(value: string) {
   return /^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(value);
@@ -107,6 +129,7 @@ function SignupForm({
 }) {
   const [showRequiredErrors, setShowRequiredErrors] = useState(false);
   const [isTermsAgreed, setIsTermsAgreed] = useState(false);
+  const [isTermsExpanded, setIsTermsExpanded] = useState(false);
   const [isIdFocused, setIsIdFocused] = useState(false);
   const emailParts = splitEmail(info.email);
 
@@ -266,10 +289,38 @@ function SignupForm({
           </View>
           <Text style={styles.termsAgreementText}>이용약관/개인정보 동의</Text>
         </Pressable>
-        <Text style={styles.termsDescription}>
-          회원가입 및 서비스 이용을 위해 이름, 주민등록번호, 아이디, 비밀번호, 이메일 정보를
-          수집하고 약관에 따라 관리합니다.
-        </Text>
+        <View style={styles.termsSummaryRow}>
+          <Text style={styles.termsDescription}>
+            회원가입 및 서비스 이용을 위해 이름, 주민등록번호, 아이디, 비밀번호, 이메일 정보를
+            수집하고 약관에 따라 관리합니다.
+          </Text>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ expanded: isTermsExpanded }}
+            hitSlop={10}
+            style={styles.termsToggleButton}
+            onPress={() => setIsTermsExpanded((expanded) => !expanded)}>
+            <Text style={styles.termsToggleText}>
+              {isTermsExpanded ? '접기' : '전문 보기'}
+            </Text>
+            <Ionicons
+              name={isTermsExpanded ? 'chevron-up' : 'chevron-down'}
+              size={17}
+              color={DEEP_PURPLE}
+            />
+          </Pressable>
+        </View>
+        {isTermsExpanded ? (
+          <View style={styles.termsDetailBox}>
+            <Text style={styles.termsDetailTitle}>이용약관 및 개인정보 수집 이용 동의서</Text>
+            {TERMS_ITEMS.map((item) => (
+              <View key={item.title} style={styles.termsDetailItem}>
+                <Text style={styles.termsDetailItemTitle}>{item.title}</Text>
+                <Text style={styles.termsDetailBody}>{item.body}</Text>
+              </View>
+            ))}
+          </View>
+        ) : null}
         {showRequiredErrors && !isTermsAgreed ? (
           <Text style={styles.termsErrorText}>이용약관에 동의해주세요</Text>
         ) : null}
@@ -727,13 +778,63 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
   },
+  termsSummaryRow: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 8,
+    paddingLeft: 34,
+  },
   termsDescription: {
     color: '#5f5f68',
+    flex: 1,
     fontSize: 13,
     fontWeight: '500',
     lineHeight: 19,
-    marginTop: 8,
-    paddingLeft: 34,
+  },
+  termsToggleButton: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    minHeight: 28,
+    paddingLeft: 4,
+  },
+  termsToggleText: {
+    color: DEEP_PURPLE,
+    fontSize: 13,
+    fontWeight: '900',
+    marginRight: 2,
+  },
+  termsDetailBox: {
+    backgroundColor: '#ffffff',
+    borderColor: '#ded6ee',
+    borderRadius: 8,
+    borderWidth: 1,
+    marginTop: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 15,
+  },
+  termsDetailTitle: {
+    color: TEXT_BLACK,
+    fontSize: 15,
+    fontWeight: '900',
+    lineHeight: 21,
+    marginBottom: 10,
+  },
+  termsDetailItem: {
+    marginTop: 9,
+  },
+  termsDetailItemTitle: {
+    color: DEEP_PURPLE,
+    fontSize: 13,
+    fontWeight: '900',
+    lineHeight: 18,
+  },
+  termsDetailBody: {
+    color: '#5f5f68',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 18,
+    marginTop: 3,
   },
   termsErrorText: {
     color: '#d82020',
