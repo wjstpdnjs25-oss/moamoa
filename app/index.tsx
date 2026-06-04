@@ -26,7 +26,21 @@ export default function HomeScreen() {
   const [monthlySpent, setMonthlySpent] = useState(0);
 
   const handleAddExpense = (amount: number) => {
-    setMonthlySpent((prev) => prev + amount);
+    setMonthlySpent((prev) => {
+      const nextSpent = prev + amount;
+
+      if (prev <= MONTHLY_BUDGET && nextSpent > MONTHLY_BUDGET) {
+        router.push({
+          pathname: "/budget-alert",
+          params: {
+            budget: String(MONTHLY_BUDGET),
+            spent: String(nextSpent),
+          },
+        });
+      }
+
+      return nextSpent;
+    });
     setBalance((prev) => prev - amount);
   };
 
