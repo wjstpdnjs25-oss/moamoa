@@ -1,3 +1,4 @@
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -11,12 +12,29 @@ const TEXT = {
   settings: '설정',
 };
 
+const MONTHLY_BUDGET = 500000;
+
 export default function MainScreen() {
+  const router = useRouter();
   const [balance, setBalance] = useState(0);
   const [monthlySpent, setMonthlySpent] = useState(0);
 
   const handleAddExpense = (amount: number) => {
-    setMonthlySpent((prev) => prev + amount);
+    setMonthlySpent((prev) => {
+      const nextSpent = prev + amount;
+
+      if (prev <= MONTHLY_BUDGET && nextSpent > MONTHLY_BUDGET) {
+        router.push({
+          pathname: '/budget-alert',
+          params: {
+            budget: String(MONTHLY_BUDGET),
+            spent: String(nextSpent),
+          },
+        });
+      }
+
+      return nextSpent;
+    });
     setBalance((prev) => prev - amount);
   };
 
