@@ -78,6 +78,8 @@ export default function MainScreen() {
 
       {/* INPUT */}
       <View style={styles.inputCard}>
+        <Text style={styles.cardTitle}>저축 목표</Text>
+
         <TextInput
           placeholder="사고 싶은 것 (예: 에어팟)"
           value={title}
@@ -154,6 +156,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#3D5AFE',
   },
+
+  inputCard: {
+  backgroundColor: '#F8F9FF', 
+  borderRadius: 20,
+  padding: 16,
+  marginTop: 16,
+  marginBottom: 16,
+},
 
   input: {
     backgroundColor: '#fff',
