@@ -27,6 +27,7 @@ export default function WishSaveCard({
 
       
       <View style={styles.progressBarBackground}>
+        <View style={[styles.progressBarFill, { width: `${Math.min(Math.round(progress), 100)}%` }]} />
       </View>
 
 
@@ -105,5 +106,10 @@ progressBarBackground: {
   overflow: 'hidden',
   marginTop: 10,
   marginBottom: 4,
+},
+progressBarFill: {
+  height: '100%',
+  backgroundColor: DEEP_PURPLE,
+  borderRadius: 6,
 },
 });
