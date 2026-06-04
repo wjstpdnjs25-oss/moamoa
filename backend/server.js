@@ -76,6 +76,17 @@ app.get('/api/expenses', (req, res) => {
   });
 });
 
+app.get('/api/expenses/month/:month', (req, res) => {
+  const { month } = req.params;
+  const sql = `SELECT * FROM expenses WHERE date LIKE ? ORDER BY date DESC, id DESC`;
+  db.all(sql, [`${month}-%`], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to retrieve monthly expenses' });
+    }
+    res.json({ expenses: rows });
+  });
+});
+
 app.listen(PORT, () => {
   console.log(`Moamoa backend running on http://localhost:${PORT}`);
 });
