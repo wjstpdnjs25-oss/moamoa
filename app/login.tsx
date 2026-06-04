@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const DEEP_PURPLE = '#261052';
@@ -16,7 +16,7 @@ export default function Login() {
   }>();
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
-  const [showError, setShowError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const signupId = getParamValue(params.signupId);
@@ -25,13 +25,18 @@ export default function Login() {
   const validPassword = signupPassword || DEFAULT_PASSWORD;
 
   const handleLogin = () => {
+    if (id.trim().length === 0 || password.trim().length === 0) {
+      setErrorMessage('아이디와 비밀번호를 입력해주세요');
+      return;
+    }
+
     if (id === validId && password === validPassword) {
-      setShowError(false);
+      setErrorMessage('');
       router.push('/main');
       return;
     }
 
-    setShowError(true);
+    setErrorMessage('아이디와 비밀번호가 일치하지 않습니다');
   };
 
   return (
@@ -40,15 +45,24 @@ export default function Login() {
         <View style={styles.heroCopy}>
           <Text style={styles.title}>언제 어디서나 간편한 은행</Text>
           <Text style={styles.description}>
-            지금 로그인하거나 회원가입하고,{'\n'}
-            나만의 금융 생활을 만들어보세요.
+            지금 로그인하고,{'\n'}
+            나만의 금융 생활을 이어가세요.
           </Text>
+          <View style={styles.securityNotice}>
+            <Ionicons name="shield-checkmark-outline" size={18} color={DEEP_PURPLE} />
+            <Text style={styles.securityNoticeText}>모아모아 보안 로그인</Text>
+          </View>
         </View>
 
         <View style={styles.formArea}>
           <View style={styles.brand}>
-            <View style={styles.brandMark}>
-              <Text style={styles.brandMarkText}>모</Text>
+            <View style={styles.brandLogoFrame}>
+              <Image
+                accessibilityLabel="모아모아 은행 로고"
+                resizeMode="cover"
+                source={require('../assets/images/moamoa-splash.png')}
+                style={styles.brandLogo}
+              />
             </View>
             <Text style={styles.brandText}>Bank</Text>
           </View>
@@ -58,7 +72,7 @@ export default function Login() {
               autoCapitalize="none"
               onChangeText={(value) => {
                 setId(value);
-                setShowError(false);
+                setErrorMessage('');
               }}
               placeholder="아이디 (ID)"
               placeholderTextColor="#5d5d5d"
@@ -70,7 +84,7 @@ export default function Login() {
               <TextInput
                 onChangeText={(value) => {
                   setPassword(value);
-                  setShowError(false);
+                  setErrorMessage('');
                 }}
                 placeholder="비밀번호 (Password)"
                 placeholderTextColor="#5d5d5d"
@@ -92,8 +106,8 @@ export default function Login() {
             </View>
           </View>
 
-          {showError ? (
-            <Text style={styles.errorText}>아이디와 비밀번호가 일치하지 않습니다</Text>
+          {errorMessage ? (
+            <Text style={styles.errorText}>{errorMessage}</Text>
           ) : null}
 
           <View style={styles.actions}>
@@ -121,10 +135,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingBottom: 42,
     paddingHorizontal: 28,
-    paddingTop: 158,
+    paddingTop: 92,
   },
   heroCopy: {
     alignItems: 'center',
+    backgroundColor: '#f1edf9',
+    borderColor: '#ded6ee',
+    borderRadius: 16,
+    borderWidth: 1,
+    elevation: 2,
+    paddingHorizontal: 22,
+    paddingVertical: 24,
+    shadowColor: '#261052',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
   },
   title: {
     color: TEXT_BLACK,
@@ -139,8 +164,23 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: '700',
     lineHeight: 35,
-    marginTop: 22,
+    marginTop: 20,
     textAlign: 'center',
+  },
+  securityNotice: {
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 999,
+    flexDirection: 'row',
+    marginTop: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  securityNoticeText: {
+    color: DEEP_PURPLE,
+    fontSize: 14,
+    fontWeight: '800',
+    marginLeft: 5,
   },
   formArea: {
     paddingBottom: 4,
@@ -151,21 +191,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 38,
   },
-  brandMark: {
-    alignItems: 'center',
-    backgroundColor: '#e9e2fb',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 31,
+  brandLogoFrame: {
+    borderColor: '#d9cdef',
+    borderRadius: 34,
     borderWidth: 2,
-    height: 62,
-    justifyContent: 'center',
+    height: 68,
     marginRight: 12,
-    width: 62,
+    overflow: 'hidden',
+    width: 68,
   },
-  brandMarkText: {
-    color: DEEP_PURPLE,
-    fontSize: 30,
-    fontWeight: '900',
+  brandLogo: {
+    height: '100%',
+    width: '100%',
   },
   brandText: {
     color: DEEP_PURPLE,

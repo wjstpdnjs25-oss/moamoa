@@ -3,6 +3,7 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -36,9 +37,35 @@ const initialSignupInfo: SignupInfo = {
 };
 
 const PASSWORD_REQUIREMENT_MESSAGE = '영문자+숫자포함 6글자 이상을 작성해주세요';
+const TERMS_ITEMS = [
+  {
+    title: '제1조 목적',
+    body: '본 약관은 모아모아 은행 회원가입 및 서비스 이용에 필요한 권리, 의무, 책임사항과 개인정보 처리 기준을 정합니다.',
+  },
+  {
+    title: '제2조 수집 항목',
+    body: '회원 식별과 서비스 제공을 위해 이름, 주민등록번호, 아이디, 비밀번호, 이메일 정보를 수집합니다.',
+  },
+  {
+    title: '제3조 이용 목적',
+    body: '수집한 정보는 본인 확인, 계정 생성, 로그인 인증, 고객 안내, 부정 이용 방지 및 서비스 품질 개선에 사용합니다.',
+  },
+  {
+    title: '제4조 보관 및 파기',
+    body: '개인정보는 회원 탈퇴 또는 목적 달성 시 지체 없이 파기하며, 관계 법령에 따라 보관이 필요한 경우 해당 기간 동안 안전하게 보관합니다.',
+  },
+  {
+    title: '제5조 동의 철회',
+    body: '회원은 언제든지 개인정보 수집 및 이용 동의를 철회할 수 있으며, 철회 시 일부 서비스 이용이 제한될 수 있습니다.',
+  },
+];
 
 function isValidPassword(value: string) {
   return /^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(value);
+}
+
+function isValidResidentNumber(value: string) {
+  return value.replace(/\D/g, '').length === 13;
 }
 
 function hasEnglishLetter(value: string) {
@@ -82,8 +109,13 @@ export default function Home() {
 function Brand({ compact = false }: { compact?: boolean }) {
   return (
     <View style={[styles.brand, compact && styles.brandCompact]}>
-      <View style={[styles.brandMark, compact && styles.brandMarkCompact]}>
-        <Text style={[styles.brandMarkText, compact && styles.brandMarkTextCompact]}>모</Text>
+      <View style={[styles.brandLogoFrame, compact && styles.brandLogoFrameCompact]}>
+        <Image
+          accessibilityLabel="모아모아 은행 로고"
+          resizeMode="cover"
+          source={require('../assets/images/moamoa-splash.png')}
+          style={styles.brandLogo}
+        />
       </View>
       <Text style={[styles.brandText, compact && styles.brandTextCompact]}>Bank</Text>
     </View>
@@ -101,13 +133,25 @@ function SignupForm({
 }) {
   const [showRequiredErrors, setShowRequiredErrors] = useState(false);
   const [isTermsAgreed, setIsTermsAgreed] = useState(false);
+  const [isTermsExpanded, setIsTermsExpanded] = useState(false);
   const [isIdFocused, setIsIdFocused] = useState(false);
+  const emailParts = splitEmail(info.email);
 
   const updateField = (field: keyof SignupInfo, value: string) => {
     onChange({ ...info, [field]: value });
   };
+  const updateEmailPart = (part: 'local' | 'domain', value: string) => {
+    const nextEmail = part === 'local' ? `${value}@${emailParts.domain}` : `${emailParts.local}@${value}`;
+    updateField('email', nextEmail);
+  };
   const isFieldEmpty = (field: keyof SignupInfo) => info[field].trim().length === 0;
-  const hasEmptyField = Object.values(info).some((value) => value.trim().length === 0);
+  const isEmailIncomplete =
+    emailParts.local.trim().length === 0 || emailParts.domain.trim().length === 0;
+  const hasEmptyField =
+    Object.entries(info).some(([field, value]) => field !== 'email' && value.trim().length === 0) ||
+    isEmailIncomplete;
+  const showResidentNumberFormatError =
+    showRequiredErrors && !isFieldEmpty('residentNumber') && !isValidResidentNumber(info.residentNumber);
   const showPasswordRequirement =
     info.password.length > 0 && !isValidPassword(info.password);
   const showPasswordMismatch =
@@ -118,6 +162,7 @@ function SignupForm({
 
     if (
       hasEmptyField ||
+      !isValidResidentNumber(info.residentNumber) ||
       !isValidPassword(info.password) ||
       showPasswordMismatch ||
       !isTermsAgreed
@@ -169,6 +214,9 @@ function SignupForm({
           {showRequiredErrors && isFieldEmpty('residentNumber') ? (
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
           ) : null}
+          {showResidentNumberFormatError ? (
+            <Text style={styles.requiredText}>주민등록번호 13자리를 입력해주세요</Text>
+          ) : null}
 
           <TextInput
             autoCapitalize="none"
@@ -210,16 +258,32 @@ function SignupForm({
             <Text style={styles.passwordMismatchText}>비밀번호가 일치하지 않습니다</Text>
           ) : null}
 
-          <TextInput
-            autoCapitalize="none"
-            keyboardType="email-address"
-            placeholder="이메일 [email@address.com]"
-            placeholderTextColor="#777777"
-            style={styles.input}
-            value={info.email}
-            onChangeText={(value) => updateField('email', value)}
-          />
-          {showRequiredErrors && isFieldEmpty('email') ? (
+          <View style={styles.emailRow}>
+            <View style={styles.emailUnderlineWrap}>
+              <TextInput
+                autoCapitalize="none"
+                keyboardType="email-address"
+                placeholder="email"
+                placeholderTextColor="#777777"
+                style={styles.emailUnderlineInput}
+                value={emailParts.local}
+                onChangeText={(value) => updateEmailPart('local', value)}
+              />
+            </View>
+            <Text style={styles.emailAtText}>@</Text>
+            <View style={[styles.emailUnderlineWrap, styles.emailDomainWrap]}>
+              <TextInput
+                autoCapitalize="none"
+                keyboardType="email-address"
+                placeholder="address.com"
+                placeholderTextColor="#777777"
+                style={styles.emailUnderlineInput}
+                value={emailParts.domain}
+                onChangeText={(value) => updateEmailPart('domain', value)}
+              />
+            </View>
+          </View>
+          {showRequiredErrors && isEmailIncomplete ? (
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
           ) : null}
         </View>
@@ -235,10 +299,38 @@ function SignupForm({
           </View>
           <Text style={styles.termsAgreementText}>이용약관/개인정보 동의</Text>
         </Pressable>
-        <Text style={styles.termsDescription}>
-          회원가입 및 서비스 이용을 위해 이름, 주민등록번호, 아이디, 비밀번호, 이메일 정보를
-          수집하고 약관에 따라 관리합니다.
-        </Text>
+        <View style={styles.termsSummaryRow}>
+          <Text style={styles.termsDescription}>
+            회원가입 및 서비스 이용을 위해 이름, 주민등록번호, 아이디, 비밀번호, 이메일 정보를
+            수집하고 약관에 따라 관리합니다.
+          </Text>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityState={{ expanded: isTermsExpanded }}
+            hitSlop={10}
+            style={styles.termsToggleButton}
+            onPress={() => setIsTermsExpanded((expanded) => !expanded)}>
+            <Text style={styles.termsToggleText}>
+              {isTermsExpanded ? '접기' : '전문 보기'}
+            </Text>
+            <Ionicons
+              name={isTermsExpanded ? 'chevron-up' : 'chevron-down'}
+              size={17}
+              color={DEEP_PURPLE}
+            />
+          </Pressable>
+        </View>
+        {isTermsExpanded ? (
+          <View style={styles.termsDetailBox}>
+            <Text style={styles.termsDetailTitle}>이용약관 및 개인정보 수집 이용 동의서</Text>
+            {TERMS_ITEMS.map((item) => (
+              <View key={item.title} style={styles.termsDetailItem}>
+                <Text style={styles.termsDetailItemTitle}>{item.title}</Text>
+                <Text style={styles.termsDetailBody}>{item.body}</Text>
+              </View>
+            ))}
+          </View>
+        ) : null}
         {showRequiredErrors && !isTermsAgreed ? (
           <Text style={styles.termsErrorText}>이용약관에 동의해주세요</Text>
         ) : null}
@@ -463,6 +555,15 @@ function formatResidentNumber(value: string) {
   return digits;
 }
 
+function splitEmail(value: string) {
+  const [local = '', ...domainParts] = value.split('@');
+
+  return {
+    local,
+    domain: domainParts.join('@'),
+  };
+}
+
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
@@ -483,30 +584,24 @@ const styles = StyleSheet.create({
   brandCompact: {
     marginBottom: 24,
   },
-  brandMark: {
-    alignItems: 'center',
-    backgroundColor: '#e9e2fb',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 31,
+  brandLogoFrame: {
+    borderColor: '#d9cdef',
+    borderRadius: 34,
     borderWidth: 2,
-    height: 62,
-    justifyContent: 'center',
+    height: 68,
     marginRight: 12,
-    width: 62,
+    overflow: 'hidden',
+    width: 68,
   },
-  brandMarkCompact: {
-    borderRadius: 21,
-    height: 42,
+  brandLogoFrameCompact: {
+    borderRadius: 23,
+    height: 46,
     marginRight: 8,
-    width: 42,
+    width: 46,
   },
-  brandMarkText: {
-    color: DEEP_PURPLE,
-    fontSize: 30,
-    fontWeight: '900',
-  },
-  brandMarkTextCompact: {
-    fontSize: 20,
+  brandLogo: {
+    height: '100%',
+    width: '100%',
   },
   brandText: {
     color: DEEP_PURPLE,
@@ -527,10 +622,15 @@ const styles = StyleSheet.create({
     borderColor: '#ded6ee',
     borderRadius: 16,
     borderWidth: 1,
+    elevation: 2,
     marginBottom: 34,
     marginTop: 28,
     paddingHorizontal: 22,
     paddingVertical: 24,
+    shadowColor: '#261052',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
   },
   confirmHeader: {
     alignItems: 'center',
@@ -538,9 +638,14 @@ const styles = StyleSheet.create({
     borderColor: '#ded6ee',
     borderRadius: 16,
     borderWidth: 1,
+    elevation: 2,
     marginBottom: 34,
     paddingHorizontal: 22,
     paddingVertical: 24,
+    shadowColor: '#261052',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 10,
   },
   stepBadge: {
     backgroundColor: DEEP_PURPLE,
@@ -582,6 +687,38 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     height: 70,
     paddingHorizontal: 28,
+  },
+  emailRow: {
+    alignItems: 'center',
+    borderColor: DEEP_PURPLE,
+    borderRadius: 12,
+    borderWidth: 2,
+    flexDirection: 'row',
+    height: 70,
+    paddingHorizontal: 22,
+  },
+  emailUnderlineWrap: {
+    borderBottomColor: '#777777',
+    borderBottomWidth: 2,
+    flex: 1,
+    minWidth: 0,
+  },
+  emailDomainWrap: {
+    flex: 1.25,
+  },
+  emailUnderlineInput: {
+    color: TEXT_BLACK,
+    fontSize: 22,
+    fontWeight: '500',
+    height: 48,
+    paddingHorizontal: 4,
+    paddingVertical: 0,
+  },
+  emailAtText: {
+    color: DEEP_PURPLE,
+    fontSize: 24,
+    fontWeight: '900',
+    marginHorizontal: 10,
   },
   passwordField: {
     alignItems: 'center',
@@ -651,13 +788,63 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
   },
+  termsSummaryRow: {
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 8,
+    paddingLeft: 34,
+  },
   termsDescription: {
     color: '#5f5f68',
+    flex: 1,
     fontSize: 13,
     fontWeight: '500',
     lineHeight: 19,
-    marginTop: 8,
-    paddingLeft: 34,
+  },
+  termsToggleButton: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    minHeight: 28,
+    paddingLeft: 4,
+  },
+  termsToggleText: {
+    color: DEEP_PURPLE,
+    fontSize: 13,
+    fontWeight: '900',
+    marginRight: 2,
+  },
+  termsDetailBox: {
+    backgroundColor: '#ffffff',
+    borderColor: '#ded6ee',
+    borderRadius: 8,
+    borderWidth: 1,
+    marginTop: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 15,
+  },
+  termsDetailTitle: {
+    color: TEXT_BLACK,
+    fontSize: 15,
+    fontWeight: '900',
+    lineHeight: 21,
+    marginBottom: 10,
+  },
+  termsDetailItem: {
+    marginTop: 9,
+  },
+  termsDetailItemTitle: {
+    color: DEEP_PURPLE,
+    fontSize: 13,
+    fontWeight: '900',
+    lineHeight: 18,
+  },
+  termsDetailBody: {
+    color: '#5f5f68',
+    fontSize: 12,
+    fontWeight: '500',
+    lineHeight: 18,
+    marginTop: 3,
   },
   termsErrorText: {
     color: '#d82020',
@@ -715,12 +902,18 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   infoCard: {
+    backgroundColor: '#ffffff',
     borderColor: '#d0ccd8',
     borderRadius: 12,
     borderWidth: 1,
+    elevation: 1,
     gap: 30,
     paddingHorizontal: 22,
     paddingVertical: 32,
+    shadowColor: '#261052',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
   },
   infoRow: {
     alignItems: 'flex-start',
