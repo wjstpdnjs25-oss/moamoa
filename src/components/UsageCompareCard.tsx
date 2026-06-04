@@ -1,3 +1,4 @@
+
 import { ThemedText } from '@/components/themed-text';
 import { useState } from 'react';
 import {
@@ -164,3 +165,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 });
+
+
+export default function UsageCompareCard() {
+  return <View />;
+}
+

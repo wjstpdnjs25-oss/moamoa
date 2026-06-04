@@ -1,10 +1,8 @@
-<<<<<<< HEAD
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 
 const DEEP_PURPLE = '#4f287f';
 const SOFT_PURPLE = '#f5efff';
@@ -13,12 +11,10 @@ const SPLASH_BACKGROUND = '#f6f1ff';
 const BRAND_BORDER = '#dfd0f4';
 const SUB_TEXT_PURPLE = '#7b6a90';
 
-
-export default function Home() {
+export default function BudgetScreen() {
   const [showSplash, setShowSplash] = useState(true);
 
   useEffect(() => {
-    
     const timer = setTimeout(() => {
       setShowSplash(false);
     }, 2000);
@@ -26,20 +22,16 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
-  const balance = 250000;
-    const monthlySpent = 85000;
-
-    const handleAddExpense = () => {};
-    
-
   if (showSplash) {
     return (
       <SafeAreaView style={styles.splashScreen}>
-        <Image
-          source={require('@/assets/images/moamoa-splash.png')}
-          style={styles.splashLogo}
-          resizeMode="contain"
-        />
+        <View style={styles.splashLogoFrame}>
+          <Image
+            source={require('@/assets/images/moamoa-splash.png')}
+            style={styles.splashLogo}
+            resizeMode="cover"
+          />
+        </View>
       </SafeAreaView>
     );
   }
@@ -109,13 +101,12 @@ export default function Home() {
         <View style={styles.copy}>
           <Text style={styles.title}>모아모아와 함께하는 간편한 은행</Text>
           <Text style={styles.description}>
-            흩어진 금융 생활을 모아,{'\n'}
-            나만의 계좌 관리를 시작해보세요.
+            흩어진 금융 생활을 모아,{'
+'}            나만의 계좌 관리를 시작해보세요.
           </Text>
         </View>
 
         <View style={styles.actions}>
-          <Text>테스트</Text>
           <Pressable style={styles.primaryButton} onPress={() => router.push('/login')}>
             <Text style={styles.primaryButtonText}>로그인하기</Text>
           </Pressable>
@@ -125,18 +116,7 @@ export default function Home() {
           </Pressable>
         </View>
       </View>
-
-     
-
-     {/* <BalanceCard balance={balance} monthlySpent={monthlySpent} /> */}
-{/* <QuickExpenseInput onSaveExpense={handleAddExpense} /> */}
-{/* <BudgetStatusCard /> */}
-{/* <QuickMenuGrid /> */}
- 
-
-   
     </SafeAreaView>
-
   );
 }
 
@@ -147,9 +127,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-  splashLogo: {
+  splashLogoFrame: {
+    borderRadius: 160,
     height: 320,
+    overflow: 'hidden',
     width: 320,
+  },
+  splashLogo: {
+    height: '100%',
+    width: '100%',
   },
   safeArea: {
     flex: 1,
@@ -161,18 +147,11 @@ const styles = StyleSheet.create({
     paddingTop: 12,
     paddingBottom: 34,
   },
-
-  content: {
-    padding: 22,
-    paddingBottom: 40,
-  },
-
   brandHeader: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: 12,
     marginTop: 10,
-
   },
   brandMark: {
     alignItems: 'center',
@@ -280,165 +259,153 @@ const styles = StyleSheet.create({
     borderColor: DEEP_PURPLE,
     borderRadius: 10,
     borderWidth: 2,
-    height: 90,
+    height: 118,
     justifyContent: 'center',
     position: 'absolute',
-    right: 26,
-    top: 214,
-    width: 92,
+    bottom: 18,
+    left: 56,
+    width: 118,
   },
   phone: {
-    backgroundColor: '#f9f8fd',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 22,
-    borderWidth: 3,
-    height: 260,
-    paddingHorizontal: 18,
-    paddingTop: 14,
-    width: 145,
+    alignItems: 'center',
+    borderRadius: 34,
+    borderWidth: 2,
+    borderColor: '#e9dff8',
+    height: 180,
+    justifyContent: 'center',
+    marginTop: 16,
+    overflow: 'hidden',
+    width: 140,
   },
   phoneTop: {
-    alignSelf: 'center',
-    backgroundColor: DEEP_PURPLE,
-    borderRadius: 6,
-    height: 3,
-    marginBottom: 16,
-    width: 42,
+    backgroundColor: '#f1edf9',
+    height: 12,
+    marginTop: -18,
+    width: '100%',
   },
   phoneScreen: {
-    flex: 1,
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderRadius: 26,
+    height: 154,
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+    width: 122,
   },
   menuLine: {
-    backgroundColor: DEEP_PURPLE,
-    borderRadius: 3,
-    height: 3,
-    marginBottom: 12,
-    width: 17,
+    backgroundColor: '#e4d9f5',
+    borderRadius: 4,
+    height: 5,
+    marginBottom: 10,
+    width: 42,
   },
   accountBox: {
     alignItems: 'center',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 7,
-    borderWidth: 2,
-    height: 70,
-    justifyContent: 'center',
-    marginBottom: 17,
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 12,
   },
   wonCircle: {
     alignItems: 'center',
-    backgroundColor: SOFT_PURPLE,
-    borderColor: DEEP_PURPLE,
-    borderRadius: 18,
-    borderWidth: 2,
-    height: 38,
+    backgroundColor: '#f7f0ff',
+    borderRadius: 12,
+    height: 28,
     justifyContent: 'center',
-    width: 38,
+    width: 28,
   },
   wonText: {
     color: DEEP_PURPLE,
-    fontSize: 18,
-    fontWeight: '800',
+    fontSize: 15,
+    fontWeight: '900',
   },
   accountText: {
-    color: DEEP_PURPLE,
+    color: '#111111',
     fontSize: 12,
     fontWeight: '700',
-    marginTop: 4,
   },
   listRow: {
     alignItems: 'center',
     flexDirection: 'row',
     gap: 8,
-    marginBottom: 8,
+    marginBottom: 6,
+    width: '100%',
   },
   dot: {
-    backgroundColor: DEEP_PURPLE,
-    borderRadius: 3,
-    height: 5,
-    width: 5,
+    backgroundColor: '#d9cff5',
+    borderRadius: 999,
+    height: 8,
+    width: 8,
   },
   longLine: {
-    backgroundColor: DEEP_PURPLE,
-    borderRadius: 3,
-    height: 3,
-    width: 62,
+    backgroundColor: '#f0eafc',
+    borderRadius: 999,
+    flex: 1,
+    height: 8,
   },
   midLine: {
-    backgroundColor: DEEP_PURPLE,
-    borderRadius: 3,
-    height: 3,
-    width: 44,
+    backgroundColor: '#f0eafc',
+    borderRadius: 999,
+    flex: 0.7,
+    height: 8,
   },
   sendButton: {
     alignItems: 'center',
-    alignSelf: 'center',
     backgroundColor: DEEP_PURPLE,
-    borderRadius: 8,
+    borderRadius: 999,
     flexDirection: 'row',
-    gap: 5,
-    height: 40,
+    gap: 8,
+    height: 38,
     justifyContent: 'center',
-    marginTop: 7,
-    width: 98,
+    marginTop: 10,
+    paddingHorizontal: 10,
   },
   sendText: {
     color: '#ffffff',
-    fontSize: 14,
-    fontWeight: '800',
+    fontSize: 13,
+    fontWeight: '700',
   },
   copy: {
-    alignItems: 'center',
-    marginTop: 26,
+    marginTop: 22,
   },
   title: {
-    color: '#050505',
-    fontSize: 30,
-    fontWeight: '900',
-    letterSpacing: 0,
-    lineHeight: 39,
-    textAlign: 'center',
+    color: '#111111',
+    fontSize: 24,
+    fontWeight: '800',
   },
   description: {
-    color: '#111111',
-    fontSize: 20,
-    fontWeight: '600',
-    lineHeight: 31,
-    marginTop: 18,
-    textAlign: 'center',
+    color: '#7b6a90',
+    fontSize: 16,
+    marginTop: 14,
+    lineHeight: 24,
   },
   actions: {
-    gap: 16,
-    marginTop: 'auto',
+    gap: 14,
+    marginTop: 18,
   },
   primaryButton: {
     alignItems: 'center',
     backgroundColor: DEEP_PURPLE,
-    borderRadius: 12,
+    borderRadius: 16,
     height: 64,
     justifyContent: 'center',
   },
   primaryButtonText: {
     color: '#ffffff',
-    fontSize: 23,
-    fontWeight: '900',
+    fontSize: 16,
+    fontWeight: '700',
   },
   secondaryButton: {
     alignItems: 'center',
     backgroundColor: '#ffffff',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 12,
-    borderWidth: 2,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: BRAND_BORDER,
     height: 64,
     justifyContent: 'center',
   },
   secondaryButtonText: {
     color: DEEP_PURPLE,
-    fontSize: 23,
-    fontWeight: '900',
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
-
-=======
-import LandingScreen from "@/src/features/home/LandingScreen";
-export default LandingScreen;
->>>>>>> 65bf4c8f183845dc7d9f50baeffbccb6d34fbfcf
