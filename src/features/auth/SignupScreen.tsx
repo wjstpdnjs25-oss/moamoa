@@ -1,13 +1,8 @@
-<<<<<<< HEAD
-import SignupScreen from "@/src/features/auth/SignupScreen";
-export default SignupScreen;
-=======
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
-  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -20,27 +15,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const DEEP_PURPLE = '#261052';
 const TEXT_BLACK = '#050505';
 
-type Step = 'form' | 'confirm' | 'complete';
-
-type SignupInfo = {
-  name: string;
-  residentNumber: string;
-  id: string;
-  password: string;
-  confirmPassword: string;
-  email: string;
-};
-
-const initialSignupInfo: SignupInfo = {
-  name: '',
-  residentNumber: '',
-  id: '',
-  email: '',
-  password: '',
-  confirmPassword: '',
-};
-
-const PASSWORD_REQUIREMENT_MESSAGE = '영문자+숫자포함 6글자 이상을 작성해주세요';
 const TERMS_ITEMS = [
   {
     title: '제1조 목적',
@@ -64,6 +38,28 @@ const TERMS_ITEMS = [
   },
 ];
 
+type Step = 'form' | 'confirm' | 'complete';
+
+type SignupInfo = {
+  name: string;
+  residentNumber: string;
+  id: string;
+  password: string;
+  confirmPassword: string;
+  email: string;
+};
+
+const initialSignupInfo: SignupInfo = {
+  name: '',
+  residentNumber: '',
+  id: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
+};
+
+const PASSWORD_REQUIREMENT_MESSAGE = '영문자+숫자포함 6글자 이상을 작성해주세요';
+
 function isValidPassword(value: string) {
   return /^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(value);
 }
@@ -72,15 +68,11 @@ function isValidResidentNumber(value: string) {
   return value.replace(/\D/g, '').length === 13;
 }
 
-function isValidEmail(value: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
-}
-
 function hasEnglishLetter(value: string) {
   return /[A-Za-z]/.test(value);
 }
 
-export default function Home() {
+export default function SignupScreen() {
   const [step, setStep] = useState<Step>('form');
   const [signupInfo, setSignupInfo] = useState<SignupInfo>(initialSignupInfo);
 
@@ -121,7 +113,7 @@ function Brand({ compact = false }: { compact?: boolean }) {
         <Image
           accessibilityLabel="모아모아 은행 로고"
           resizeMode="cover"
-          source={require('../assets/images/moamoa-splash.png')}
+          source={require('@/assets/images/moamoa-splash.png')}
           style={styles.brandLogo}
         />
       </View>
@@ -148,10 +140,12 @@ function SignupForm({
   const updateField = (field: keyof SignupInfo, value: string) => {
     onChange({ ...info, [field]: value });
   };
+
   const updateEmailPart = (part: 'local' | 'domain', value: string) => {
     const nextEmail = part === 'local' ? `${value}@${emailParts.domain}` : `${emailParts.local}@${value}`;
     updateField('email', nextEmail);
   };
+
   const isFieldEmpty = (field: keyof SignupInfo) => info[field].trim().length === 0;
   const isEmailIncomplete =
     emailParts.local.trim().length === 0 || emailParts.domain.trim().length === 0;
@@ -160,16 +154,10 @@ function SignupForm({
     isEmailIncomplete;
   const showResidentNumberFormatError =
     showRequiredErrors && !isFieldEmpty('residentNumber') && !isValidResidentNumber(info.residentNumber);
-  const showEmailFormatError =
-    showRequiredErrors && !isEmailIncomplete && !isValidEmail(info.email);
   const showPasswordRequirement =
     info.password.length > 0 && !isValidPassword(info.password);
   const showPasswordMismatch =
     info.confirmPassword.length > 0 && info.password !== info.confirmPassword;
-  const showPasswordMatched =
-    info.confirmPassword.length > 0 &&
-    isValidPassword(info.password) &&
-    info.password === info.confirmPassword;
   const showIdHint = isIdFocused && !hasEnglishLetter(info.id);
   const handleNext = () => {
     setShowRequiredErrors(true);
@@ -177,7 +165,6 @@ function SignupForm({
     if (
       hasEmptyField ||
       !isValidResidentNumber(info.residentNumber) ||
-      !isValidEmail(info.email) ||
       !isValidPassword(info.password) ||
       showPasswordMismatch ||
       !isTermsAgreed
@@ -272,9 +259,6 @@ function SignupForm({
           {showPasswordMismatch ? (
             <Text style={styles.passwordMismatchText}>비밀번호가 일치하지 않습니다</Text>
           ) : null}
-          {showPasswordMatched ? (
-            <Text style={styles.passwordMatchedText}>비밀번호가 일치합니다</Text>
-          ) : null}
 
           <View style={styles.emailRow}>
             <View style={styles.emailUnderlineWrap}>
@@ -304,9 +288,6 @@ function SignupForm({
           {showRequiredErrors && isEmailIncomplete ? (
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
           ) : null}
-          {showEmailFormatError ? (
-            <Text style={styles.requiredText}>이메일 형식을 확인해주세요</Text>
-          ) : null}
         </View>
 
         <Pressable
@@ -319,14 +300,11 @@ function SignupForm({
             {isTermsAgreed ? <Ionicons name="checkmark" size={18} color="#ffffff" /> : null}
           </View>
           <Text style={styles.termsAgreementText}>이용약관/개인정보 동의</Text>
-          <View style={styles.requiredBadge}>
-            <Text style={styles.requiredBadgeText}>필수</Text>
-          </View>
         </Pressable>
         <View style={styles.termsSummaryRow}>
           <Text style={styles.termsDescription}>
             회원가입 및 서비스 이용을 위해 이름, 주민등록번호, 아이디, 비밀번호, 이메일 정보를
-            수집하고 약관에 따라 관리합니다. 동의 후 다음 단계로 진행할 수 있습니다.
+            수집하고 약관에 따라 관리합니다.
           </Text>
           <Pressable
             accessibilityRole="button"
@@ -499,7 +477,7 @@ function ConfirmInfo({
         </Pressable>
       </View>
 
-      <Text style={styles.footer}>모아모아 은행 © 2024. All rights reserved.</Text>
+      <Text style={styles.footer}>₩ Bank © 2024. All rights reserved.</Text>
     </View>
   );
 }
@@ -518,8 +496,8 @@ function CompleteSignup({ info, onLogin }: { info: SignupInfo; onLogin: () => vo
     <View style={styles.completeScreen}>
       <Brand compact />
       <Text style={styles.completeTitle}>
-        회원가입이{'\n'}
-        완료되었습니다!
+        회원가입이{'
+'}        완료되었습니다!
       </Text>
 
       <View style={styles.completeIllustration}>
@@ -548,12 +526,12 @@ function CompleteSignup({ info, onLogin }: { info: SignupInfo; onLogin: () => vo
       </View>
 
       <Text style={styles.welcomeText}>
-        [{info.name || '회원'}]님, 모아모아 은행의{'\n'}
-        새로운 회원이 되신 것을 환영합니다.
+        [{info.name || '회원'}]님, W Bank의 새로운{'
+'}        회원이 되신 것을 환영합니다.
       </Text>
 
       <Pressable style={styles.homeButton} onPress={onLogin}>
-        <Text style={styles.homeButtonText}>로그인하러 가기</Text>
+        <Text style={styles.homeButtonText}>로그인 하러 가기</Text>
       </Pressable>
     </View>
   );
@@ -705,7 +683,7 @@ const styles = StyleSheet.create({
   input: {
     borderColor: DEEP_PURPLE,
     borderRadius: 12,
-    borderWidth: 2,
+    borderWidth: 1,
     color: TEXT_BLACK,
     fontSize: 24,
     fontWeight: '500',
@@ -774,13 +752,6 @@ const styles = StyleSheet.create({
     marginTop: -6,
     paddingLeft: 6,
   },
-  passwordMatchedText: {
-    color: '#2f9e44',
-    fontSize: 13,
-    fontWeight: '700',
-    marginTop: -6,
-    paddingLeft: 6,
-  },
   fieldHintText: {
     color: '#5f5f68',
     fontSize: 13,
@@ -818,17 +789,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 18,
     fontWeight: '700',
-  },
-  requiredBadge: {
-    backgroundColor: '#f1edf9',
-    borderRadius: 999,
-    paddingHorizontal: 9,
-    paddingVertical: 4,
-  },
-  requiredBadgeText: {
-    color: DEEP_PURPLE,
-    fontSize: 12,
-    fontWeight: '900',
   },
   termsSummaryRow: {
     alignItems: 'flex-start',
@@ -1090,118 +1050,96 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderTopWidth: 0,
     borderWidth: 3,
-    bottom: 0,
-    height: 94,
-    position: 'absolute',
-    width: 126,
   },
   door: {
-    backgroundColor: '#b8a8d3',
-    borderColor: DEEP_PURPLE,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
-    borderWidth: 3,
-    bottom: -3,
-    height: 66,
+    backgroundColor: '#8e76b7',
+    borderRadius: 10,
+    height: 48,
     left: 42,
     position: 'absolute',
-    width: 42,
+    top: 58,
+    width: 32,
   },
   person: {
+    alignItems: 'center',
     bottom: 18,
-    height: 150,
+    left: 148,
     position: 'absolute',
-    right: 28,
-    width: 96,
+    width: 86,
   },
   face: {
     alignItems: 'center',
-    backgroundColor: '#d9cdef',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 28,
-    borderWidth: 3,
-    height: 56,
+    backgroundColor: '#ffe8e8',
+    borderRadius: 999,
+    borderWidth: 2,
+    borderColor: '#f2dffd',
+    height: 50,
     justifyContent: 'center',
-    left: 22,
-    position: 'absolute',
-    top: 0,
-    width: 56,
+    width: 50,
   },
   bodyLine: {
-    backgroundColor: DEEP_PURPLE,
-    borderRadius: 4,
-    height: 62,
-    left: 48,
-    position: 'absolute',
-    top: 54,
-    width: 4,
+    backgroundColor: '#8e76b7',
+    height: 58,
+    marginTop: 12,
+    width: 8,
   },
   leftArm: {
-    backgroundColor: DEEP_PURPLE,
-    borderRadius: 4,
-    height: 58,
-    left: 20,
+    backgroundColor: '#8e76b7',
+    height: 42,
+    left: -18,
     position: 'absolute',
-    top: 54,
-    transform: [{ rotate: '45deg' }],
-    width: 4,
+    top: 26,
+    width: 10,
   },
   rightArm: {
-    backgroundColor: DEEP_PURPLE,
-    borderRadius: 4,
-    height: 64,
+    backgroundColor: '#8e76b7',
+    height: 42,
     position: 'absolute',
-    right: 13,
-    top: 42,
-    transform: [{ rotate: '-42deg' }],
-    width: 4,
+    right: -18,
+    top: 26,
+    width: 10,
   },
   leftLeg: {
-    backgroundColor: DEEP_PURPLE,
-    borderRadius: 4,
-    bottom: 0,
-    height: 48,
-    left: 37,
+    backgroundColor: '#8e76b7',
+    height: 42,
+    left: -10,
     position: 'absolute',
-    transform: [{ rotate: '18deg' }],
-    width: 4,
+    top: 70,
+    width: 10,
   },
   rightLeg: {
-    backgroundColor: DEEP_PURPLE,
-    borderRadius: 4,
-    bottom: 0,
-    height: 48,
+    backgroundColor: '#8e76b7',
+    height: 42,
     position: 'absolute',
-    right: 31,
-    transform: [{ rotate: '-18deg' }],
-    width: 4,
+    right: -10,
+    top: 70,
+    width: 10,
   },
   confetti: {
     position: 'absolute',
-    right: 8,
-    top: 8,
+    right: -10,
+    top: 16,
   },
   welcomeText: {
     color: TEXT_BLACK,
-    fontSize: 22,
-    fontWeight: '500',
+    fontSize: 24,
+    fontWeight: '900',
     lineHeight: 34,
-    marginTop: 52,
+    marginTop: 32,
     textAlign: 'center',
   },
   homeButton: {
     alignItems: 'center',
-    alignSelf: 'stretch',
     backgroundColor: DEEP_PURPLE,
-    borderRadius: 9,
-    height: 62,
+    borderRadius: 14,
+    height: 70,
     justifyContent: 'center',
-    marginTop: 'auto',
+    marginTop: 38,
+    width: '100%',
   },
   homeButtonText: {
     color: '#ffffff',
-    fontSize: 22,
+    fontSize: 19,
     fontWeight: '900',
   },
 });
->>>>>>> origin/main
