@@ -1,6 +1,8 @@
 import { useState } from "react";
 import {
   Alert,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -48,6 +50,7 @@ export default function BudgetScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+<<<<<<< HEAD
 <<<<<<< HEAD
     <ScrollView
       style={styles.container}
@@ -120,9 +123,16 @@ export default function BudgetScreen() {
             <Text style={styles.secondaryButtonText}>회원가입하기</Text>
           </Pressable>
 =======
+=======
+      <KeyboardAvoidingView
+      style={{ flex:1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+>>>>>>> d9bdc48 (fix: prevent keyboard from covering budget input)
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
@@ -249,6 +259,7 @@ export default function BudgetScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
