@@ -48,6 +48,10 @@ export default function Login() {
             지금 로그인하거나 회원가입하고,{'\n'}
             나만의 금융 생활을 만들어보세요.
           </Text>
+          <View style={styles.securityNotice}>
+            <Ionicons name="shield-checkmark-outline" size={18} color={DEEP_PURPLE} />
+            <Text style={styles.securityNoticeText}>모아모아 보안 로그인</Text>
+          </View>
         </View>
 
         <View style={styles.formArea}>
@@ -131,7 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingBottom: 42,
     paddingHorizontal: 28,
-    paddingTop: 158,
+    paddingTop: 118,
   },
   heroCopy: {
     alignItems: 'center',
@@ -151,6 +155,21 @@ const styles = StyleSheet.create({
     lineHeight: 35,
     marginTop: 22,
     textAlign: 'center',
+  },
+  securityNotice: {
+    alignItems: 'center',
+    backgroundColor: '#f1edf9',
+    borderRadius: 999,
+    flexDirection: 'row',
+    marginTop: 18,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  securityNoticeText: {
+    color: DEEP_PURPLE,
+    fontSize: 14,
+    fontWeight: '800',
+    marginLeft: 5,
   },
   formArea: {
     paddingBottom: 4,
