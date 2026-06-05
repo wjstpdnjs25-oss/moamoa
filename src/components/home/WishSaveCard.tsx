@@ -40,8 +40,13 @@ export default function WishSaveCard({
     </TouchableOpacity>
   </>
 )}
+{isEditing && (
+    <View style={styles.editContainer}>
+    <Text style={{fontWeight: '700', marginBottom: 8}}>정보 수정하기</Text>
 
-
+  </View>
+  );
+}
 
       
      {remaining <= 0 ? (
