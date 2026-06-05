@@ -1,15 +1,20 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import type { ReactNode } from "react";
 
-export type ExpenseItem = {
-  id: string;
-  category: string;
-  amount: number;
-  date: string;
-};
+import {
+  createExpense,
+  CreateExpenseInput,
+  ExpenseRecord,
+  getAllExpenses,
+  initializeExpenseDatabase,
+} from "@/src/data/expenseRepository";
 
 type ExpenseContextType = {
-  expenses: ExpenseItem[];
-  addExpense: (expense: ExpenseItem) => void;
+  expenses: ExpenseRecord[];
+  isReady: boolean;
+  refreshToken: number;
+  addExpense: (expense: CreateExpenseInput) => Promise<ExpenseRecord>;
+  reloadExpenses: () => Promise<void>;
 };
 
 const ExpenseContext = createContext<ExpenseContextType | undefined>(
@@ -19,16 +24,53 @@ const ExpenseContext = createContext<ExpenseContextType | undefined>(
 export function ExpenseProvider({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
-  const [expenses, setExpenses] = useState<ExpenseItem[]>([]);
+  const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
+  const [isReady, setIsReady] = useState(false);
+  const [refreshToken, setRefreshToken] = useState(0);
 
-  const addExpense = (expense: ExpenseItem) => {
-    setExpenses((prev) => [...prev, expense]);
-  };
+  const reloadExpenses = useCallback(async () => {
+    const nextExpenses = await getAllExpenses();
+    setExpenses(nextExpenses);
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function prepareDatabase() {
+      await initializeExpenseDatabase();
+
+      if (!mounted) {
+        return;
+      }
+
+      await reloadExpenses();
+      setIsReady(true);
+    }
+
+    prepareDatabase().catch((error) => {
+      console.error("Failed to initialize expense database", error);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [reloadExpenses]);
+
+  const addExpense = useCallback(async (expense: CreateExpenseInput) => {
+    const savedExpense = await createExpense(expense);
+
+    setExpenses((prev) => [savedExpense, ...prev]);
+    setRefreshToken((prev) => prev + 1);
+
+    return savedExpense;
+  }, []);
 
   return (
-    <ExpenseContext.Provider value={{ expenses, addExpense }}>
+    <ExpenseContext.Provider
+      value={{ expenses, isReady, refreshToken, addExpense, reloadExpenses }}
+    >
       {children}
     </ExpenseContext.Provider>
   );

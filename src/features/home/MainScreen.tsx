@@ -1,5 +1,5 @@
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useRouter } from "expo-router";
+import { useMemo, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -7,24 +7,30 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useBudget } from '../../../contexts/BudgetContext';
+import { useBudget } from "../../../contexts/BudgetContext";
+import { useExpense } from "../../../contexts/ExpenseContext";
 
-import BalanceCard from '@/src/components/home/BalanceCard';
-import BudgetStatusCard from '@/src/components/home/BudgetStatusCard';
-import QuickExpenseInput from '@/src/components/home/QuickExpenseInput';
-import QuickMenuGrid from '@/src/components/home/QuickMenuGrid';
-import UsageCompareCard from '@/src/components/home/UsageCompareCard';
-import WishSaveCard from '@/src/components/home/WishSaveCard';
+import BalanceCard from "@/src/components/home/BalanceCard";
+import BudgetStatusCard from "@/src/components/home/BudgetStatusCard";
+import QuickExpenseInput from "@/src/components/home/QuickExpenseInput";
+import QuickMenuGrid from "@/src/components/home/QuickMenuGrid";
+import UsageCompareCard from "@/src/components/home/UsageCompareCard";
+import WishSaveCard from "@/src/components/home/WishSaveCard";
+import { getExpenseCategoryIcon } from "@/src/constants/expense";
 
 const TEXT = {
-  appTitle: '내 계좌',
+  appTitle: "모아모아",
+  wishTitle: "나의 위시",
+  wishNamePlaceholder: "사고 싶은 것",
+  wishAmountPlaceholder: "목표 금액",
+  addWish: "추가",
 };
 
-const SOFT_PURPLE = '#f5efff';
-const DEEP_PURPLE = '#4f287f';
+const SOFT_PURPLE = "#f5efff";
+const DEEP_PURPLE = "#4f287f";
 
 type WishItem = {
   id: number;
@@ -35,11 +41,22 @@ type WishItem = {
 
 export default function MainScreen() {
   const router = useRouter();
-  const [monthlySpent, setMonthlySpent] = useState(0);
   const { budgets } = useBudget();
-  const [title, setTitle] = useState('');
-  const [targetAmount, setTargetAmount] = useState('');
+  const { addExpense, expenses } = useExpense();
+  const [title, setTitle] = useState("");
+  const [targetAmount, setTargetAmount] = useState("");
   const [wishList, setWishList] = useState<WishItem[]>([]);
+
+  const monthlySpent = useMemo(() => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const monthPrefix = `${year}-${month}`;
+
+    return expenses
+      .filter((expense) => expense.spentDate.startsWith(monthPrefix))
+      .reduce((sum, expense) => sum + expense.amount, 0);
+  }, [expenses]);
 
   const monthlyBudget = budgets.reduce((sum, item) => sum + item.amount, 0);
   const balance = monthlyBudget - monthlySpent;
@@ -61,8 +78,8 @@ export default function MainScreen() {
       },
     ]);
 
-    setTitle('');
-    setTargetAmount('');
+    setTitle("");
+    setTargetAmount("");
   };
 
   const handleSaveAmount = (id: number, amount: number) => {
@@ -82,22 +99,30 @@ export default function MainScreen() {
     setWishList((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const handleAddExpense = (amount: number) => {
-    setMonthlySpent((prev) => {
-      const nextSpent = prev + amount;
+  const handleAddExpense = async (amount: number, category: string) => {
+    const previousSpent = monthlySpent;
+    const today = new Date();
 
-      if (prev <= monthlyBudget && nextSpent > monthlyBudget) {
-        router.push({
-          pathname: '/budget-alert' as any,
-          params: {
-            budget: String(monthlyBudget),
-            spent: String(nextSpent),
-          },
-        });
-      }
-
-      return nextSpent;
+    await addExpense({
+      amount,
+      category,
+      icon: getExpenseCategoryIcon(category),
+      label: category,
+      source: "quick",
+      spentAt: today,
     });
+
+    const nextSpent = previousSpent + amount;
+
+    if (previousSpent <= monthlyBudget && nextSpent > monthlyBudget) {
+      router.push({
+        pathname: "/budget-alert" as never,
+        params: {
+          budget: String(monthlyBudget),
+          spent: String(nextSpent),
+        },
+      });
+    }
   };
 
   return (
@@ -117,25 +142,25 @@ export default function MainScreen() {
         <BudgetStatusCard />
 
         <View style={styles.inputCard}>
-          <Text style={styles.cardTitle}>나의 위시</Text>
+          <Text style={styles.cardTitle}>{TEXT.wishTitle}</Text>
 
           <TextInput
             onChangeText={setTitle}
-            placeholder="사고 싶은 것 (예: 에어팟)"
+            placeholder={TEXT.wishNamePlaceholder}
             style={styles.input}
             value={title}
           />
 
           <TextInput
             keyboardType="numeric"
-            onChangeText={(value) => setTargetAmount(value.replace(/[^0-9]/g, ''))}
-            placeholder="목표 금액"
+            onChangeText={(value) => setTargetAmount(value.replace(/[^0-9]/g, ""))}
+            placeholder={TEXT.wishAmountPlaceholder}
             style={styles.input}
             value={targetAmount}
           />
 
           <TouchableOpacity onPress={addWish} style={styles.addButton}>
-            <Text style={styles.addButtonText}>추가</Text>
+            <Text style={styles.addButtonText}>{TEXT.addWish}</Text>
           </TouchableOpacity>
         </View>
 
@@ -165,32 +190,32 @@ export default function MainScreen() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   container: {
     flex: 1,
-    backgroundColor: '#F7F7FB',
+    backgroundColor: "#F7F7FB",
   },
   content: {
     padding: 22,
     paddingBottom: 40,
   },
   header: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 22,
     marginTop: 18,
   },
   appTitle: {
-    color: '#111111',
+    color: "#111111",
     fontSize: 24,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   cardTitle: {
     color: DEEP_PURPLE,
     fontSize: 24,
-    fontWeight: '800',
+    fontWeight: "800",
     marginBottom: 10,
   },
   inputCard: {
@@ -201,21 +226,21 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   input: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderRadius: 10,
     marginTop: 10,
     padding: 12,
   },
   addButton: {
-    alignItems: 'center',
-    backgroundColor: '#3D5AFE',
+    alignItems: "center",
+    backgroundColor: "#3D5AFE",
     borderRadius: 10,
     marginTop: 10,
     padding: 12,
   },
   addButtonText: {
-    color: '#ffffff',
-    fontWeight: '700',
+    color: "#ffffff",
+    fontWeight: "700",
   },
   wishList: {
     gap: 12,
