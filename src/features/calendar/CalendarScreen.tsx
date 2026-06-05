@@ -38,6 +38,7 @@ const CATEGORY_STYLES: Record<string, CategoryStyle> = {
 };
 
 const DEFAULT_CATEGORY_STYLE = CATEGORY_STYLES.기타;
+const CATEGORY_LEGEND = ["음식", "카페/간식", "교통", "패션", "쇼핑", "기타"];
 
 const SAMPLE_EXPENSES: Record<string, ExpenseItem[]> = {
   "2024-06-02": [{ id: "lunch", label: "점심 식사", category: "음식", icon: "food", amount: 15000 }],
@@ -226,14 +227,16 @@ export default function CalendarScreen() {
         </View>
 
         <View style={styles.legendRow}>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDot, styles.dotActive]} />
-            <Text style={styles.legendText}>지출 있음</Text>
-          </View>
-          <View style={styles.legendItem}>
-            <View style={[styles.legendDot, styles.dotInactive]} />
-            <Text style={styles.legendText}>지출 없음</Text>
-          </View>
+          {CATEGORY_LEGEND.map((category) => {
+            const categoryStyle = getCategoryStyle(category);
+
+            return (
+              <View key={category} style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: categoryStyle.color }]} />
+                <Text style={styles.legendText}>{category}</Text>
+              </View>
+            );
+          })}
         </View>
 
         <View style={styles.summaryCard}>
@@ -288,8 +291,8 @@ const styles = StyleSheet.create({
   dot: { width: 6, height: 6, borderRadius: 3, marginTop: 6 },
   dotActive: { backgroundColor: "#7356E8" },
   dotInactive: { backgroundColor: "#D9D9E3" },
-  legendRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 16 },
-  legendItem: { flexDirection: "row", alignItems: "center" },
+  legendRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 },
+  legendItem: { minHeight: 28, flexDirection: "row", alignItems: "center", paddingHorizontal: 10, borderRadius: 14, backgroundColor: "#FFFFFF" },
   legendDot: { width: 10, height: 10, borderRadius: 5, marginRight: 6 },
   legendText: { color: "#6B6B7E", fontSize: 12 },
   summaryCard: { backgroundColor: "#FFFFFF", borderRadius: 28, padding: 20, marginBottom: 18 },
