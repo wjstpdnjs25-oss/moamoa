@@ -469,6 +469,26 @@ const styles = StyleSheet.create({
   categorySelectedText: {
     color: "#FFFFFF",
   },
+  customCategoryArea: {
+    marginTop: 18,
+    gap: 8,
+  },
+  customCategoryInput: {
+    minHeight: 54,
+    borderWidth: 1,
+    borderColor: "#DCD8F7",
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    backgroundColor: "#FDFDFF",
+    color: "#25252A",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  customCategoryHelp: {
+    color: "#747783",
+    fontSize: 13,
+    lineHeight: 18,
+  },
   dateBox: {
     minHeight: 58,
     borderWidth: 1,
