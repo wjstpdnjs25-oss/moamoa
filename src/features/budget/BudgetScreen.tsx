@@ -163,10 +163,15 @@ export default function BudgetScreen() {
               style={styles.input}
               placeholder="0"
               keyboardType="numeric"
-              value={draftAmount}
-              onChangeText={(text) =>
-                setDraftAmount(text.replace(/[^0-9]/g, ""))
+              value={
+                draftAmount
+                ? Number(draftAmount).toLocaleString("ko-KR")
+                : ""
               }
+              onChangeText={(text) =>{
+                const numericValue = text.replace(/[0-9]/g, "")
+                setDraftAmount(text.replace(/[^0-9]/g, ""))
+              }}
             />
           </View>
 
