@@ -476,6 +476,15 @@ function ConfirmInfo({
       </View>
 
       <View style={styles.infoCard}>
+        <View style={styles.infoCardHeader}>
+          <View style={styles.infoCardIcon}>
+            <Ionicons name="document-text-outline" size={22} color={DEEP_PURPLE} />
+          </View>
+          <View style={styles.infoCardHeaderCopy}>
+            <Text style={styles.infoCardTitle}>제출 전 최종 확인</Text>
+            <Text style={styles.infoCardDescription}>민감 정보는 일부 숨김 처리됩니다.</Text>
+          </View>
+        </View>
         <InfoRow label="이름" value={info.name || '-'} />
         <InfoRow label="아이디" value={info.id || '-'} />
         <InfoRow label="이메일" value={info.email || '-'} />
@@ -1082,6 +1091,37 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
+  },
+  infoCardHeader: {
+    alignItems: 'center',
+    borderBottomColor: '#eee8f6',
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 2,
+    paddingBottom: 18,
+  },
+  infoCardIcon: {
+    alignItems: 'center',
+    backgroundColor: '#f1edf9',
+    borderRadius: 999,
+    height: 42,
+    justifyContent: 'center',
+    width: 42,
+  },
+  infoCardHeaderCopy: {
+    flex: 1,
+  },
+  infoCardTitle: {
+    color: TEXT_BLACK,
+    fontSize: 16,
+    fontWeight: '900',
+  },
+  infoCardDescription: {
+    color: '#5f5f68',
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 4,
   },
   infoRow: {
     alignItems: 'flex-start',
