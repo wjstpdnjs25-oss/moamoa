@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import BalanceCard from '@/src/components/home/BalanceCard';
@@ -48,11 +48,6 @@ export default function MainScreen() {
       <View style={styles.header}>
         <Text style={styles.appTitle}>{TEXT.appTitle}</Text>
 
-        <TouchableOpacity style={styles.settingButton}
-        onPress={() => router.push("/settings" as any)}
-        >
-          <Text style={styles.settingText}>{TEXT.settings}</Text>
-        </TouchableOpacity>
       </View>
 
       <BalanceCard balance={balance} monthlySpent={monthlySpent} />
