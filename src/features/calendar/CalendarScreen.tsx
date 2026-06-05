@@ -184,19 +184,41 @@ export default function CalendarScreen() {
             {monthDays.map((day, index) => {
               const hasExpense = typeof day === "number" && monthTotals[day] > 0;
               const isSelected = day === selectedDate.getDate();
+              const categorySummary = typeof day === "number" ? monthCategorySummaries[day] || [] : [];
+              const primaryCategoryStyle = categorySummary[0]
+                ? getCategoryStyle(categorySummary[0].category)
+                : DEFAULT_CATEGORY_STYLE;
 
               return (
                 <TouchableOpacity
                   key={`${day ?? "empty"}-${index}`}
-                  style={[styles.dayCell, day === null && styles.emptyCell, isSelected && styles.dayCellSelected]}
+                  style={[
+                    styles.dayCell,
+                    hasExpense && { backgroundColor: primaryCategoryStyle.backgroundColor },
+                    day === null && styles.emptyCell,
+                    isSelected && { ...styles.dayCellSelected, borderColor: primaryCategoryStyle.color },
+                  ]}
                   disabled={day === null}
                   onPress={() => typeof day === "number" && handleSelectDay(day)}
                 >
-                  <Text style={[styles.dayNumber, isSelected && styles.dayNumberSelected]}>{day ?? ""}</Text>
+                  <Text style={[styles.dayNumber, isSelected && { color: primaryCategoryStyle.color }]}>{day ?? ""}</Text>
                   <Text style={[styles.dayAmount, hasExpense && styles.dayAmountActive]}>
                     {day !== null ? formatCurrency(monthTotals[day]) : ""}
                   </Text>
-                  {day !== null && <View style={[styles.dot, hasExpense ? styles.dotActive : styles.dotInactive]} />}
+                  {day !== null && (
+                    <View style={styles.categoryDotRow}>
+                      {hasExpense ? (
+                        categorySummary.slice(0, 3).map((summary) => (
+                          <View
+                            key={summary.category}
+                            style={[styles.dot, { backgroundColor: getCategoryStyle(summary.category).color }]}
+                          />
+                        ))
+                      ) : (
+                        <View style={[styles.dot, styles.dotInactive]} />
+                      )}
+                    </View>
+                  )}
                 </TouchableOpacity>
               );
             })}
@@ -258,11 +280,11 @@ const styles = StyleSheet.create({
   grid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
   dayCell: { width: "14.28%", minHeight: 84, borderRadius: 18, paddingVertical: 10, marginBottom: 10, alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF" },
   emptyCell: { backgroundColor: "transparent" },
-  dayCellSelected: { backgroundColor: "#EEE7FF", borderWidth: 1, borderColor: "#7356E8" },
+  dayCellSelected: { borderWidth: 1 },
   dayNumber: { fontSize: 14, fontWeight: "700", color: "#111111" },
-  dayNumberSelected: { color: "#7356E8" },
   dayAmount: { fontSize: 9, color: "#A0A3AD", marginTop: 4, textAlign: "center" },
   dayAmountActive: { color: "#111111", fontWeight: "700" },
+  categoryDotRow: { minHeight: 8, flexDirection: "row", justifyContent: "center", gap: 3, marginTop: 6 },
   dot: { width: 6, height: 6, borderRadius: 3, marginTop: 6 },
   dotActive: { backgroundColor: "#7356E8" },
   dotInactive: { backgroundColor: "#D9D9E3" },
