@@ -47,6 +47,7 @@ export default function BudgetScreen() {
 
   const handleSaveBudget = () => {
     setBudgetAmount(selectedCategory, Number(draftAmount || 0));
+    setDraftAmount("");
 
     Alert.alert(
       "저장 완료",
