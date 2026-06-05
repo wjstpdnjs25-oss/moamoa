@@ -200,6 +200,19 @@ function SignupForm({
           <Text style={styles.formDescription}>
             안전한 계좌 이용을 위해 회원 정보를 입력해주세요.
           </Text>
+          <View style={styles.progressTrack}>
+            <View style={[styles.progressStep, styles.progressStepActive]}>
+              <Text style={[styles.progressStepText, styles.progressStepTextActive]}>1</Text>
+            </View>
+            <View style={styles.progressLine} />
+            <View style={styles.progressStep}>
+              <Text style={styles.progressStepText}>2</Text>
+            </View>
+            <View style={styles.progressLine} />
+            <View style={styles.progressStep}>
+              <Text style={styles.progressStepText}>3</Text>
+            </View>
+          </View>
         </View>
 
         <View style={styles.signupFields}>
@@ -694,6 +707,38 @@ const styles = StyleSheet.create({
     lineHeight: 23,
     marginTop: 8,
     textAlign: 'center',
+  },
+  progressTrack: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginTop: 18,
+  },
+  progressStep: {
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderColor: '#d9cdef',
+    borderRadius: 999,
+    borderWidth: 1,
+    height: 28,
+    justifyContent: 'center',
+    width: 28,
+  },
+  progressStepActive: {
+    backgroundColor: DEEP_PURPLE,
+    borderColor: DEEP_PURPLE,
+  },
+  progressStepText: {
+    color: '#7b6a90',
+    fontSize: 12,
+    fontWeight: '900',
+  },
+  progressStepTextActive: {
+    color: '#ffffff',
+  },
+  progressLine: {
+    backgroundColor: '#d9cdef',
+    height: 2,
+    width: 34,
   },
   signupFields: {
     gap: 14,
