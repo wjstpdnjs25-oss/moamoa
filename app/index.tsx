@@ -45,9 +45,10 @@ const handleAddWish = () => {
     price: Number(wishPrice),
   };
 
-  setWishList((prev) => [...prev, newWish]);
+  setWishList((prev) => [newWish, ...prev]); 
   setWishName("");
   setWishPrice("");
+  
 };
  
 
@@ -76,7 +77,7 @@ const handleAddWish = () => {
       <View style={styles.inputRow}>
     <TextInput
       style={styles.input}
-      placeholder="위시 템 (예: 에어팟)"
+      placeholder="위시템 (예: 에어팟)"
       value={wishName}
       onChangeText={setWishName}
     />
@@ -94,6 +95,14 @@ const handleAddWish = () => {
   <TouchableOpacity style={styles.addButton} onPress={handleAddWish}>
     <Text style={styles.addButtonText}>추가</Text>
   </TouchableOpacity>
+
+  {wishList.map((item) => (
+    <View key={item.id} style={styles.wishItem}>
+      <Text style={styles.wishText}>
+        {item.name} - {item.price.toLocaleString()}원
+      </Text>
+    </View>
+    ))}
 
       <UsageCompareCard />
       <QuickMenuGrid />
@@ -142,6 +151,16 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 16,
   },
+  wishItem: {
+  marginTop: 10,
+  paddingVertical: 10,
+  borderBottomWidth: 1,
+  borderBottomColor: "#ddd",
+},
+
+  wishText: {
+    fontSize: 14,
+},
   container: {
     flex: 1,
     backgroundColor: "#F7F7FB",
