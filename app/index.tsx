@@ -1,9 +1,21 @@
-import BalanceCard from "@/components/home/BalanceCard";
-import BudgetStatusCard from "@/components/home/BudgetStatusCard";
-import QuickExpenseInput from "@/components/home/QuickExpenseInput";
-import QuickMenuGrid from "@/components/home/QuickMenuGrid";
-import UsageCompareCard from "@/components/home/UsageCompareCard";
-import WishSaveCard from "@/components/home/WishSaveCard";
+import { useState } from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+
+import WishSaveCard from "@/src/components/home/WishSaveCard";
+
+import BalanceCard from "@/src/components/home/BalanceCard";
+import BudgetStatusCard from "@/src/components/home/BudgetStatusCard";
+import QuickExpenseInput from "@/src/components/home/QuickExpenseInput";
+import QuickMenuGrid from "@/src/components/home/QuickMenuGrid";
+import UsageCompareCard from "@/src/components/home/UsageCompareCard";
+
+
 
 const TEXT = {
   appTitle: "\uB0B4 \uACC4\uC88C",
@@ -38,6 +50,14 @@ export default function HomeScreen() {
       <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
       <BudgetStatusCard />
+
+      <WishSaveCard
+  title="아이패드"
+  targetAmount={1000000}
+  savedAmount={150000}
+  onDelete={() => console.log("삭제")}
+  onSave={(amount) => console.log(amount)}
+/>
 
       <UsageCompareCard />
 
@@ -81,4 +101,3 @@ const styles = StyleSheet.create({
     color: "#3D5AFE",
   },
 });
-
