@@ -19,6 +19,11 @@ type CategoryStyle = {
   backgroundColor: string;
 };
 
+type CategorySummary = {
+  category: string;
+  amount: number;
+};
+
 const CATEGORY_STYLES: Record<string, CategoryStyle> = {
   음식: { color: "#E35D5B", backgroundColor: "#FFF0EF" },
   패션: { color: "#8A55D7", backgroundColor: "#F4EDFF" },
@@ -67,6 +72,17 @@ function getCategoryStyle(category: string) {
   return CATEGORY_STYLES[category] ?? DEFAULT_CATEGORY_STYLE;
 }
 
+function summarizeByCategory(expenses: ExpenseItem[]) {
+  const totals = expenses.reduce<Record<string, number>>((acc, item) => {
+    acc[item.category] = (acc[item.category] ?? 0) + item.amount;
+    return acc;
+  }, {});
+
+  return Object.entries(totals)
+    .map(([category, amount]) => ({ category, amount }))
+    .sort((a, b) => b.amount - a.amount);
+}
+
 export default function CalendarScreen() {
   const router = useRouter();
   const [selectedDate, setSelectedDate] = useState(new Date(2024, 5, 15));
@@ -104,9 +120,21 @@ export default function CalendarScreen() {
     }, {});
   }, [monthDays, selectedMonthStart]);
 
+  const monthCategorySummaries = useMemo(() => {
+    return monthDays.reduce<Record<number, CategorySummary[]>>((acc, day) => {
+      if (!day) return acc;
+
+      const key = formatDayKey(new Date(selectedMonthStart.getFullYear(), selectedMonthStart.getMonth(), day));
+      acc[day] = summarizeByCategory(SAMPLE_EXPENSES[key] || []);
+
+      return acc;
+    }, {});
+  }, [monthDays, selectedMonthStart]);
+
   const selectedDayKey = formatDayKey(selectedDate);
   const selectedExpenses = SAMPLE_EXPENSES[selectedDayKey] || [];
   const selectedTotal = selectedExpenses.reduce((sum, item) => sum + item.amount, 0);
+  const selectedCategorySummary = summarizeByCategory(selectedExpenses);
 
   const handleMoveMonth = (offset: number) => {
     setSelectedDate(new Date(selectedMonthStart.getFullYear(), selectedMonthStart.getMonth() + offset, 15));
