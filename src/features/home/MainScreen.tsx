@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import BalanceCard from '@/src/components/home/BalanceCard';
 import BudgetStatusCard from '@/src/components/home/BudgetStatusCard';
@@ -39,6 +40,7 @@ export default function MainScreen() {
   };
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
@@ -61,6 +63,7 @@ export default function MainScreen() {
 
       <QuickMenuGrid />
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -95,5 +98,9 @@ const styles = StyleSheet.create({
     color: '#3D5AFE',
     fontSize: 14,
     fontWeight: '700',
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
   },
 });
