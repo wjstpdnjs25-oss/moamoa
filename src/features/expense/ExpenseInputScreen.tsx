@@ -118,6 +118,7 @@ export default function ExpenseInputScreen() {
   const submittedCategory = isCustomCategory
     ? customCategory.trim()
     : selectedCategory;
+  const canSubmit = numericAmount > 0 && Boolean(submittedCategory) && Boolean(selectedDate);
 
   const clearSavedExpense = () => {
     setSavedExpense(null);
@@ -377,7 +378,12 @@ export default function ExpenseInputScreen() {
           </View>
         )}
 
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <TouchableOpacity
+          style={[styles.submitButton, !canSubmit && styles.submitButtonDisabled]}
+          onPress={handleSubmit}
+          disabled={!canSubmit}
+          accessibilityState={{ disabled: !canSubmit }}
+        >
           <Text style={styles.submitText}>{TEXT.submit}</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -667,6 +673,9 @@ const styles = StyleSheet.create({
     backgroundColor: PURPLE,
     alignItems: "center",
     justifyContent: "center",
+  },
+  submitButtonDisabled: {
+    backgroundColor: "#C9C4E8",
   },
   submitText: {
     color: "#FFFFFF",
