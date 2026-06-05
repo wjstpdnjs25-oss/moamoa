@@ -46,6 +46,12 @@ export default function BudgetScreen() {
   };
 
   const handleSaveBudget = () => {
+    const amount = Number(draftAmount || 0);
+
+    if (amount <= 0) {
+      Alert.alert("입력 오류", "1원 이상 입력해주세요.");
+      return;
+    }
     setBudgetAmount(selectedCategory, Number(draftAmount || 0));
     setDraftAmount("");
 
