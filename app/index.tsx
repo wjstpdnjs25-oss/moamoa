@@ -73,15 +73,16 @@ export default function HomeScreen() {
     onChangeText={setWishPrice}
     style={styles.input}
     />
+    <View style={styles.buttonRow}>
+      <TouchableOpacity style={[styles.addButton, {backgroundColor: '#ccc', flex: 1, marginRight: 8}]} onPress={() => setIsEditing(false)}>
+        <Text style={styles.addButtonText}>취소</Text>
 
-    <TouchableOpacity
-  style={styles.addButton}
-  onPress={() => console.log(wishTitle, wishPrice)}
->
-      <Text style={styles.addButtonText}>
-      추가하기
-    </Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={[styles.addButton, {flex: 2}]} onPress={handleSaveWish}>
+        <Text style={styles.addButtonText}>저장하기</Text>
+
   </TouchableOpacity>
+  </View>
 </View>
 
       <WishSaveCard
@@ -102,15 +103,29 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  inputContainer: {
-  backgroundColor: '#ffffff',
-  borderRadius: 16,
-  padding: 20,
-  margin: 16,
-  borderWidth: 1,
-  borderColor: '#3D5AFE', 
-  elevation: 3,
+  card: {
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    padding: 20,
+    marginHorizontal: 16,
+    marginVertical: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3, 
+  
 },
+input: {
+    backgroundColor: '#F8F9FA',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginBottom: 12,
+    fontSize: 15,
+    color: '#333',
+  },
+  
   container: {
     flex: 1,
     backgroundColor: "#F7F7FB",
