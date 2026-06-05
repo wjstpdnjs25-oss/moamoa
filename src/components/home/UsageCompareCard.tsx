@@ -118,13 +118,12 @@ export default function UsageCompareCard() {
           }
         >
           <Text>{jobType}</Text>
-<<<<<<< HEAD
+
           <Text>{isLifestyleOpen ? '▲' : '▼'}</Text>
-=======
+
           <Text>
             {isLifestyleOpen ? '▲' : '▼'}
           </Text>
->>>>>>> 7ab6b44 (feat: add WishSaveCard to home screen)
         </Pressable>
 
         {isLifestyleOpen && (
@@ -213,8 +212,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#4A90E2',
   },
 
-<<<<<<< HEAD
-=======
+
   dropdownHeader: {
     backgroundColor: '#fff',
     borderRadius: 12,
@@ -232,14 +230,12 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
 
->>>>>>> 7ab6b44 (feat: add WishSaveCard to home screen)
   resultBox: {
     marginTop: 20,
     padding: 12,
     backgroundColor: '#f5f5f5',
     borderRadius: 10,
   },
-<<<<<<< HEAD
 
   dropdownHeader: {
     backgroundColor: '#fff',
@@ -257,6 +253,4 @@ const styles = StyleSheet.create({
     gap: 8,
     flexWrap: 'wrap',
   },
-=======
->>>>>>> 7ab6b44 (feat: add WishSaveCard to home screen)
 });
