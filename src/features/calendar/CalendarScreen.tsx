@@ -1,33 +1,41 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { useMemo, useState } from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useMemo, useState } from "react";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
-const SAMPLE_EXPENSES: Record<string, { id: string; label: string; icon: string; amount: number }[]> = {
-  '2024-06-02': [{ id: 'lunch', label: '점심 식사', icon: 'food', amount: 15000 }],
-  '2024-06-04': [{ id: 'coffee', label: '카페', icon: 'coffee', amount: 12000 }],
-  '2024-06-05': [{ id: 'dinner', label: '저녁 식사', icon: 'food-variant', amount: 8000 }],
-  '2024-06-07': [{ id: 'transport', label: '교통', icon: 'bus', amount: 23000 }],
-  '2024-06-08': [{ id: 'shopping', label: '의류 쇼핑', icon: 'tshirt-crew-outline', amount: 10000 }],
-  '2024-06-10': [{ id: 'lunch2', label: '점심 식사', icon: 'food', amount: 18000 }],
-  '2024-06-12': [{ id: 'market', label: '마트', icon: 'cart', amount: 31500 }],
-  '2024-06-13': [{ id: 'delivery', label: '배달 음식', icon: 'food-variant', amount: 7000 }],
-  '2024-06-14': [{ id: 'dessert', label: '디저트', icon: 'cupcake', amount: 12000 }],
-  '2024-06-15': [
-    { id: 'lunch3', label: '점심 식사', icon: 'food', amount: 18000 },
-    { id: 'coffee2', label: '카페', icon: 'coffee', amount: 6000 },
-    { id: 'shopping2', label: '의류 쇼핑', icon: 'tshirt-crew-outline', amount: 54000 },
+const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+
+type ExpenseItem = {
+  id: string;
+  label: string;
+  icon: keyof typeof MaterialCommunityIcons.glyphMap;
+  amount: number;
+};
+
+const SAMPLE_EXPENSES: Record<string, ExpenseItem[]> = {
+  "2024-06-02": [{ id: "lunch", label: "점심 식사", icon: "food", amount: 15000 }],
+  "2024-06-04": [{ id: "coffee", label: "카페", icon: "coffee", amount: 12000 }],
+  "2024-06-05": [{ id: "dinner", label: "저녁 식사", icon: "food-variant", amount: 8000 }],
+  "2024-06-07": [{ id: "transport", label: "교통", icon: "bus", amount: 23000 }],
+  "2024-06-08": [{ id: "shopping", label: "의류 쇼핑", icon: "tshirt-crew-outline", amount: 10000 }],
+  "2024-06-10": [{ id: "lunch2", label: "점심 식사", icon: "food", amount: 18000 }],
+  "2024-06-12": [{ id: "market", label: "마트", icon: "cart", amount: 31500 }],
+  "2024-06-13": [{ id: "delivery", label: "배달 음식", icon: "food-variant", amount: 7000 }],
+  "2024-06-14": [{ id: "dessert", label: "디저트", icon: "cupcake", amount: 12000 }],
+  "2024-06-15": [
+    { id: "lunch3", label: "점심 식사", icon: "food", amount: 18000 },
+    { id: "coffee2", label: "카페", icon: "coffee", amount: 6000 },
+    { id: "shopping2", label: "의류 쇼핑", icon: "tshirt-crew-outline", amount: 54000 },
   ],
 };
 
 function formatMonthLabel(date: Date) {
-  return `${date.getFullYear()}년 ${String(date.getMonth() + 1).padStart(2, '0')}월`;
+  return `${date.getFullYear()}년 ${String(date.getMonth() + 1).padStart(2, "0")}월`;
 }
 
 function formatDayKey(date: Date) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
 function formatCurrency(amount: number) {
@@ -63,8 +71,10 @@ export default function CalendarScreen() {
   const monthTotals = useMemo(() => {
     return monthDays.reduce<Record<number, number>>((acc, day) => {
       if (!day) return acc;
+
       const key = formatDayKey(new Date(selectedMonthStart.getFullYear(), selectedMonthStart.getMonth(), day));
       acc[day] = (SAMPLE_EXPENSES[key] || []).reduce((sum, item) => sum + item.amount, 0);
+
       return acc;
     }, {});
   }, [monthDays, selectedMonthStart]);
@@ -111,25 +121,27 @@ export default function CalendarScreen() {
 
           <View style={styles.weekdayRow}>
             {WEEKDAYS.map((day) => (
-              <Text key={day} style={styles.weekdayText}>{day}</Text>
+              <Text key={day} style={styles.weekdayText}>
+                {day}
+              </Text>
             ))}
           </View>
 
           <View style={styles.grid}>
             {monthDays.map((day, index) => {
-              const hasExpense = typeof day === 'number' && monthTotals[day] > 0;
+              const hasExpense = typeof day === "number" && monthTotals[day] > 0;
               const isSelected = day === selectedDate.getDate();
 
               return (
                 <TouchableOpacity
-                  key={`${day ?? 'empty'}-${index}`}
+                  key={`${day ?? "empty"}-${index}`}
                   style={[styles.dayCell, day === null && styles.emptyCell, isSelected && styles.dayCellSelected]}
                   disabled={day === null}
-                  onPress={() => typeof day === 'number' && handleSelectDay(day)}
+                  onPress={() => typeof day === "number" && handleSelectDay(day)}
                 >
-                  <Text style={[styles.dayNumber, isSelected && styles.dayNumberSelected]}>{day ?? ''}</Text>
+                  <Text style={[styles.dayNumber, isSelected && styles.dayNumberSelected]}>{day ?? ""}</Text>
                   <Text style={[styles.dayAmount, hasExpense && styles.dayAmountActive]}>
-                    {day !== null ? formatCurrency(monthTotals[day]) : ''}
+                    {day !== null ? formatCurrency(monthTotals[day]) : ""}
                   </Text>
                   {day !== null && <View style={[styles.dot, hasExpense ? styles.dotActive : styles.dotInactive]} />}
                 </TouchableOpacity>
@@ -178,42 +190,42 @@ export default function CalendarScreen() {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: '#F7F7FB' },
+  safeArea: { flex: 1, backgroundColor: "#F7F7FB" },
   container: { flex: 1, paddingHorizontal: 22 },
   content: { paddingBottom: 40 },
-  header: { marginTop: 12, marginBottom: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  headerButton: { width: 44, height: 44, borderRadius: 16, backgroundColor: '#FFFFFF', justifyContent: 'center', alignItems: 'center' },
-  title: { fontSize: 20, fontWeight: '700', color: '#111111' },
-  calendarCard: { backgroundColor: '#FFFFFF', borderRadius: 28, padding: 20, marginBottom: 16 },
-  monthHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 },
-  monthLabel: { fontSize: 18, fontWeight: '700', color: '#111111' },
-  monthArrow: { width: 40, height: 40, borderRadius: 14, backgroundColor: '#EEF0FF', justifyContent: 'center', alignItems: 'center' },
-  weekdayRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
-  weekdayText: { width: '14.28%', textAlign: 'center', color: '#777777', fontSize: 12, fontWeight: '700' },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  dayCell: { width: '14.28%', minHeight: 84, borderRadius: 18, paddingVertical: 10, marginBottom: 10, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF' },
-  emptyCell: { backgroundColor: 'transparent' },
-  dayCellSelected: { backgroundColor: '#EEE7FF', borderWidth: 1, borderColor: '#7356E8' },
-  dayNumber: { fontSize: 14, fontWeight: '700', color: '#111111' },
-  dayNumberSelected: { color: '#7356E8' },
-  dayAmount: { fontSize: 9, color: '#A0A3AD', marginTop: 4, textAlign: 'center' },
-  dayAmountActive: { color: '#111111', fontWeight: '700' },
+  header: { marginTop: 12, marginBottom: 20, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
+  headerButton: { width: 44, height: 44, borderRadius: 16, backgroundColor: "#FFFFFF", justifyContent: "center", alignItems: "center" },
+  title: { fontSize: 20, fontWeight: "700", color: "#111111" },
+  calendarCard: { backgroundColor: "#FFFFFF", borderRadius: 28, padding: 20, marginBottom: 16 },
+  monthHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 18 },
+  monthLabel: { fontSize: 18, fontWeight: "700", color: "#111111" },
+  monthArrow: { width: 40, height: 40, borderRadius: 14, backgroundColor: "#EEF0FF", justifyContent: "center", alignItems: "center" },
+  weekdayRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 12 },
+  weekdayText: { width: "14.28%", textAlign: "center", color: "#777777", fontSize: 12, fontWeight: "700" },
+  grid: { flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" },
+  dayCell: { width: "14.28%", minHeight: 84, borderRadius: 18, paddingVertical: 10, marginBottom: 10, alignItems: "center", justifyContent: "center", backgroundColor: "#FFFFFF" },
+  emptyCell: { backgroundColor: "transparent" },
+  dayCellSelected: { backgroundColor: "#EEE7FF", borderWidth: 1, borderColor: "#7356E8" },
+  dayNumber: { fontSize: 14, fontWeight: "700", color: "#111111" },
+  dayNumberSelected: { color: "#7356E8" },
+  dayAmount: { fontSize: 9, color: "#A0A3AD", marginTop: 4, textAlign: "center" },
+  dayAmountActive: { color: "#111111", fontWeight: "700" },
   dot: { width: 6, height: 6, borderRadius: 3, marginTop: 6 },
-  dotActive: { backgroundColor: '#7356E8' },
-  dotInactive: { backgroundColor: '#D9D9E3' },
-  legendRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 },
-  legendItem: { flexDirection: 'row', alignItems: 'center' },
+  dotActive: { backgroundColor: "#7356E8" },
+  dotInactive: { backgroundColor: "#D9D9E3" },
+  legendRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 16 },
+  legendItem: { flexDirection: "row", alignItems: "center" },
   legendDot: { width: 10, height: 10, borderRadius: 5, marginRight: 6 },
-  legendText: { color: '#6B6B7E', fontSize: 12 },
-  summaryCard: { backgroundColor: '#FFFFFF', borderRadius: 28, padding: 20, marginBottom: 18 },
-  summaryHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 },
-  summaryTitle: { fontSize: 16, fontWeight: '700', color: '#111111' },
-  summaryTotal: { fontSize: 16, fontWeight: '700', color: '#7356E8' },
-  emptyText: { color: '#777777', fontSize: 14, textAlign: 'center', paddingVertical: 20 },
-  transactionRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: '#F0F0F5' },
-  iconCircle: { width: 42, height: 42, borderRadius: 16, backgroundColor: '#EEF0FF', justifyContent: 'center', alignItems: 'center', marginRight: 12 },
-  transactionLabel: { flex: 1, fontSize: 15, color: '#111111' },
-  transactionAmount: { fontSize: 15, fontWeight: '700', color: '#111111' },
-  closeButton: { height: 58, borderRadius: 18, backgroundColor: '#7356E8', justifyContent: 'center', alignItems: 'center', marginBottom: 24 },
-  closeButtonText: { color: '#FFFFFF', fontSize: 16, fontWeight: '700' },
+  legendText: { color: "#6B6B7E", fontSize: 12 },
+  summaryCard: { backgroundColor: "#FFFFFF", borderRadius: 28, padding: 20, marginBottom: 18 },
+  summaryHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 18 },
+  summaryTitle: { fontSize: 16, fontWeight: "700", color: "#111111" },
+  summaryTotal: { fontSize: 16, fontWeight: "700", color: "#7356E8" },
+  emptyText: { color: "#777777", fontSize: 14, textAlign: "center", paddingVertical: 20 },
+  transactionRow: { flexDirection: "row", alignItems: "center", paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: "#F0F0F5" },
+  iconCircle: { width: 42, height: 42, borderRadius: 16, backgroundColor: "#EEF0FF", justifyContent: "center", alignItems: "center", marginRight: 12 },
+  transactionLabel: { flex: 1, fontSize: 15, color: "#111111" },
+  transactionAmount: { fontSize: 15, fontWeight: "700", color: "#111111" },
+  closeButton: { height: 58, borderRadius: 18, backgroundColor: "#7356E8", justifyContent: "center", alignItems: "center", marginBottom: 24 },
+  closeButtonText: { color: "#FFFFFF", fontSize: 16, fontWeight: "700" },
 });
