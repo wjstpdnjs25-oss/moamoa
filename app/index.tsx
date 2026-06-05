@@ -86,15 +86,4 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#111111",
   },
-  settingButton: {
-    backgroundColor: "#EEF0FF",
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-  },
-  settingText: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#3D5AFE",
-  },
 });
