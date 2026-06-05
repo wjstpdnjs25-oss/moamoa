@@ -37,15 +37,6 @@ export default function BudgetScreen() {
   const selectedBudget =
     budgets.find((item) => item.category === selectedCategory)?.amount ?? 0;
 
-  const categorySpent = expenses
-    .filter((expense) => expense.category === selectedCategory)
-    .reduce((sum, expense) => sum + expense.amount, 0);
-
-  const usageRate =
-    selectedBudget === 0
-      ? 0
-      : Math.round((categorySpent / selectedBudget) * 100);
-
   const handleSelectCategory = (category: string) => {
     const currentAmount =
       budgets.find((item) => item.category === category)?.amount ?? 0;
@@ -106,19 +97,11 @@ export default function BudgetScreen() {
             const selected = selectedCategory === item.category;
 
             const spent = expenses
-            .filter((expenses) => expenses.category === item.category)
-            .reduce((sum, expense) => sum + expense.amount, 0);
-
- feat_wishsave
-        <View style={styles.copy}>
-          <Text style={styles.title}>모아모아와 함께하는 간편한 은행</Text>
-          <Text style={styles.description}>
-            흩어진 금융 생활을 모아,{'/n'}
-            나만의 계좌 관리를 시작해보세요.
-          </Text>
+              .filter((expense) => expense.category === item.category)
+              .reduce((sum, expense) => sum + expense.amount, 0);
 
             const rate =
-            item.amount === 0 ? 0 : Math.round((spent / item.amount) * 100);
+              item.amount === 0 ? 0 : Math.round((spent / item.amount) * 100);
 
             return (
               <TouchableOpacity
@@ -169,7 +152,6 @@ export default function BudgetScreen() {
               </TouchableOpacity>
             );
           })}
- main
         </View>
 
         <View style={styles.editCard}>

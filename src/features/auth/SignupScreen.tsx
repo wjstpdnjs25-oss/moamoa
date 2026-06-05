@@ -16,6 +16,27 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const DEEP_PURPLE = '#261052';
 const TEXT_BLACK = '#050505';
 
+type Step = 'form' | 'confirm' | 'complete';
+
+type SignupInfo = {
+  name: string;
+  residentNumber: string;
+  id: string;
+  password: string;
+  confirmPassword: string;
+  email: string;
+};
+
+const initialSignupInfo: SignupInfo = {
+  name: '',
+  residentNumber: '',
+  id: '',
+  email: '',
+  password: '',
+  confirmPassword: '',
+};
+
+const PASSWORD_REQUIREMENT_MESSAGE = '영문자+숫자포함 6글자 이상을 작성해주세요';
 const TERMS_ITEMS = [
   {
     title: '제1조 목적',
@@ -39,34 +60,16 @@ const TERMS_ITEMS = [
   },
 ];
 
-type Step = 'form' | 'confirm' | 'complete';
-
-type SignupInfo = {
-  name: string;
-  residentNumber: string;
-  id: string;
-  password: string;
-  confirmPassword: string;
-  email: string;
-};
-
-const initialSignupInfo: SignupInfo = {
-  name: '',
-  residentNumber: '',
-  id: '',
-  email: '',
-  password: '',
-  confirmPassword: '',
-};
-
-const PASSWORD_REQUIREMENT_MESSAGE = '영문자+숫자포함 6글자 이상을 작성해주세요';
-
 function isValidPassword(value: string) {
   return /^(?=.*[A-Za-z])(?=.*\d).{6,}$/.test(value);
 }
 
 function isValidResidentNumber(value: string) {
   return value.replace(/\D/g, '').length === 13;
+}
+
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
 }
 
 function hasEnglishLetter(value: string) {
@@ -141,12 +144,10 @@ function SignupForm({
   const updateField = (field: keyof SignupInfo, value: string) => {
     onChange({ ...info, [field]: value });
   };
-
   const updateEmailPart = (part: 'local' | 'domain', value: string) => {
     const nextEmail = part === 'local' ? `${value}@${emailParts.domain}` : `${emailParts.local}@${value}`;
     updateField('email', nextEmail);
   };
-
   const isFieldEmpty = (field: keyof SignupInfo) => info[field].trim().length === 0;
   const isEmailIncomplete =
     emailParts.local.trim().length === 0 || emailParts.domain.trim().length === 0;
@@ -155,10 +156,16 @@ function SignupForm({
     isEmailIncomplete;
   const showResidentNumberFormatError =
     showRequiredErrors && !isFieldEmpty('residentNumber') && !isValidResidentNumber(info.residentNumber);
+  const showEmailFormatError =
+    showRequiredErrors && !isEmailIncomplete && !isValidEmail(info.email);
   const showPasswordRequirement =
     info.password.length > 0 && !isValidPassword(info.password);
   const showPasswordMismatch =
     info.confirmPassword.length > 0 && info.password !== info.confirmPassword;
+  const showPasswordMatched =
+    info.confirmPassword.length > 0 &&
+    isValidPassword(info.password) &&
+    info.password === info.confirmPassword;
   const showIdHint = isIdFocused && !hasEnglishLetter(info.id);
   const handleNext = () => {
     setShowRequiredErrors(true);
@@ -166,6 +173,7 @@ function SignupForm({
     if (
       hasEmptyField ||
       !isValidResidentNumber(info.residentNumber) ||
+      !isValidEmail(info.email) ||
       !isValidPassword(info.password) ||
       showPasswordMismatch ||
       !isTermsAgreed
@@ -192,6 +200,29 @@ function SignupForm({
           <Text style={styles.formDescription}>
             안전한 계좌 이용을 위해 회원 정보를 입력해주세요.
           </Text>
+          <View style={styles.progressTrack}>
+            <View style={[styles.progressStep, styles.progressStepActive]}>
+              <Text style={[styles.progressStepText, styles.progressStepTextActive]}>1</Text>
+            </View>
+            <View style={styles.progressLine} />
+            <View style={styles.progressStep}>
+              <Text style={styles.progressStepText}>2</Text>
+            </View>
+            <View style={styles.progressLine} />
+            <View style={styles.progressStep}>
+              <Text style={styles.progressStepText}>3</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.fieldSectionHeader}>
+          <View>
+            <Text style={styles.fieldSectionTitle}>기본 정보</Text>
+            <Text style={styles.fieldSectionDescription}>본인 확인에 필요한 정보를 정확히 입력해주세요.</Text>
+          </View>
+          <View style={styles.fieldSectionBadge}>
+            <Text style={styles.fieldSectionBadgeText}>전체 필수</Text>
+          </View>
         </View>
 
         <View style={styles.signupFields}>
@@ -260,6 +291,9 @@ function SignupForm({
           {showPasswordMismatch ? (
             <Text style={styles.passwordMismatchText}>비밀번호가 일치하지 않습니다</Text>
           ) : null}
+          {showPasswordMatched ? (
+            <Text style={styles.passwordMatchedText}>비밀번호가 일치합니다</Text>
+          ) : null}
 
           <View style={styles.emailRow}>
             <View style={styles.emailUnderlineWrap}>
@@ -289,6 +323,21 @@ function SignupForm({
           {showRequiredErrors && isEmailIncomplete ? (
             <Text style={styles.requiredText}>정보를 입력해주세요</Text>
           ) : null}
+          {showEmailFormatError ? (
+            <Text style={styles.requiredText}>이메일 형식을 확인해주세요</Text>
+          ) : null}
+        </View>
+
+        <View style={styles.securityNotice}>
+          <View style={styles.securityNoticeIcon}>
+            <Ionicons name="shield-checkmark" size={20} color={DEEP_PURPLE} />
+          </View>
+          <View style={styles.securityNoticeCopy}>
+            <Text style={styles.securityNoticeTitle}>개인정보 보호 안내</Text>
+            <Text style={styles.securityNoticeText}>
+              입력한 정보는 가입 확인 단계에서 다시 검토할 수 있습니다.
+            </Text>
+          </View>
         </View>
 
         <Pressable
@@ -301,11 +350,14 @@ function SignupForm({
             {isTermsAgreed ? <Ionicons name="checkmark" size={18} color="#ffffff" /> : null}
           </View>
           <Text style={styles.termsAgreementText}>이용약관/개인정보 동의</Text>
+          <View style={styles.requiredBadge}>
+            <Text style={styles.requiredBadgeText}>필수</Text>
+          </View>
         </Pressable>
         <View style={styles.termsSummaryRow}>
           <Text style={styles.termsDescription}>
             회원가입 및 서비스 이용을 위해 이름, 주민등록번호, 아이디, 비밀번호, 이메일 정보를
-            수집하고 약관에 따라 관리합니다.
+            수집하고 약관에 따라 관리합니다. 동의 후 다음 단계로 진행할 수 있습니다.
           </Text>
           <Pressable
             accessibilityRole="button"
@@ -412,74 +464,88 @@ function ConfirmInfo({
   };
 
   return (
-    <View style={styles.confirmScreen}>
-      <Brand compact />
+    <ScrollView
+      contentContainerStyle={styles.stepScrollContent}
+      style={styles.stepScroll}
+      showsVerticalScrollIndicator={false}>
+      <View style={styles.confirmScreen}>
+        <Brand compact />
 
-      <View style={styles.confirmHeader}>
-        <View style={styles.stepBadge}>
-          <Text style={styles.stepBadgeText}>STEP 2</Text>
-        </View>
-        <Text style={styles.confirmTitle}>가입 정보 확인</Text>
-        <Text style={styles.confirmDescription}>입력하신 정보가 맞는지 확인해주세요.</Text>
-      </View>
-
-      <View style={styles.infoCard}>
-        <InfoRow label="이름" value={info.name || '-'} />
-        <InfoRow label="아이디" value={info.id || '-'} />
-        <InfoRow label="이메일" value={info.email || '-'} />
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>비밀번호</Text>
-          <View style={styles.infoValueWrap}>
-            <Text style={styles.infoValue}>
-              {isPasswordVisible ? visiblePassword : maskedPassword}
-            </Text>
-            {isPasswordVisible ? null : (
-              <Text style={styles.infoHint}>(보안상 가림)</Text>
-            )}
+        <View style={styles.confirmHeader}>
+          <View style={styles.stepBadge}>
+            <Text style={styles.stepBadgeText}>STEP 2</Text>
           </View>
+          <Text style={styles.confirmTitle}>가입 정보 확인</Text>
+          <Text style={styles.confirmDescription}>입력하신 정보가 맞는지 확인해주세요.</Text>
+        </View>
+
+        <View style={styles.infoCard}>
+          <View style={styles.infoCardHeader}>
+            <View style={styles.infoCardIcon}>
+              <Ionicons name="document-text-outline" size={22} color={DEEP_PURPLE} />
+            </View>
+            <View style={styles.infoCardHeaderCopy}>
+              <Text style={styles.infoCardTitle}>제출 전 최종 확인</Text>
+              <Text style={styles.infoCardDescription}>민감 정보는 일부 숨김 처리됩니다.</Text>
+            </View>
+          </View>
+          <InfoRow label="이름" value={info.name || '-'} />
+          <InfoRow label="아이디" value={info.id || '-'} />
+          <InfoRow label="이메일" value={info.email || '-'} />
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>비밀번호</Text>
+            <View style={styles.infoValueWrap}>
+              <Text style={styles.infoValue}>
+                {isPasswordVisible ? visiblePassword : maskedPassword}
+              </Text>
+              {isPasswordVisible ? null : (
+                <Text style={styles.infoHint}>(보안상 가림)</Text>
+              )}
+            </View>
+            <Pressable
+              accessibilityLabel={isPasswordVisible ? '비밀번호 가리기' : '비밀번호 보기'}
+              hitSlop={10}
+              onPress={() => setIsPasswordVisible((visible) => !visible)}
+              style={styles.infoEyeButton}>
+              <Ionicons
+                name={isPasswordVisible ? 'eye-outline' : 'eye-off-outline'}
+                size={24}
+                color={DEEP_PURPLE}
+              />
+            </Pressable>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>주민등록번호</Text>
+            <View style={styles.infoValueWrap}>
+              <Text style={styles.infoValue}>{maskedResidentNumber}</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.confirmActions}>
+          <Pressable style={styles.outlineButton} onPress={onBack}>
+            <Text style={styles.outlineButtonText}>수정하기</Text>
+            <Text style={styles.smallActionText}>→ 다시 1단계로 돌아가기</Text>
+          </Pressable>
+
           <Pressable
-            accessibilityLabel={isPasswordVisible ? '비밀번호 가리기' : '비밀번호 보기'}
-            hitSlop={10}
-            onPress={() => setIsPasswordVisible((visible) => !visible)}
-            style={styles.infoEyeButton}>
-            <Ionicons
-              name={isPasswordVisible ? 'eye-outline' : 'eye-off-outline'}
-              size={24}
-              color={DEEP_PURPLE}
-            />
+            disabled={isSubmitting}
+            style={[styles.confirmButton, isSubmitting && styles.confirmButtonDisabled]}
+            onPress={handleComplete}>
+            {isSubmitting ? (
+              <ActivityIndicator color="#ffffff" size="small" />
+            ) : (
+              <>
+                <Text style={styles.confirmButtonText}>가입 완료</Text>
+                <Text style={styles.confirmButtonSubText}>→ 완료 화면으로 이동</Text>
+              </>
+            )}
           </Pressable>
         </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>주민등록번호</Text>
-          <View style={styles.infoValueWrap}>
-            <Text style={styles.infoValue}>{maskedResidentNumber}</Text>
-          </View>
-        </View>
+
+        <Text style={styles.footer}>모아모아 은행 © 2024. All rights reserved.</Text>
       </View>
-
-      <View style={styles.confirmActions}>
-        <Pressable style={styles.outlineButton} onPress={onBack}>
-          <Text style={styles.outlineButtonText}>수정하기</Text>
-          <Text style={styles.smallActionText}>→ 다시 1단계로 돌아가기</Text>
-        </Pressable>
-
-        <Pressable
-          disabled={isSubmitting}
-          style={[styles.confirmButton, isSubmitting && styles.confirmButtonDisabled]}
-          onPress={handleComplete}>
-          {isSubmitting ? (
-            <ActivityIndicator color="#ffffff" size="small" />
-          ) : (
-            <>
-              <Text style={styles.confirmButtonText}>가입 완료</Text>
-              <Text style={styles.confirmButtonSubText}>→ 완료 화면으로 이동</Text>
-            </>
-          )}
-        </Pressable>
-      </View>
-
-      <Text style={styles.footer}>₩ Bank © 2024. All rights reserved.</Text>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -494,55 +560,62 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 function CompleteSignup({ info, onLogin }: { info: SignupInfo; onLogin: () => void }) {
   return (
-    <View style={styles.completeScreen}>
-      <Brand compact />
-      <Text style={styles.completeTitle}>
- feat_wishsave
-        회원가입이{'\n'}       
-        완료되었습니다!
+    <ScrollView
+      contentContainerStyle={styles.stepScrollContent}
+      style={styles.stepScroll}
+      showsVerticalScrollIndicator={false}>
+      <View style={styles.completeScreen}>
+        <Brand compact />
+        <Text style={styles.completeTitle}>
+          회원가입이{'\n'}
+          완료되었습니다!
+        </Text>
 
-        회원가입이 완료되었습니다!
-        main
-      </Text>
+        <View style={styles.completeIllustration}>
+          <View style={styles.house}>
+            <View style={styles.roof} />
+            <View style={styles.houseBody}>
+              <View style={styles.door} />
+            </View>
+          </View>
+          <View style={styles.person}>
+            <View style={styles.face}>
+              <Ionicons name="happy-outline" size={29} color={DEEP_PURPLE} />
+            </View>
+            <View style={styles.bodyLine} />
+            <View style={styles.leftArm} />
+            <View style={styles.rightArm} />
+            <View style={styles.leftLeg} />
+            <View style={styles.rightLeg} />
+          </View>
+          <MaterialCommunityIcons
+            name="party-popper"
+            size={38}
+            color="#8e76b7"
+            style={styles.confetti}
+          />
+        </View>
 
-      <View style={styles.completeIllustration}>
-        <View style={styles.house}>
-          <View style={styles.roof} />
-          <View style={styles.houseBody}>
-            <View style={styles.door} />
+        <Text style={styles.welcomeText}>
+          [{info.name || '회원'}]님, 모아모아 은행의{'\n'}
+          새로운 회원이 되신 것을 환영합니다.
+        </Text>
+
+        <View style={styles.nextStepCard}>
+          <View style={styles.nextStepIcon}>
+            <Ionicons name="sparkles-outline" size={21} color={DEEP_PURPLE} />
+          </View>
+          <View style={styles.nextStepCopy}>
+            <Text style={styles.nextStepTitle}>이제 로그인할 수 있어요</Text>
+            <Text style={styles.nextStepText}>방금 만든 아이디로 계좌 서비스를 시작해보세요.</Text>
           </View>
         </View>
-        <View style={styles.person}>
-          <View style={styles.face}>
-            <Ionicons name="happy-outline" size={29} color={DEEP_PURPLE} />
-          </View>
-          <View style={styles.bodyLine} />
-          <View style={styles.leftArm} />
-          <View style={styles.rightArm} />
-          <View style={styles.leftLeg} />
-          <View style={styles.rightLeg} />
-        </View>
-        <MaterialCommunityIcons
-          name="party-popper"
-          size={38}
-          color="#8e76b7"
-          style={styles.confetti}
-        />
+
+        <Pressable style={styles.homeButton} onPress={onLogin}>
+          <Text style={styles.homeButtonText}>로그인하러 가기</Text>
+        </Pressable>
       </View>
-
-      <Text style={styles.welcomeText}>
- feat_wishsave
-        [{info.name || '회원'}]님, W Bank의 새로운{'\n'}   
-        회원이 되신 것을 환영합니다.
-
-        [{info.name || '회원'}]님, W Bank의 새로운 회원이 되신 것을 환영합니다.
- main
-      </Text>
-
-      <Pressable style={styles.homeButton} onPress={onLogin}>
-        <Text style={styles.homeButtonText}>로그인 하러 가기</Text>
-      </Pressable>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -585,6 +658,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
   },
   formScrollContent: {
+    flexGrow: 1,
+  },
+  stepScroll: {
+    flex: 1,
+  },
+  stepScrollContent: {
     flexGrow: 1,
   },
   brand: {
@@ -686,13 +765,73 @@ const styles = StyleSheet.create({
     marginTop: 8,
     textAlign: 'center',
   },
+  progressTrack: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginTop: 18,
+  },
+  progressStep: {
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderColor: '#d9cdef',
+    borderRadius: 999,
+    borderWidth: 1,
+    height: 28,
+    justifyContent: 'center',
+    width: 28,
+  },
+  progressStepActive: {
+    backgroundColor: DEEP_PURPLE,
+    borderColor: DEEP_PURPLE,
+  },
+  progressStepText: {
+    color: '#7b6a90',
+    fontSize: 12,
+    fontWeight: '900',
+  },
+  progressStepTextActive: {
+    color: '#ffffff',
+  },
+  progressLine: {
+    backgroundColor: '#d9cdef',
+    height: 2,
+    width: 34,
+  },
   signupFields: {
     gap: 14,
+  },
+  fieldSectionHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 14,
+  },
+  fieldSectionTitle: {
+    color: TEXT_BLACK,
+    fontSize: 19,
+    fontWeight: '900',
+  },
+  fieldSectionDescription: {
+    color: '#6c6577',
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  fieldSectionBadge: {
+    backgroundColor: '#f1edf9',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  fieldSectionBadgeText: {
+    color: DEEP_PURPLE,
+    fontSize: 12,
+    fontWeight: '900',
   },
   input: {
     borderColor: DEEP_PURPLE,
     borderRadius: 12,
-    borderWidth: 1,
+    borderWidth: 2,
     color: TEXT_BLACK,
     fontSize: 24,
     fontWeight: '500',
@@ -761,6 +900,13 @@ const styles = StyleSheet.create({
     marginTop: -6,
     paddingLeft: 6,
   },
+  passwordMatchedText: {
+    color: '#2f9e44',
+    fontSize: 13,
+    fontWeight: '700',
+    marginTop: -6,
+    paddingLeft: 6,
+  },
   fieldHintText: {
     color: '#5f5f68',
     fontSize: 13,
@@ -774,6 +920,41 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginTop: -6,
     paddingLeft: 6,
+  },
+  securityNotice: {
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderColor: '#ded6ee',
+    borderRadius: 12,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 22,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+  },
+  securityNoticeIcon: {
+    alignItems: 'center',
+    backgroundColor: '#f1edf9',
+    borderRadius: 999,
+    height: 38,
+    justifyContent: 'center',
+    width: 38,
+  },
+  securityNoticeCopy: {
+    flex: 1,
+  },
+  securityNoticeTitle: {
+    color: TEXT_BLACK,
+    fontSize: 14,
+    fontWeight: '900',
+  },
+  securityNoticeText: {
+    color: '#5f5f68',
+    fontSize: 12,
+    fontWeight: '600',
+    lineHeight: 18,
+    marginTop: 3,
   },
   termsAgreement: {
     alignItems: 'center',
@@ -798,6 +979,17 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 18,
     fontWeight: '700',
+  },
+  requiredBadge: {
+    backgroundColor: '#f1edf9',
+    borderRadius: 999,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+  },
+  requiredBadgeText: {
+    color: DEEP_PURPLE,
+    fontSize: 12,
+    fontWeight: '900',
   },
   termsSummaryRow: {
     alignItems: 'flex-start',
@@ -892,7 +1084,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   confirmScreen: {
-    flex: 1,
+    flexGrow: 1,
     paddingBottom: 28,
     paddingTop: 58,
   },
@@ -925,6 +1117,37 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.06,
     shadowRadius: 8,
+  },
+  infoCardHeader: {
+    alignItems: 'center',
+    borderBottomColor: '#eee8f6',
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 2,
+    paddingBottom: 18,
+  },
+  infoCardIcon: {
+    alignItems: 'center',
+    backgroundColor: '#f1edf9',
+    borderRadius: 999,
+    height: 42,
+    justifyContent: 'center',
+    width: 42,
+  },
+  infoCardHeaderCopy: {
+    flex: 1,
+  },
+  infoCardTitle: {
+    color: TEXT_BLACK,
+    fontSize: 16,
+    fontWeight: '900',
+  },
+  infoCardDescription: {
+    color: '#5f5f68',
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 4,
   },
   infoRow: {
     alignItems: 'flex-start',
@@ -1012,7 +1235,7 @@ const styles = StyleSheet.create({
   },
   completeScreen: {
     alignItems: 'center',
-    flex: 1,
+    flexGrow: 1,
     paddingBottom: 48,
     paddingTop: 88,
   },
@@ -1059,96 +1282,153 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderTopWidth: 0,
     borderWidth: 3,
+    bottom: 0,
+    height: 94,
+    position: 'absolute',
+    width: 126,
   },
   door: {
-    backgroundColor: '#8e76b7',
-    borderRadius: 10,
-    height: 48,
+    backgroundColor: '#b8a8d3',
+    borderColor: DEEP_PURPLE,
+    borderTopLeftRadius: 28,
+    borderTopRightRadius: 28,
+    borderWidth: 3,
+    bottom: -3,
+    height: 66,
     left: 42,
     position: 'absolute',
-    top: 58,
-    width: 32,
+    width: 42,
   },
   person: {
-    alignItems: 'center',
     bottom: 18,
-    left: 148,
+    height: 150,
     position: 'absolute',
-    width: 86,
+    right: 28,
+    width: 96,
   },
   face: {
     alignItems: 'center',
-    backgroundColor: '#ffe8e8',
-    borderRadius: 999,
-    borderWidth: 2,
-    borderColor: '#f2dffd',
-    height: 50,
+    backgroundColor: '#d9cdef',
+    borderColor: DEEP_PURPLE,
+    borderRadius: 28,
+    borderWidth: 3,
+    height: 56,
     justifyContent: 'center',
-    width: 50,
+    left: 22,
+    position: 'absolute',
+    top: 0,
+    width: 56,
   },
   bodyLine: {
-    backgroundColor: '#8e76b7',
-    height: 58,
-    marginTop: 12,
-    width: 8,
+    backgroundColor: DEEP_PURPLE,
+    borderRadius: 4,
+    height: 62,
+    left: 48,
+    position: 'absolute',
+    top: 54,
+    width: 4,
   },
   leftArm: {
-    backgroundColor: '#8e76b7',
-    height: 42,
-    left: -18,
+    backgroundColor: DEEP_PURPLE,
+    borderRadius: 4,
+    height: 58,
+    left: 20,
     position: 'absolute',
-    top: 26,
-    width: 10,
+    top: 54,
+    transform: [{ rotate: '45deg' }],
+    width: 4,
   },
   rightArm: {
-    backgroundColor: '#8e76b7',
-    height: 42,
+    backgroundColor: DEEP_PURPLE,
+    borderRadius: 4,
+    height: 64,
     position: 'absolute',
-    right: -18,
-    top: 26,
-    width: 10,
+    right: 13,
+    top: 42,
+    transform: [{ rotate: '-42deg' }],
+    width: 4,
   },
   leftLeg: {
-    backgroundColor: '#8e76b7',
-    height: 42,
-    left: -10,
+    backgroundColor: DEEP_PURPLE,
+    borderRadius: 4,
+    bottom: 0,
+    height: 48,
+    left: 37,
     position: 'absolute',
-    top: 70,
-    width: 10,
+    transform: [{ rotate: '18deg' }],
+    width: 4,
   },
   rightLeg: {
-    backgroundColor: '#8e76b7',
-    height: 42,
+    backgroundColor: DEEP_PURPLE,
+    borderRadius: 4,
+    bottom: 0,
+    height: 48,
     position: 'absolute',
-    right: -10,
-    top: 70,
-    width: 10,
+    right: 31,
+    transform: [{ rotate: '-18deg' }],
+    width: 4,
   },
   confetti: {
     position: 'absolute',
-    right: -10,
-    top: 16,
+    right: 8,
+    top: 8,
   },
   welcomeText: {
     color: TEXT_BLACK,
-    fontSize: 24,
-    fontWeight: '900',
+    fontSize: 22,
+    fontWeight: '500',
     lineHeight: 34,
-    marginTop: 32,
+    marginTop: 52,
     textAlign: 'center',
+  },
+  nextStepCard: {
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    backgroundColor: '#ffffff',
+    borderColor: '#ded6ee',
+    borderRadius: 12,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 28,
+    paddingHorizontal: 16,
+    paddingVertical: 15,
+  },
+  nextStepIcon: {
+    alignItems: 'center',
+    backgroundColor: '#f1edf9',
+    borderRadius: 999,
+    height: 42,
+    justifyContent: 'center',
+    width: 42,
+  },
+  nextStepCopy: {
+    flex: 1,
+  },
+  nextStepTitle: {
+    color: TEXT_BLACK,
+    fontSize: 15,
+    fontWeight: '900',
+  },
+  nextStepText: {
+    color: '#5f5f68',
+    fontSize: 12,
+    fontWeight: '600',
+    lineHeight: 18,
+    marginTop: 4,
   },
   homeButton: {
     alignItems: 'center',
+    alignSelf: 'stretch',
     backgroundColor: DEEP_PURPLE,
-    borderRadius: 14,
-    height: 70,
+    borderRadius: 9,
+    height: 62,
     justifyContent: 'center',
-    marginTop: 38,
-    width: '100%',
+    marginTop: 'auto',
   },
   homeButtonText: {
     color: '#ffffff',
-    fontSize: 19,
+    fontSize: 22,
     fontWeight: '900',
   },
 });

@@ -54,8 +54,6 @@ export default function UsageCompareCard() {
   const averageSpending =
     AVERAGE_SPENDING[ageGroup]?.[jobType] ?? 0;
 
-  const diff = mySpending - averageSpending;
-
   return (
     <View style={styles.container}>
 
@@ -222,16 +220,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
 
-  button: {
-  paddingHorizontal: 12,
-  paddingVertical: 8,
-  borderRadius: 10,
-  backgroundColor: '#F2F2F2',
-},
-
-  buttonSelected: {
-  backgroundColor: '#6C5CE7',
-},
 dropdownHeader: {
   backgroundColor: '#fff',
   borderRadius: 12,

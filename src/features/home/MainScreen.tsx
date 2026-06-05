@@ -1,4 +1,3 @@
- feat_wishsave
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -9,6 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
+import { useBudget } from '../../../contexts/BudgetContext';
 
 import BalanceCard from '@/src/components/home/BalanceCard';
 import BudgetStatusCard from '@/src/components/home/BudgetStatusCard';
@@ -17,69 +19,44 @@ import QuickMenuGrid from '@/src/components/home/QuickMenuGrid';
 import UsageCompareCard from '@/src/components/home/UsageCompareCard';
 import WishSaveCard from '@/src/components/home/WishSaveCard';
 
-import { useRouter } from "expo-router";
-import { useState } from "react";
-
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View
-} from "react-native";
-
-import { SafeAreaView } from "react-native-safe-area-context";
-
-import { useBudget } from "../../../contexts/BudgetContext";
-
-import BalanceCard from "@/src/components/home/BalanceCard";
-import BudgetStatusCard from "@/src/components/home/BudgetStatusCard";
-import QuickExpenseInput from "@/src/components/home/QuickExpenseInput";
-import QuickMenuGrid from "@/src/components/home/QuickMenuGrid";
-main
-
 const TEXT = {
   appTitle: '내 계좌',
-  settings: '설정',
 };
- feat_wishsave
+
 const SOFT_PURPLE = '#f5efff';
 const DEEP_PURPLE = '#4f287f';
 
+type WishItem = {
+  id: number;
+  title: string;
+  targetAmount: number;
+  savedAmount: number;
+};
+
 export default function MainScreen() {
   const router = useRouter();
-
-  const [balance, setBalance] = useState(0);
-
-
-
-export default function MainScreen() {
-  const router = useRouter();
-> main
   const [monthlySpent, setMonthlySpent] = useState(0);
   const { budgets } = useBudget();
-
-  const monthlyBudget = budgets.reduce(
-    (sum, item) => sum + item.amount,
-    0
-  );
-
-  const balance = monthlyBudget - monthlySpent;
-
   const [title, setTitle] = useState('');
   const [targetAmount, setTargetAmount] = useState('');
+  const [wishList, setWishList] = useState<WishItem[]>([]);
 
-  const [wishList, setWishList] = useState<any[]>([]);
-  
+  const monthlyBudget = budgets.reduce((sum, item) => sum + item.amount, 0);
+  const balance = monthlyBudget - monthlySpent;
 
   const addWish = () => {
-    if (!title || !targetAmount) return;
+    const amount = Number(targetAmount);
 
-    setWishList(prev => [
+    if (!title.trim() || !Number.isFinite(amount) || amount <= 0) {
+      return;
+    }
+
+    setWishList((prev) => [
       ...prev,
       {
         id: Date.now(),
-        title,
-        targetAmount: Number(targetAmount),
+        title: title.trim(),
+        targetAmount: amount,
         savedAmount: 0,
       },
     ]);
@@ -88,11 +65,24 @@ export default function MainScreen() {
     setTargetAmount('');
   };
 
-  const handleAddExpense = (amount: number) => {
-feat_wishsave
-    setMonthlySpent(prev => prev + amount);
-    setBalance(prev => prev - amount);
+  const handleSaveAmount = (id: number, amount: number) => {
+    setWishList((prev) =>
+      prev.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              savedAmount: Math.min(item.savedAmount + amount, item.targetAmount),
+            }
+          : item
+      )
+    );
+  };
 
+  const handleDelete = (id: number) => {
+    setWishList((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const handleAddExpense = (amount: number) => {
     setMonthlySpent((prev) => {
       const nextSpent = prev + amount;
 
@@ -108,86 +98,75 @@ feat_wishsave
 
       return nextSpent;
     });
-main
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-    >
-      {/* HEADER */}
-      <View style={styles.header}>
-        <Text style={styles.appTitle}>{TEXT.appTitle}</Text>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.appTitle}>{TEXT.appTitle}</Text>
+        </View>
 
-      </View>
+        <BalanceCard balance={balance} monthlySpent={monthlySpent} />
 
-      {/* CARDS */}
-      <BalanceCard balance={balance} monthlySpent={monthlySpent} />
+        <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
-      <QuickExpenseInput onSaveExpense={handleAddExpense} />
+        <BudgetStatusCard />
 
-      <BudgetStatusCard />
+        <View style={styles.inputCard}>
+          <Text style={styles.cardTitle}>나의 위시</Text>
 
-      {/* INPUT */}
-<View style={styles.inputCard}>
-  <Text style={styles.cardTitle}>나의 위시</Text>
+          <TextInput
+            onChangeText={setTitle}
+            placeholder="사고 싶은 것 (예: 에어팟)"
+            style={styles.input}
+            value={title}
+          />
 
-  <TextInput
-    placeholder="사고 싶은 것 (예: 에어팟)"
-    value={title}
-    onChangeText={setTitle}
-    style={styles.input}
-  />
+          <TextInput
+            keyboardType="numeric"
+            onChangeText={(value) => setTargetAmount(value.replace(/[^0-9]/g, ''))}
+            placeholder="목표 금액"
+            style={styles.input}
+            value={targetAmount}
+          />
 
-  <TextInput
-    placeholder="목표 금액"
-    value={targetAmount}
-    onChangeText={setTargetAmount}
-    keyboardType="numeric"
-    style={styles.input}
-  />
+          <TouchableOpacity onPress={addWish} style={styles.addButton}>
+            <Text style={styles.addButtonText}>추가</Text>
+          </TouchableOpacity>
+        </View>
 
-  <TouchableOpacity onPress={addWish} style={styles.addButton}>
-    <Text style={styles.addButtonText}>추가</Text>
-  </TouchableOpacity>
-</View>
+        <View style={styles.wishList}>
+          {wishList.map((item) => (
+            <WishSaveCard
+              key={item.id}
+              onDelete={() => handleDelete(item.id)}
+              onSave={(amount: number) => handleSaveAmount(item.id, amount)}
+              savedAmount={item.savedAmount}
+              targetAmount={item.targetAmount}
+              title={item.title}
+            />
+          ))}
+        </View>
 
+        <UsageCompareCard />
 
-     {/* WISH LIST */}
-<View style={{ marginBottom: 24 }}>
-  {wishList.map(item => (
-    <WishSaveCard
-      key={item.id}
-      title={item.title}
-      targetAmount={item.targetAmount}
-
-      savedAmount={currentSavedAmount} 
-      onSave={handleSaveAmount}       
-  
-      onDelete={() => handleDelete(item.id)}
-    />
-  ))}
-</View>
-
-<UsageCompareCard />
-
-{/* QUICK MENU */}
-<View style={{ marginTop: 24 }}>
-  <QuickMenuGrid />
-</View>
-    </ScrollView>
- feat_wishsave
-    
-
+        <View style={styles.quickMenu}>
+          <QuickMenuGrid />
+        </View>
+      </ScrollView>
     </SafeAreaView>
- main
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
     backgroundColor: '#F7F7FB',
@@ -197,69 +176,52 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   header: {
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
     marginBottom: 22,
     marginTop: 18,
   },
   appTitle: {
+    color: '#111111',
     fontSize: 24,
     fontWeight: '700',
-    color: '#111',
   },
-  
   cardTitle: {
-  fontSize: 24,
-  fontWeight: '800',
-  color: DEEP_PURPLE,
-  marginBottom: 10,
-},
-inputCard: {
-  backgroundColor: '#f5efff',
-  borderRadius: 16,
-  padding: 16,
-  marginTop: 10,
-  marginBottom: 16,
-},
-
-  settingButton: {
-    backgroundColor: '#EEF0FF',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+    color: DEEP_PURPLE,
+    fontSize: 24,
+    fontWeight: '800',
+    marginBottom: 10,
+  },
+  inputCard: {
+    backgroundColor: SOFT_PURPLE,
     borderRadius: 16,
+    marginBottom: 16,
+    marginTop: 10,
+    padding: 16,
   },
-  settingText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#3D5AFE',
-  },
-
   input: {
-    backgroundColor: '#fff',
-    padding: 12,
+    backgroundColor: '#ffffff',
     borderRadius: 10,
     marginTop: 10,
+    padding: 12,
   },
-
   addButton: {
+    alignItems: 'center',
     backgroundColor: '#3D5AFE',
-    padding: 12,
     borderRadius: 10,
     marginTop: 10,
-    alignItems: 'center',
+    padding: 12,
   },
-
   addButtonText: {
-    color: '#fff',
+    color: '#ffffff',
     fontWeight: '700',
   },
- feat_wishsave
-});
-
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
+  wishList: {
+    gap: 12,
+    marginBottom: 24,
+  },
+  quickMenu: {
+    marginTop: 24,
   },
 });
- main
