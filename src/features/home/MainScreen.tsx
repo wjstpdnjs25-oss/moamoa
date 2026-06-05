@@ -1,5 +1,5 @@
-import { useFocusEffect, useRouter } from "expo-router";
-import { useCallback, useState } from "react";
+import { useRouter } from "expo-router";
+import { useMemo, useState } from "react";
 import {
   ScrollView,
   StyleSheet,
@@ -20,7 +20,6 @@ import QuickMenuGrid from "@/src/components/home/QuickMenuGrid";
 import UsageCompareCard from "@/src/components/home/UsageCompareCard";
 import WishSaveCard from "@/src/components/home/WishSaveCard";
 import { getExpenseCategoryIcon } from "@/src/constants/expense";
-import { getMonthlyExpenseTotal } from "@/src/data/expenseRepository";
 
 const TEXT = {
   appTitle: "모아모아",
@@ -42,32 +41,25 @@ type WishItem = {
 
 export default function MainScreen() {
   const router = useRouter();
-  const [monthlySpent, setMonthlySpent] = useState(0);
   const { budgets } = useBudget();
-  const { addExpense, refreshToken } = useExpense();
+  const { addExpense, expenses } = useExpense();
   const [title, setTitle] = useState("");
   const [targetAmount, setTargetAmount] = useState("");
   const [wishList, setWishList] = useState<WishItem[]>([]);
 
+  const monthlySpent = useMemo(() => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const monthPrefix = `${year}-${month}`;
+
+    return expenses
+      .filter((expense) => expense.spentDate.startsWith(monthPrefix))
+      .reduce((sum, expense) => sum + expense.amount, 0);
+  }, [expenses]);
+
   const monthlyBudget = budgets.reduce((sum, item) => sum + item.amount, 0);
   const balance = monthlyBudget - monthlySpent;
-
-  const loadMonthlySpent = useCallback(async () => {
-    const today = new Date();
-    const total = await getMonthlyExpenseTotal(today.getFullYear(), today.getMonth());
-
-    setMonthlySpent(total);
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      void refreshToken;
-
-      loadMonthlySpent().catch((error) => {
-        console.error("Failed to load monthly expenses", error);
-      });
-    }, [loadMonthlySpent, refreshToken])
-  );
 
   const addWish = () => {
     const amount = Number(targetAmount);
@@ -120,8 +112,7 @@ export default function MainScreen() {
       spentAt: today,
     });
 
-    const nextSpent = await getMonthlyExpenseTotal(today.getFullYear(), today.getMonth());
-    setMonthlySpent(nextSpent);
+    const nextSpent = previousSpent + amount;
 
     if (previousSpent <= monthlyBudget && nextSpent > monthlyBudget) {
       router.push({

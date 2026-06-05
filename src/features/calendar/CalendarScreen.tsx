@@ -8,16 +8,16 @@ import { useExpense } from "../../../contexts/ExpenseContext";
 
 import {
   CATEGORY_LEGEND,
+  CUSTOM_EXPENSE_CATEGORY_LABEL,
   getExpenseCategoryStyle,
 } from "@/src/constants/expense";
 import {
   ExpenseRecord,
   formatExpenseDateKey,
-  getExpensesByMonth,
 } from "@/src/data/expenseRepository";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
-const DEFAULT_CATEGORY_STYLE = getExpenseCategoryStyle("기타");
+const DEFAULT_CATEGORY_STYLE = getExpenseCategoryStyle(CUSTOM_EXPENSE_CATEGORY_LABEL);
 
 type CategorySummary = {
   category: string;
@@ -52,32 +52,28 @@ function groupExpensesByDate(expenses: ExpenseRecord[]) {
 
 export default function CalendarScreen() {
   const router = useRouter();
-  const { refreshToken } = useExpense();
+  const { expenses, reloadExpenses } = useExpense();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [monthlyExpenses, setMonthlyExpenses] = useState<ExpenseRecord[]>([]);
 
   const selectedMonthStart = useMemo(() => {
     return new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
   }, [selectedDate]);
 
-  const loadMonthlyExpenses = useCallback(async () => {
-    const expenses = await getExpensesByMonth(
-      selectedMonthStart.getFullYear(),
-      selectedMonthStart.getMonth()
-    );
-
-    setMonthlyExpenses(expenses);
-  }, [selectedMonthStart]);
-
   useFocusEffect(
     useCallback(() => {
-      void refreshToken;
-
-      loadMonthlyExpenses().catch((error) => {
+      reloadExpenses().catch((error) => {
         console.error("Failed to load calendar expenses", error);
       });
-    }, [loadMonthlyExpenses, refreshToken])
+    }, [reloadExpenses])
   );
+
+  const monthlyExpenses = useMemo(() => {
+    const year = selectedMonthStart.getFullYear();
+    const month = String(selectedMonthStart.getMonth() + 1).padStart(2, "0");
+    const monthPrefix = `${year}-${month}`;
+
+    return expenses.filter((expense) => expense.spentDate.startsWith(monthPrefix));
+  }, [expenses, selectedMonthStart]);
 
   const expensesByDate = useMemo(() => {
     return groupExpensesByDate(monthlyExpenses);
