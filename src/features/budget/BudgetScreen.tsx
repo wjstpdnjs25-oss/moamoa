@@ -109,6 +109,14 @@ export default function BudgetScreen() {
             .filter((expenses) => expenses.category === item.category)
             .reduce((sum, expense) => sum + expense.amount, 0);
 
+ feat_wishsave
+        <View style={styles.copy}>
+          <Text style={styles.title}>모아모아와 함께하는 간편한 은행</Text>
+          <Text style={styles.description}>
+            흩어진 금융 생활을 모아,{'/n'}
+            나만의 계좌 관리를 시작해보세요.
+          </Text>
+
             const rate =
             item.amount === 0 ? 0 : Math.round((spent / item.amount) * 100);
 
@@ -161,6 +169,7 @@ export default function BudgetScreen() {
               </TouchableOpacity>
             );
           })}
+ main
         </View>
 
         <View style={styles.editCard}>

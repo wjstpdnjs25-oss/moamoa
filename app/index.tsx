@@ -91,5 +91,13 @@ const styles = StyleSheet.create({
 
 
 import LandingScreen from "@/src/features/home/LandingScreen";
+
 export default LandingScreen;
+ feat_spending_compare
+ main
+
+
+<Text style={{ backgroundColor: 'red' }}>
+TEST
+</Text>
  main
