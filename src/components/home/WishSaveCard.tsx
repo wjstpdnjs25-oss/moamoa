@@ -10,6 +10,8 @@ export default function WishSaveCard({
   savedAmount = 0,
   onDelete,
   onSave,
+  isEditing,
+  onEdit,
 }) {
   const safeTarget = Number(targetAmount) || 0;
   const safeSaved = Number(savedAmount) || 0;
@@ -23,33 +25,32 @@ export default function WishSaveCard({
 
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>{title}</Text>
-      <TouchableOpacity style={styles.deleteButton} activeOpacity={0.7}
-        onPress={onDelete}
-        >
-        <Text style={styles.deleteButtonText}>삭제</Text>
-      </TouchableOpacity>
+      <View style={styles.headerRow}>
+      <Text style={styles.title}>{title || "위시 아이템"}</Text>
+     <TouchableOpacity onPress={onDelete} style={styles.deleteButton}>
+      <Text style={styles.deleteButtonText}>삭제</Text>
+    </TouchableOpacity>
+  </View>
 
-      <Text style={styles.amount}>
-        {safeSaved.toLocaleString()}원 / {safeTarget.toLocaleString()}원
-      </Text>
+{!isEditing && (
+  <>
+    <Text style={styles.targetText}>{targetAmount.toLocaleString()}원 목표</Text>
+    <TouchableOpacity style={styles.editButton} onPress={onEdit}>
+      <Text style={styles.editButtonText}>수정하기</Text>
+    </TouchableOpacity>
+  </>
+)}
 
-      <Text style={styles.percent}>
-        {Math.round(progress)}%
-      </Text>
-      
-      <View style={styles.progressBarBackground}>
-        <View style={[styles.progressBarFill, { width: `${Math.min(Math.round(progress), 100)}%` }]} />
-      </View>
 
 
       
-      {remaining <= 0 ? (
+     {remaining <= 0 ? (
         <Text style={styles.achievedText}>
         🎉 축하합니다! 목표 금액을 전액 모았습니다!</Text>
         ) : (
         <Text style={styles.remaining}>{remaining.toLocaleString()}원 남았어요</Text>
       )}
+
       <TextInput
       style={styles.amountInput}
       placeholder="오늘 저축할 금액 입력"
