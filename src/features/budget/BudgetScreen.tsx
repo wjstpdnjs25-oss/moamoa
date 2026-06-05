@@ -3,6 +3,8 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -63,6 +65,10 @@ export default function BudgetScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView 
+        style={styles.KeyboardAvoidingView}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.content}
@@ -182,6 +188,7 @@ export default function BudgetScreen() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+     </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -380,5 +387,8 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 17,
     fontWeight: "800",
+  },
+  KeyboardAvoidingView: {
+    flex: 1,
   },
 });
