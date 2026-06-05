@@ -328,6 +328,18 @@ function SignupForm({
           ) : null}
         </View>
 
+        <View style={styles.securityNotice}>
+          <View style={styles.securityNoticeIcon}>
+            <Ionicons name="shield-checkmark" size={20} color={DEEP_PURPLE} />
+          </View>
+          <View style={styles.securityNoticeCopy}>
+            <Text style={styles.securityNoticeTitle}>개인정보 보호 안내</Text>
+            <Text style={styles.securityNoticeText}>
+              입력한 정보는 가입 확인 단계에서 다시 검토할 수 있습니다.
+            </Text>
+          </View>
+        </View>
+
         <Pressable
           accessibilityRole="checkbox"
           accessibilityState={{ checked: isTermsAgreed }}
@@ -873,6 +885,41 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginTop: -6,
     paddingLeft: 6,
+  },
+  securityNotice: {
+    alignItems: 'center',
+    backgroundColor: '#ffffff',
+    borderColor: '#ded6ee',
+    borderRadius: 12,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 22,
+    paddingHorizontal: 14,
+    paddingVertical: 13,
+  },
+  securityNoticeIcon: {
+    alignItems: 'center',
+    backgroundColor: '#f1edf9',
+    borderRadius: 999,
+    height: 38,
+    justifyContent: 'center',
+    width: 38,
+  },
+  securityNoticeCopy: {
+    flex: 1,
+  },
+  securityNoticeTitle: {
+    color: TEXT_BLACK,
+    fontSize: 14,
+    fontWeight: '900',
+  },
+  securityNoticeText: {
+    color: '#5f5f68',
+    fontSize: 12,
+    fontWeight: '600',
+    lineHeight: 18,
+    marginTop: 3,
   },
   termsAgreement: {
     alignItems: 'center',
