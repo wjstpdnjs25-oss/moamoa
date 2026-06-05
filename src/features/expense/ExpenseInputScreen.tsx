@@ -237,6 +237,22 @@ export default function ExpenseInputScreen() {
               );
             })}
           </View>
+
+          {isCustomCategory && (
+            <View style={styles.customCategoryArea}>
+              <TextInput
+                style={styles.customCategoryInput}
+                value={customCategory}
+                onChangeText={setCustomCategory}
+                placeholder={TEXT.customCategoryPlaceholder}
+                placeholderTextColor="#A0A3AD"
+                returnKeyType="done"
+              />
+              <Text style={styles.customCategoryHelp}>
+                {TEXT.customCategoryHelp}
+              </Text>
+            </View>
+          )}
         </View>
 
         <View style={styles.card}>
