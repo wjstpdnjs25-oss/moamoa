@@ -10,16 +10,19 @@ export default function WishSaveCard({
   savedAmount = 0,
   onDelete,
   onSave,
-  isEditing,
   onEdit,
   onTitleChange,
   onPriceChange,
   onEditDone,
+
+
 }) {
+  const [isEditing, setIsEditing] = useState(false);
   const [inputAmount, setInputAmount] = useState('');
   
   const safeTarget = Number(targetAmount) || 0;
   const safeSaved = Number(savedAmount) || 0;
+ 
   
 
   const progress =
@@ -28,96 +31,98 @@ export default function WishSaveCard({
   const remaining = safeTarget - safeSaved;
   
  return (
-    <View style={styles.card}>
+  <View style={styles.card}>
 
-      {/* 헤더 */}
-      <View style={styles.headerRow}>
-        <Text style={styles.title}>{title || "위시 아이템"}</Text>
+    {/* 헤더 */}
+    <View style={styles.headerRow}>
+      <Text style={styles.title}>{title || "위시 아이템"}</Text>
 
-        <TouchableOpacity onPress={onDelete} style={styles.deleteButton}>
-          <Text style={styles.deleteButtonText}>삭제</Text>
+      <TouchableOpacity onPress={onDelete} style={styles.deleteButton}>
+        <Text style={styles.deleteButtonText}>삭제</Text>
+      </TouchableOpacity>
+    </View>
+
+    {/* 보기 / 수정 모드 */}
+    {!isEditing ? (
+      <View>
+        <Text style={styles.targetText}>
+          {safeTarget.toLocaleString()}원 목표
+        </Text>
+
+        {remaining <= 0 ? (
+          <Text style={styles.achievedText}>🎉 목표 금액 달성!</Text>
+        ) : (
+          <Text style={styles.remaining}>
+            {remaining.toLocaleString()}원 남았어요
+          </Text>
+        )}
+
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => setIsEditing(true)}
+        >
+          <Text style={styles.editButtonText}>등록하기</Text>
         </TouchableOpacity>
       </View>
+    ) : (
+      <View style={styles.editContainer}>
+        <Text style={{ fontWeight: '700', marginBottom: 8 }}>
+          위시템등록하기
+        </Text>
 
-      {/* 보기 모드 / 수정 모드 */}
-      {!isEditing ? (
-        <View>
-          <Text style={styles.targetText}>
-            {safeTarget.toLocaleString()}원 목표
-          </Text>
+        <TextInput
+          style={styles.amountInput}
+          placeholder="사고 싶은 것(예:에어팟)"
+          value={title}
+          onChangeText={onTitleChange}
+        />
 
-          {remaining <= 0 ? (
-            <Text style={styles.achievedText}>
-              🎉 목표 금액 달성!
-            </Text>
-          ) : (
-            <Text style={styles.remaining}>
-              {remaining.toLocaleString()}원 남았어요
-            </Text>
-          )}
+        <TextInput
+          style={styles.amountInput}
+          placeholder="목표 금액"
+          keyboardType="numeric"
+          value={String(targetAmount)}
+          onChangeText={onPriceChange}
+        />
 
-          <TouchableOpacity style={styles.editButton} onPress={onEdit}>
-            <Text style={styles.editButtonText}>수정하기</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View style={styles.editContainer}>
-          <Text style={{ fontWeight: '700', marginBottom: 8 }}>
-            정보 수정하기
-          </Text>
+        <TouchableOpacity
+          style={styles.saveSubmitButton}
+          onPress={() => setIsEditing(false)}
+        >
+          <Text style={styles.saveSubmitButtonText}>등록 완료</Text>
+        </TouchableOpacity>
+      </View>
+    )}
 
-          <TextInput
-            style={styles.amountInput}
-            placeholder="사고 싶은 물건"
-            value={title}
-            onChangeText={onTitleChange}
-          />
+    {/* 저축 입력 (조건문 밖으로 분리!) */}
+    {!isEditing && (
+      <View>
+        <TextInput
+          style={styles.amountInput}
+          placeholder="오늘 저축할 금액"
+          keyboardType="numeric"
+          value={inputAmount}
+          onChangeText={setInputAmount}
+        />
 
-          <TextInput
-            style={styles.amountInput}
-            placeholder="목표 금액"
-            keyboardType="numeric"
-            value={String(targetAmount)}
-            onChangeText={onPriceChange}
-          />
+        <TouchableOpacity
+          style={styles.saveSubmitButton}
+          onPress={() => {
+            if (inputAmount) {
+              onSave(Number(inputAmount));
+              setInputAmount('');
+            }
+          }}
+        >
+          <Text style={styles.saveSubmitButtonText}>저축하기</Text>
+        </TouchableOpacity>
+      </View>
+    )}
 
-          <TouchableOpacity
-            style={[styles.saveSubmitButton, { backgroundColor: '#3D5AFE', marginTop: 15 }]}
-            onPress={onEditDone}
-          >
-            <Text style={styles.saveSubmitButtonText}>수정 완료</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-      {/* 저축 입력 */}
-      {!isEditing && (
-        <View>
-          <TextInput
-            style={styles.amountInput}
-            placeholder="오늘 저축할 금액"
-            keyboardType="numeric"
-            value={inputAmount}
-            onChangeText={setInputAmount}
-          />
-
-          <TouchableOpacity
-            style={styles.saveSubmitButton}
-            onPress={() => {
-              if (inputAmount) {
-                onSave(Number(inputAmount));
-                setInputAmount('');
-              }
-            }}
-          >
-            <Text style={styles.saveSubmitButtonText}>저축하기</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
-    </View>
-  );
+  </View>
+);
 }
+
 const styles = {
   card: {
     padding: 16,
