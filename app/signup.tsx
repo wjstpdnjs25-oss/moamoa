@@ -464,83 +464,88 @@ function ConfirmInfo({
   };
 
   return (
-    <View style={styles.confirmScreen}>
-      <Brand compact />
+    <ScrollView
+      contentContainerStyle={styles.stepScrollContent}
+      style={styles.stepScroll}
+      showsVerticalScrollIndicator={false}>
+      <View style={styles.confirmScreen}>
+        <Brand compact />
 
-      <View style={styles.confirmHeader}>
-        <View style={styles.stepBadge}>
-          <Text style={styles.stepBadgeText}>STEP 2</Text>
+        <View style={styles.confirmHeader}>
+          <View style={styles.stepBadge}>
+            <Text style={styles.stepBadgeText}>STEP 2</Text>
+          </View>
+          <Text style={styles.confirmTitle}>가입 정보 확인</Text>
+          <Text style={styles.confirmDescription}>입력하신 정보가 맞는지 확인해주세요.</Text>
         </View>
-        <Text style={styles.confirmTitle}>가입 정보 확인</Text>
-        <Text style={styles.confirmDescription}>입력하신 정보가 맞는지 확인해주세요.</Text>
-      </View>
 
-      <View style={styles.infoCard}>
-        <View style={styles.infoCardHeader}>
-          <View style={styles.infoCardIcon}>
-            <Ionicons name="document-text-outline" size={22} color={DEEP_PURPLE} />
+        <View style={styles.infoCard}>
+          <View style={styles.infoCardHeader}>
+            <View style={styles.infoCardIcon}>
+              <Ionicons name="document-text-outline" size={22} color={DEEP_PURPLE} />
+            </View>
+            <View style={styles.infoCardHeaderCopy}>
+              <Text style={styles.infoCardTitle}>제출 전 최종 확인</Text>
+              <Text style={styles.infoCardDescription}>민감 정보는 일부 숨김 처리됩니다.</Text>
+            </View>
           </View>
-          <View style={styles.infoCardHeaderCopy}>
-            <Text style={styles.infoCardTitle}>제출 전 최종 확인</Text>
-            <Text style={styles.infoCardDescription}>민감 정보는 일부 숨김 처리됩니다.</Text>
+          <InfoRow label="이름" value={info.name || '-'} />
+          <InfoRow label="아이디" value={info.id || '-'} />
+          <InfoRow label="이메일" value={info.email || '-'} />
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>비밀번호</Text>
+            <View style={styles.infoValueWrap}>
+              <Text style={styles.infoValue}>
+                {isPasswordVisible ? visiblePassword : maskedPassword}
+              </Text>
+              {isPasswordVisible ? null : (
+                <Text style={styles.infoHint}>(보안상 가림)</Text>
+              )}
+            </View>
+            <Pressable
+              accessibilityLabel={isPasswordVisible ? '비밀번호 가리기' : '비밀번호 보기'}
+              hitSlop={10}
+              onPress={() => setIsPasswordVisible((visible) => !visible)}
+              style={styles.infoEyeButton}>
+              <Ionicons
+                name={isPasswordVisible ? 'eye-outline' : 'eye-off-outline'}
+                size={24}
+                color={DEEP_PURPLE}
+              />
+            </Pressable>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>주민등록번호</Text>
+            <View style={styles.infoValueWrap}>
+              <Text style={styles.infoValue}>{maskedResidentNumber}</Text>
+            </View>
           </View>
         </View>
-        <InfoRow label="이름" value={info.name || '-'} />
-        <InfoRow label="아이디" value={info.id || '-'} />
-        <InfoRow label="이메일" value={info.email || '-'} />
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>비밀번호</Text>
-          <View style={styles.infoValueWrap}>
-            <Text style={styles.infoValue}>
-              {isPasswordVisible ? visiblePassword : maskedPassword}
-            </Text>
-            {isPasswordVisible ? null : (
-              <Text style={styles.infoHint}>(보안상 가림)</Text>
-            )}
-          </View>
+
+        <View style={styles.confirmActions}>
+          <Pressable style={styles.outlineButton} onPress={onBack}>
+            <Text style={styles.outlineButtonText}>수정하기</Text>
+            <Text style={styles.smallActionText}>→ 다시 1단계로 돌아가기</Text>
+          </Pressable>
+
           <Pressable
-            accessibilityLabel={isPasswordVisible ? '비밀번호 가리기' : '비밀번호 보기'}
-            hitSlop={10}
-            onPress={() => setIsPasswordVisible((visible) => !visible)}
-            style={styles.infoEyeButton}>
-            <Ionicons
-              name={isPasswordVisible ? 'eye-outline' : 'eye-off-outline'}
-              size={24}
-              color={DEEP_PURPLE}
-            />
+            disabled={isSubmitting}
+            style={[styles.confirmButton, isSubmitting && styles.confirmButtonDisabled]}
+            onPress={handleComplete}>
+            {isSubmitting ? (
+              <ActivityIndicator color="#ffffff" size="small" />
+            ) : (
+              <>
+                <Text style={styles.confirmButtonText}>가입 완료</Text>
+                <Text style={styles.confirmButtonSubText}>→ 완료 화면으로 이동</Text>
+              </>
+            )}
           </Pressable>
         </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>주민등록번호</Text>
-          <View style={styles.infoValueWrap}>
-            <Text style={styles.infoValue}>{maskedResidentNumber}</Text>
-          </View>
-        </View>
+
+        <Text style={styles.footer}>모아모아 은행 © 2024. All rights reserved.</Text>
       </View>
-
-      <View style={styles.confirmActions}>
-        <Pressable style={styles.outlineButton} onPress={onBack}>
-          <Text style={styles.outlineButtonText}>수정하기</Text>
-          <Text style={styles.smallActionText}>→ 다시 1단계로 돌아가기</Text>
-        </Pressable>
-
-        <Pressable
-          disabled={isSubmitting}
-          style={[styles.confirmButton, isSubmitting && styles.confirmButtonDisabled]}
-          onPress={handleComplete}>
-          {isSubmitting ? (
-            <ActivityIndicator color="#ffffff" size="small" />
-          ) : (
-            <>
-              <Text style={styles.confirmButtonText}>가입 완료</Text>
-              <Text style={styles.confirmButtonSubText}>→ 완료 화면으로 이동</Text>
-            </>
-          )}
-        </Pressable>
-      </View>
-
-      <Text style={styles.footer}>모아모아 은행 © 2024. All rights reserved.</Text>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -555,57 +560,62 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 function CompleteSignup({ info, onLogin }: { info: SignupInfo; onLogin: () => void }) {
   return (
-    <View style={styles.completeScreen}>
-      <Brand compact />
-      <Text style={styles.completeTitle}>
-        회원가입이{'\n'}
-        완료되었습니다!
-      </Text>
+    <ScrollView
+      contentContainerStyle={styles.stepScrollContent}
+      style={styles.stepScroll}
+      showsVerticalScrollIndicator={false}>
+      <View style={styles.completeScreen}>
+        <Brand compact />
+        <Text style={styles.completeTitle}>
+          회원가입이{'\n'}
+          완료되었습니다!
+        </Text>
 
-      <View style={styles.completeIllustration}>
-        <View style={styles.house}>
-          <View style={styles.roof} />
-          <View style={styles.houseBody}>
-            <View style={styles.door} />
+        <View style={styles.completeIllustration}>
+          <View style={styles.house}>
+            <View style={styles.roof} />
+            <View style={styles.houseBody}>
+              <View style={styles.door} />
+            </View>
+          </View>
+          <View style={styles.person}>
+            <View style={styles.face}>
+              <Ionicons name="happy-outline" size={29} color={DEEP_PURPLE} />
+            </View>
+            <View style={styles.bodyLine} />
+            <View style={styles.leftArm} />
+            <View style={styles.rightArm} />
+            <View style={styles.leftLeg} />
+            <View style={styles.rightLeg} />
+          </View>
+          <MaterialCommunityIcons
+            name="party-popper"
+            size={38}
+            color="#8e76b7"
+            style={styles.confetti}
+          />
+        </View>
+
+        <Text style={styles.welcomeText}>
+          [{info.name || '회원'}]님, 모아모아 은행의{'\n'}
+          새로운 회원이 되신 것을 환영합니다.
+        </Text>
+
+        <View style={styles.nextStepCard}>
+          <View style={styles.nextStepIcon}>
+            <Ionicons name="sparkles-outline" size={21} color={DEEP_PURPLE} />
+          </View>
+          <View style={styles.nextStepCopy}>
+            <Text style={styles.nextStepTitle}>이제 로그인할 수 있어요</Text>
+            <Text style={styles.nextStepText}>방금 만든 아이디로 계좌 서비스를 시작해보세요.</Text>
           </View>
         </View>
-        <View style={styles.person}>
-          <View style={styles.face}>
-            <Ionicons name="happy-outline" size={29} color={DEEP_PURPLE} />
-          </View>
-          <View style={styles.bodyLine} />
-          <View style={styles.leftArm} />
-          <View style={styles.rightArm} />
-          <View style={styles.leftLeg} />
-          <View style={styles.rightLeg} />
-        </View>
-        <MaterialCommunityIcons
-          name="party-popper"
-          size={38}
-          color="#8e76b7"
-          style={styles.confetti}
-        />
+
+        <Pressable style={styles.homeButton} onPress={onLogin}>
+          <Text style={styles.homeButtonText}>로그인하러 가기</Text>
+        </Pressable>
       </View>
-
-      <Text style={styles.welcomeText}>
-        [{info.name || '회원'}]님, 모아모아 은행의{'\n'}
-        새로운 회원이 되신 것을 환영합니다.
-      </Text>
-
-      <View style={styles.nextStepCard}>
-        <View style={styles.nextStepIcon}>
-          <Ionicons name="sparkles-outline" size={21} color={DEEP_PURPLE} />
-        </View>
-        <View style={styles.nextStepCopy}>
-          <Text style={styles.nextStepTitle}>이제 로그인할 수 있어요</Text>
-          <Text style={styles.nextStepText}>방금 만든 아이디로 계좌 서비스를 시작해보세요.</Text>
-        </View>
-      </View>
-
-      <Pressable style={styles.homeButton} onPress={onLogin}>
-        <Text style={styles.homeButtonText}>로그인하러 가기</Text>
-      </Pressable>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -648,6 +658,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
   },
   formScrollContent: {
+    flexGrow: 1,
+  },
+  stepScroll: {
+    flex: 1,
+  },
+  stepScrollContent: {
     flexGrow: 1,
   },
   brand: {
@@ -1068,7 +1084,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
   },
   confirmScreen: {
-    flex: 1,
+    flexGrow: 1,
     paddingBottom: 28,
     paddingTop: 58,
   },
@@ -1219,7 +1235,7 @@ const styles = StyleSheet.create({
   },
   completeScreen: {
     alignItems: 'center',
-    flex: 1,
+    flexGrow: 1,
     paddingBottom: 48,
     paddingTop: 88,
   },
