@@ -1,12 +1,21 @@
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useBudget } from '../../../contexts/BudgetContext';
+import { useRouter } from "expo-router";
+import { useState } from "react";
 
-import BalanceCard from '@/src/components/home/BalanceCard';
-import BudgetStatusCard from '@/src/components/home/BudgetStatusCard';
-import QuickExpenseInput from '@/src/components/home/QuickExpenseInput';
-import QuickMenuGrid from '@/src/components/home/QuickMenuGrid';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
+
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { useBudget } from "../../../contexts/BudgetContext";
+
+import BalanceCard from "@/src/components/home/BalanceCard";
+import BudgetStatusCard from "@/src/components/home/BudgetStatusCard";
+import QuickExpenseInput from "@/src/components/home/QuickExpenseInput";
+import QuickMenuGrid from "@/src/components/home/QuickMenuGrid";
 
 const TEXT = {
   appTitle: '내 계좌',
@@ -45,6 +54,7 @@ export default function MainScreen() {
   };
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
@@ -52,9 +62,6 @@ export default function MainScreen() {
       <View style={styles.header}>
         <Text style={styles.appTitle}>{TEXT.appTitle}</Text>
 
-        <TouchableOpacity style={styles.settingButton}>
-          <Text style={styles.settingText}>{TEXT.settings}</Text>
-        </TouchableOpacity>
       </View>
 
       <BalanceCard balance={balance} monthlySpent={monthlySpent} />
@@ -65,6 +72,7 @@ export default function MainScreen() {
 
       <QuickMenuGrid />
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -99,5 +107,9 @@ const styles = StyleSheet.create({
     color: '#3D5AFE',
     fontSize: 14,
     fontWeight: '700',
+  },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
   },
 });
