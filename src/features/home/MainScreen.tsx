@@ -132,6 +132,7 @@ const balance = monthlyBudget - monthlySpent;
       <KeyboardAvoidingView
       style={styles.keyboardAvoidingView}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40: 0} 
       >
       <ScrollView
         contentContainerStyle={styles.content}
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 22,
-    paddingBottom: 40,
+    paddingBottom: 80,
   },
   header: {
     alignItems: "center",
