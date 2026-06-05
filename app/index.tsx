@@ -71,12 +71,12 @@ const handleAddWish = () => {
 
 
       <View style={styles.purpleBox}>
-        <Text style={styles.sectionTitle}>🎯wishtem </Text>
+        <Text style={styles.sectionTitle}>위시템 </Text>
 
       <View style={styles.inputRow}>
     <TextInput
       style={styles.input}
-      placeholder="물건 이름"
+      placeholder="위시 템 (예: 에어팟)"
       value={wishName}
       onChangeText={setWishName}
     />
@@ -87,13 +87,19 @@ const handleAddWish = () => {
       value={wishPrice}
       onChangeText={setWishPrice}
       keyboardType="numeric"
-    />
-    </View>
+       />
   </View>
+
+
+  <TouchableOpacity style={styles.addButton} onPress={handleAddWish}>
+    <Text style={styles.addButtonText}>추가</Text>
+  </TouchableOpacity>
 
       <UsageCompareCard />
       <QuickMenuGrid />
+      </View>
     </ScrollView>
+  
    
   );
 }
@@ -126,13 +132,13 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   addButton: {
-    backgroundColor: '#3D5AFE',
+    backgroundColor: "#EEF0FF",
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
   },
   addButtonText: {
-    color: '#ffffff',
+    color: '#3D5AFE',
     fontWeight: '700',
     fontSize: 16,
   },
