@@ -244,18 +244,43 @@ export default function CalendarScreen() {
             <Text style={styles.summaryTitle}>{`${selectedDate.getMonth() + 1}월 ${selectedDate.getDate()}일 지출 내역`}</Text>
             <Text style={styles.summaryTotal}>{formatCurrency(selectedTotal)}</Text>
           </View>
+          {selectedCategorySummary.length > 0 && (
+            <View style={styles.categorySummaryRow}>
+              {selectedCategorySummary.map((summary) => {
+                const categoryStyle = getCategoryStyle(summary.category);
+
+                return (
+                  <View
+                    key={summary.category}
+                    style={[styles.categorySummaryChip, { backgroundColor: categoryStyle.backgroundColor }]}
+                  >
+                    <Text style={[styles.categorySummaryText, { color: categoryStyle.color }]}>
+                      {summary.category} {formatCurrency(summary.amount)}
+                    </Text>
+                  </View>
+                );
+              })}
+            </View>
+          )}
           {selectedExpenses.length === 0 ? (
             <Text style={styles.emptyText}>선택한 날짜에 지출 내역이 없습니다.</Text>
           ) : (
-            selectedExpenses.map((item) => (
-              <View key={item.id} style={styles.transactionRow}>
-                <View style={styles.iconCircle}>
-                  <MaterialCommunityIcons name={item.icon} size={20} color="#7356E8" />
+            selectedExpenses.map((item) => {
+              const categoryStyle = getCategoryStyle(item.category);
+
+              return (
+                <View key={item.id} style={styles.transactionRow}>
+                  <View style={[styles.iconCircle, { backgroundColor: categoryStyle.backgroundColor }]}>
+                    <MaterialCommunityIcons name={item.icon} size={20} color={categoryStyle.color} />
+                  </View>
+                  <View style={styles.transactionCopy}>
+                    <Text style={styles.transactionLabel}>{item.label}</Text>
+                    <Text style={[styles.transactionCategory, { color: categoryStyle.color }]}>{item.category}</Text>
+                  </View>
+                  <Text style={styles.transactionAmount}>{formatCurrency(item.amount)}</Text>
                 </View>
-                <Text style={styles.transactionLabel}>{item.label}</Text>
-                <Text style={styles.transactionAmount}>{formatCurrency(item.amount)}</Text>
-              </View>
-            ))
+              );
+            })
           )}
         </View>
 
@@ -299,10 +324,15 @@ const styles = StyleSheet.create({
   summaryHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 18 },
   summaryTitle: { fontSize: 16, fontWeight: "700", color: "#111111" },
   summaryTotal: { fontSize: 16, fontWeight: "700", color: "#7356E8" },
+  categorySummaryRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 12 },
+  categorySummaryChip: { minHeight: 30, borderRadius: 15, justifyContent: "center", paddingHorizontal: 12 },
+  categorySummaryText: { fontSize: 12, fontWeight: "800" },
   emptyText: { color: "#777777", fontSize: 14, textAlign: "center", paddingVertical: 20 },
   transactionRow: { flexDirection: "row", alignItems: "center", paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: "#F0F0F5" },
   iconCircle: { width: 42, height: 42, borderRadius: 16, backgroundColor: "#EEF0FF", justifyContent: "center", alignItems: "center", marginRight: 12 },
-  transactionLabel: { flex: 1, fontSize: 15, color: "#111111" },
+  transactionCopy: { flex: 1, minWidth: 0 },
+  transactionLabel: { fontSize: 15, color: "#111111" },
+  transactionCategory: { marginTop: 3, fontSize: 12, fontWeight: "800" },
   transactionAmount: { fontSize: 15, fontWeight: "700", color: "#111111" },
   closeButton: { height: 58, borderRadius: 18, backgroundColor: "#7356E8", justifyContent: "center", alignItems: "center", marginBottom: 24 },
   closeButtonText: { color: "#FFFFFF", fontSize: 16, fontWeight: "700" },
