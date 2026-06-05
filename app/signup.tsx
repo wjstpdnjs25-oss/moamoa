@@ -215,6 +215,16 @@ function SignupForm({
           </View>
         </View>
 
+        <View style={styles.fieldSectionHeader}>
+          <View>
+            <Text style={styles.fieldSectionTitle}>기본 정보</Text>
+            <Text style={styles.fieldSectionDescription}>본인 확인에 필요한 정보를 정확히 입력해주세요.</Text>
+          </View>
+          <View style={styles.fieldSectionBadge}>
+            <Text style={styles.fieldSectionBadgeText}>전체 필수</Text>
+          </View>
+        </View>
+
         <View style={styles.signupFields}>
           <TextInput
             placeholder="이름 [홍길동]"
@@ -742,6 +752,34 @@ const styles = StyleSheet.create({
   },
   signupFields: {
     gap: 14,
+  },
+  fieldSectionHeader: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 14,
+  },
+  fieldSectionTitle: {
+    color: TEXT_BLACK,
+    fontSize: 19,
+    fontWeight: '900',
+  },
+  fieldSectionDescription: {
+    color: '#6c6577',
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 4,
+  },
+  fieldSectionBadge: {
+    backgroundColor: '#f1edf9',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  fieldSectionBadgeText: {
+    color: DEEP_PURPLE,
+    fontSize: 12,
+    fontWeight: '900',
   },
   input: {
     borderColor: DEEP_PURPLE,
