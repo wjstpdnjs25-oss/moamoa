@@ -1,6 +1,8 @@
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import {
+  KeyboardAvoidingView,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -127,10 +129,16 @@ const balance = monthlyBudget - monthlySpent;
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+      style={styles.keyboardAvoidingView}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 40: 0} 
+      >
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
-        style={styles.container}>
+        style={styles.container}
+        keyboardShouldPersistTaps="handled">
         <View style={styles.header}>
           <Text style={styles.appTitle}>{TEXT.appTitle}</Text>
         </View>
@@ -183,6 +191,7 @@ const balance = monthlyBudget - monthlySpent;
           <QuickMenuGrid />
         </View>
       </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -198,7 +207,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 22,
-    paddingBottom: 40,
+    paddingBottom: 80,
   },
   header: {
     alignItems: "center",
@@ -248,5 +257,8 @@ const styles = StyleSheet.create({
   },
   quickMenu: {
     marginTop: 24,
+  },
+  keyboardAvoidingView: {
+    flex: 1,
   },
 });

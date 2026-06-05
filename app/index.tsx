@@ -3,8 +3,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View,
+  View
 } from "react-native";
 
 import WishSaveCard from "@/src/components/home/WishSaveCard";
@@ -40,9 +39,7 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <Text style={styles.appTitle}>{TEXT.appTitle}</Text>
 
-        <TouchableOpacity style={styles.settingButton}>
-          <Text style={styles.settingText}>{TEXT.settings}</Text>
-        </TouchableOpacity>
+
       </View>
 
       <BalanceCard balance={balance} monthlySpent={monthlySpent} />
@@ -88,16 +85,5 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "700",
     color: "#111111",
-  },
-  settingButton: {
-    backgroundColor: "#EEF0FF",
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-  },
-  settingText: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: "#3D5AFE",
   },
 });
