@@ -25,6 +25,8 @@ const TEXT = {
   directInput: "\uC9C1\uC811\uC785\uB825",
   help: "\uD544\uC218 \uC785\uB825 \uD56D\uBAA9\uC744 \uBAA8\uB450 \uC785\uB825\uD574\uC8FC\uC138\uC694.",
   submit: "\uC785\uB825 \uC644\uB8CC",
+  customCategoryPlaceholder: "\uAE30\uD0C0 \uCE74\uD14C\uACE0\uB9AC\uB97C \uC785\uB825\uD574\uC8FC\uC138\uC694",
+  customCategoryHelp: "\uAE30\uD0C0 \uC120\uD0DD \uC2DC \uC6D0\uD558\uB294 \uCE74\uD14C\uACE0\uB9AC\uBA85\uC744 \uC9C1\uC811 \uC801\uC744 \uC218 \uC788\uC5B4\uC694.",
   errorTitle: "\uC785\uB825 \uD655\uC778",
   errorMessage: "\uAE08\uC561\uACFC \uCE74\uD14C\uACE0\uB9AC, \uB0A0\uC9DC\uB97C \uBAA8\uB450 \uC120\uD0DD\uD574\uC8FC\uC138\uC694.",
   successTitle: "\uC800\uC7A5\uB418\uC5C8\uC5B4\uC694",
@@ -48,6 +50,8 @@ const CATEGORIES: Category[] = [
   { label: "\uC758\uB8CC/\uAC74\uAC15", icon: "medical-bag" },
   { label: "\uAE30\uD0C0", icon: "dots-horizontal-circle-outline" },
 ];
+
+const CUSTOM_CATEGORY_LABEL = "\uAE30\uD0C0";
 
 const QUICK_AMOUNTS = [
   { label: "+1\uB9CC", value: 10000 },
@@ -75,6 +79,7 @@ export default function ExpenseInputScreen() {
   const router = useRouter();
   const [amount, setAmount] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0].label);
+  const [customCategory, setCustomCategory] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
 
@@ -97,6 +102,10 @@ export default function ExpenseInputScreen() {
   }, [selectedDate]);
 
   const numericAmount = Number(amount.replaceAll(",", ""));
+  const isCustomCategory = selectedCategory === CUSTOM_CATEGORY_LABEL;
+  const submittedCategory = isCustomCategory
+    ? customCategory.trim()
+    : selectedCategory;
 
   const handleChangeAmount = (value: string) => {
     setAmount(value.replace(/[^0-9]/g, ""));
@@ -123,8 +132,16 @@ export default function ExpenseInputScreen() {
     );
   };
 
+  const handleSelectCategory = (category: string) => {
+    setSelectedCategory(category);
+
+    if (category !== CUSTOM_CATEGORY_LABEL) {
+      setCustomCategory("");
+    }
+  };
+
   const handleSubmit = () => {
-    if (!numericAmount || !selectedCategory || !selectedDate) {
+    if (!numericAmount || !submittedCategory || !selectedDate) {
       Alert.alert(TEXT.errorTitle, TEXT.errorMessage);
       return;
     }
@@ -201,7 +218,7 @@ export default function ExpenseInputScreen() {
                 <TouchableOpacity
                   key={category.label}
                   style={[styles.categoryButton, selected && styles.categorySelected]}
-                  onPress={() => setSelectedCategory(category.label)}
+                  onPress={() => handleSelectCategory(category.label)}
                 >
                   <MaterialCommunityIcons
                     name={category.icon}
