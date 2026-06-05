@@ -156,6 +156,25 @@ export async function getExpensesByMonth(year: number, monthIndex: number) {
   return rows.map(mapExpenseRow);
 }
 
+export async function getAllExpenses() {
+  const db = await getDatabase();
+  const rows = await db.getAllAsync<{
+    id: number;
+    amount: number;
+    category: string;
+    label: string;
+    icon: string;
+    spent_date: string;
+    source: ExpenseSource;
+    created_at: string;
+  }>(
+    `SELECT * FROM expenses
+     ORDER BY spent_date DESC, created_at DESC`
+  );
+
+  return rows.map(mapExpenseRow);
+}
+
 export async function getMonthlyExpenseTotal(year: number, monthIndex: number) {
   const db = await getDatabase();
   const { startKey, nextMonthKey } = getMonthRange(year, monthIndex);
