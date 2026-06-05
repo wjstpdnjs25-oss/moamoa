@@ -3,6 +3,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View
 } from "react-native";
 
@@ -11,7 +12,6 @@ import BudgetStatusCard from "@/src/components/home/BudgetStatusCard";
 import QuickExpenseInput from "@/src/components/home/QuickExpenseInput";
 import QuickMenuGrid from "@/src/components/home/QuickMenuGrid";
 import UsageCompareCard from "@/src/components/home/UsageCompareCard";
-import WishSaveCard from "@/src/components/home/WishSaveCard";
 
 const TEXT = {
   appTitle: "\uB0B4 \uACC4\uC88C",
@@ -21,9 +21,8 @@ const TEXT = {
 export default function HomeScreen() {
   const [balance, setBalance] = useState(0);
   const [monthlySpent, setMonthlySpent] = useState(0);
-  const [wishTitle, setWishTitle] = useState("");
+  const [wishName, setWishName] = useState("");
   const [wishPrice, setWishPrice] = useState("");
-  const [isEditing, setIsEditing] = useState(false);
   const [wishList, setWishList] = useState([]);
   const [editingId, setEditingId] = useState(null); 
 
@@ -36,10 +35,18 @@ export default function HomeScreen() {
     item.id === id ? { ...item, ...updatedFields } : item
   ));
 };
-  const handleSaveWish = () => {
-  console.log(wishTitle, wishPrice);
-  setIsEditing(false); 
-  setWishTitle("");    
+
+const handleAddWish = () => {
+  if (!wishName || !wishPrice) return;
+
+  const newWish = {
+    id: Date.now().toString(),
+    name: wishName,
+    price: Number(wishPrice),
+  };
+
+  setWishList((prev) => [...prev, newWish]);
+  setWishName("");
   setWishPrice("");
 };
  
@@ -63,21 +70,31 @@ export default function HomeScreen() {
       <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
 
-      <WishSaveCard
-      title={wishTitle}
-      targetAmount={Number(wishPrice)}
-      isEditing={isEditing}
-      savedAmount={0}
-      onEdit={() => setIsEditing(true)}
-      onSave={handleSaveWish}
-      onTitleChange={(newTitle) => setWishTitle(newTitle)}
-      onPriceChange={(newPrice) => setWishPrice(newPrice)}
-      onEditDone={() => setIsEditing(false)}
-      />
+      <View style={styles.purpleBox}>
+        <Text style={styles.sectionTitle}>🎯wishtem </Text>
+
+      <View style={styles.inputRow}>
+    <TextInput
+      style={styles.input}
+      placeholder="물건 이름"
+      value={wishName}
+      onChangeText={setWishName}
+    />
+
+    <TextInput
+      style={styles.input}
+      placeholder="가격"
+      value={wishPrice}
+      onChangeText={setWishPrice}
+      keyboardType="numeric"
+    />
+    </View>
+  </View>
 
       <UsageCompareCard />
       <QuickMenuGrid />
     </ScrollView>
+   
   );
 }
 
@@ -95,7 +112,11 @@ const styles = StyleSheet.create({
     elevation: 3, 
   
 },
-input: {
+  buttonRow: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  input: {
     backgroundColor: '#F8F9FA',
     borderRadius: 12,
     paddingHorizontal: 16,
@@ -103,10 +124,6 @@ input: {
     marginBottom: 12,
     fontSize: 15,
     color: '#333',
-  },
-  buttonRow: {
-    flexDirection: 'row',
-    marginTop: 10,
   },
   addButton: {
     backgroundColor: '#3D5AFE',
