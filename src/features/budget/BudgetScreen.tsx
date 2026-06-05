@@ -37,15 +37,6 @@ export default function BudgetScreen() {
   const selectedBudget =
     budgets.find((item) => item.category === selectedCategory)?.amount ?? 0;
 
-  const categorySpent = expenses
-    .filter((expense) => expense.category === selectedCategory)
-    .reduce((sum, expense) => sum + expense.amount, 0);
-
-  const usageRate =
-    selectedBudget === 0
-      ? 0
-      : Math.round((categorySpent / selectedBudget) * 100);
-
   const handleSelectCategory = (category: string) => {
     const currentAmount =
       budgets.find((item) => item.category === category)?.amount ?? 0;
@@ -106,11 +97,11 @@ export default function BudgetScreen() {
             const selected = selectedCategory === item.category;
 
             const spent = expenses
-            .filter((expenses) => expenses.category === item.category)
-            .reduce((sum, expense) => sum + expense.amount, 0);
+              .filter((expense) => expense.category === item.category)
+              .reduce((sum, expense) => sum + expense.amount, 0);
 
             const rate =
-            item.amount === 0 ? 0 : Math.round((spent / item.amount) * 100);
+              item.amount === 0 ? 0 : Math.round((spent / item.amount) * 100);
 
             return (
               <TouchableOpacity

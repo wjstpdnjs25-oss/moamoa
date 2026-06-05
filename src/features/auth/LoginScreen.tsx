@@ -45,7 +45,8 @@ export default function LoginScreen() {
         <View style={styles.heroCopy}>
           <Text style={styles.title}>언제 어디서나 간편한 은행</Text>
           <Text style={styles.description}>
-            지금 로그인하고, 나만의 금융 생활을 이어가세요.
+            지금 로그인하고,{'\n'}
+            나만의 금융 생활을 이어가세요.
           </Text>
           <View style={styles.securityNotice}>
             <Ionicons name="shield-checkmark-outline" size={18} color={DEEP_PURPLE} />
