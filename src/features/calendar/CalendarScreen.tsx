@@ -14,6 +14,26 @@ type ExpenseItem = {
   amount: number;
 };
 
+type CategoryStyle = {
+  color: string;
+  backgroundColor: string;
+};
+
+const CATEGORY_STYLES: Record<string, CategoryStyle> = {
+  음식: { color: "#E35D5B", backgroundColor: "#FFF0EF" },
+  패션: { color: "#8A55D7", backgroundColor: "#F4EDFF" },
+  주거: { color: "#2E7D64", backgroundColor: "#EBF7F3" },
+  교통: { color: "#2F73D9", backgroundColor: "#EDF4FF" },
+  "카페/간식": { color: "#B9791E", backgroundColor: "#FFF6E7" },
+  쇼핑: { color: "#D45E9B", backgroundColor: "#FFF0F7" },
+  "문화/여가": { color: "#287D8E", backgroundColor: "#EAF8FA" },
+  교육: { color: "#7B6A20", backgroundColor: "#FBF7DF" },
+  "의료/건강": { color: "#22966E", backgroundColor: "#E9F8F1" },
+  기타: { color: "#6B6B7E", backgroundColor: "#F1F1F5" },
+};
+
+const DEFAULT_CATEGORY_STYLE = CATEGORY_STYLES.기타;
+
 const SAMPLE_EXPENSES: Record<string, ExpenseItem[]> = {
   "2024-06-02": [{ id: "lunch", label: "점심 식사", category: "음식", icon: "food", amount: 15000 }],
   "2024-06-04": [{ id: "coffee", label: "카페", category: "카페/간식", icon: "coffee", amount: 12000 }],
@@ -41,6 +61,10 @@ function formatDayKey(date: Date) {
 
 function formatCurrency(amount: number) {
   return `${amount.toLocaleString()}원`;
+}
+
+function getCategoryStyle(category: string) {
+  return CATEGORY_STYLES[category] ?? DEFAULT_CATEGORY_STYLE;
 }
 
 export default function CalendarScreen() {
