@@ -26,11 +26,18 @@ export default function HomeScreen() {
   const [wishTitle, setWishTitle] = useState("");
   const [wishPrice, setWishPrice] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [wishList, setWishList] = useState([...]);
+const [editingId, setEditingId] = useState(null); 
 
   const handleAddExpense = (amount: number) => {
     setMonthlySpent((prev) => prev + amount);
     setBalance((prev) => prev - amount);
   };
+  const handleUpdateWish = (id, updatedFields) => {
+  setWishList(wishList.map(item => 
+    item.id === id ? { ...item, ...updatedFields } : item
+  ));
+};
   const handleSaveWish = () => {
   console.log(wishTitle, wishPrice);
   setIsEditing(false); 
@@ -59,39 +66,13 @@ export default function HomeScreen() {
 
 
       <WishSaveCard
-      title={wishTitle || "위시 아이템"}
-      targetAmount={Number(wishPrice) || 0}
-      savedAmount={150000}
-      onDelete={() => console.log("삭제")}
-      onSave={(amount) => console.log(amount)}
+      title={wishTitle}
+      targetAmount={Number(wishPrice)}
+      isEditing={isEditing}
+      savedAmount={0}
+      onEdit={() => setIsEditing(true)}
+      onSave={handleSaveWish}
       />
-
-  <View style={styles.inputContainer}>
-    <TextInput
-    placeholder="사고 싶은 물건"
-    value={wishTitle}
-    onChangeText={setWishTitle}
-    style={styles.input}
-    />
-
-    <TextInput
-    placeholder="목표 금액"
-    keyboardType="numeric"
-    value={wishPrice}
-    onChangeText={setWishPrice}
-    style={styles.input}
-    />
-    <View style={styles.buttonRow}>
-      <TouchableOpacity style={[styles.addButton, {backgroundColor: '#ccc', flex: 1, marginRight: 8}]} onPress={() => setIsEditing(false)}>
-        <Text style={styles.addButtonText}>취소</Text>
-
-    </TouchableOpacity>
-    <TouchableOpacity style={[styles.addButton, {flex: 2}]} onPress={handleSaveWish}>
-        <Text style={styles.addButtonText}>저장하기</Text>
-
-  </TouchableOpacity>
-  </View>
-</View>
 
       <UsageCompareCard />
       <QuickMenuGrid />
