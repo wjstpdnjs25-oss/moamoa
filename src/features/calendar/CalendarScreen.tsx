@@ -1,79 +1,38 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useFocusEffect, useRouter } from "expo-router";
+import { useCallback, useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useExpense } from "../../../contexts/ExpenseContext";
+
+import {
+  CATEGORY_LEGEND,
+  getExpenseCategoryStyle,
+} from "@/src/constants/expense";
+import {
+  ExpenseRecord,
+  formatExpenseDateKey,
+  getExpensesByMonth,
+} from "@/src/data/expenseRepository";
+
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
-
-type ExpenseItem = {
-  id: string;
-  label: string;
-  category: string;
-  icon: keyof typeof MaterialCommunityIcons.glyphMap;
-  amount: number;
-};
-
-type CategoryStyle = {
-  color: string;
-  backgroundColor: string;
-};
+const DEFAULT_CATEGORY_STYLE = getExpenseCategoryStyle("기타");
 
 type CategorySummary = {
   category: string;
   amount: number;
 };
 
-const CATEGORY_STYLES: Record<string, CategoryStyle> = {
-  음식: { color: "#E35D5B", backgroundColor: "#FFF0EF" },
-  패션: { color: "#8A55D7", backgroundColor: "#F4EDFF" },
-  주거: { color: "#2E7D64", backgroundColor: "#EBF7F3" },
-  교통: { color: "#2F73D9", backgroundColor: "#EDF4FF" },
-  "카페/간식": { color: "#B9791E", backgroundColor: "#FFF6E7" },
-  쇼핑: { color: "#D45E9B", backgroundColor: "#FFF0F7" },
-  "문화/여가": { color: "#287D8E", backgroundColor: "#EAF8FA" },
-  교육: { color: "#7B6A20", backgroundColor: "#FBF7DF" },
-  "의료/건강": { color: "#22966E", backgroundColor: "#E9F8F1" },
-  기타: { color: "#6B6B7E", backgroundColor: "#F1F1F5" },
-};
-
-const DEFAULT_CATEGORY_STYLE = CATEGORY_STYLES.기타;
-const CATEGORY_LEGEND = ["음식", "카페/간식", "교통", "패션", "쇼핑", "기타"];
-
-const SAMPLE_EXPENSES: Record<string, ExpenseItem[]> = {
-  "2024-06-02": [{ id: "lunch", label: "점심 식사", category: "음식", icon: "food", amount: 15000 }],
-  "2024-06-04": [{ id: "coffee", label: "카페", category: "카페/간식", icon: "coffee", amount: 12000 }],
-  "2024-06-05": [{ id: "dinner", label: "저녁 식사", category: "음식", icon: "food-variant", amount: 8000 }],
-  "2024-06-07": [{ id: "transport", label: "교통", category: "교통", icon: "bus", amount: 23000 }],
-  "2024-06-08": [{ id: "shopping", label: "의류 쇼핑", category: "패션", icon: "tshirt-crew-outline", amount: 10000 }],
-  "2024-06-10": [{ id: "lunch2", label: "점심 식사", category: "음식", icon: "food", amount: 18000 }],
-  "2024-06-12": [{ id: "market", label: "마트", category: "쇼핑", icon: "cart", amount: 31500 }],
-  "2024-06-13": [{ id: "delivery", label: "배달 음식", category: "음식", icon: "food-variant", amount: 7000 }],
-  "2024-06-14": [{ id: "dessert", label: "디저트", category: "카페/간식", icon: "cupcake", amount: 12000 }],
-  "2024-06-15": [
-    { id: "lunch3", label: "점심 식사", category: "음식", icon: "food", amount: 18000 },
-    { id: "coffee2", label: "카페", category: "카페/간식", icon: "coffee", amount: 6000 },
-    { id: "shopping2", label: "의류 쇼핑", category: "패션", icon: "tshirt-crew-outline", amount: 54000 },
-  ],
-};
-
 function formatMonthLabel(date: Date) {
   return `${date.getFullYear()}년 ${String(date.getMonth() + 1).padStart(2, "0")}월`;
-}
-
-function formatDayKey(date: Date) {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
 function formatCurrency(amount: number) {
   return `${amount.toLocaleString()}원`;
 }
 
-function getCategoryStyle(category: string) {
-  return CATEGORY_STYLES[category] ?? DEFAULT_CATEGORY_STYLE;
-}
-
-function summarizeByCategory(expenses: ExpenseItem[]) {
+function summarizeByCategory(expenses: ExpenseRecord[]) {
   const totals = expenses.reduce<Record<string, number>>((acc, item) => {
     acc[item.category] = (acc[item.category] ?? 0) + item.amount;
     return acc;
@@ -84,13 +43,43 @@ function summarizeByCategory(expenses: ExpenseItem[]) {
     .sort((a, b) => b.amount - a.amount);
 }
 
+function groupExpensesByDate(expenses: ExpenseRecord[]) {
+  return expenses.reduce<Record<string, ExpenseRecord[]>>((acc, item) => {
+    acc[item.spentDate] = [...(acc[item.spentDate] ?? []), item];
+    return acc;
+  }, {});
+}
+
 export default function CalendarScreen() {
   const router = useRouter();
-  const [selectedDate, setSelectedDate] = useState(new Date(2024, 5, 15));
+  const { refreshToken } = useExpense();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [monthlyExpenses, setMonthlyExpenses] = useState<ExpenseRecord[]>([]);
 
   const selectedMonthStart = useMemo(() => {
     return new Date(selectedDate.getFullYear(), selectedDate.getMonth(), 1);
   }, [selectedDate]);
+
+  const loadMonthlyExpenses = useCallback(async () => {
+    const expenses = await getExpensesByMonth(
+      selectedMonthStart.getFullYear(),
+      selectedMonthStart.getMonth()
+    );
+
+    setMonthlyExpenses(expenses);
+  }, [selectedMonthStart]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadMonthlyExpenses().catch((error) => {
+        console.error("Failed to load calendar expenses", error);
+      });
+    }, [loadMonthlyExpenses, refreshToken])
+  );
+
+  const expensesByDate = useMemo(() => {
+    return groupExpensesByDate(monthlyExpenses);
+  }, [monthlyExpenses]);
 
   const monthDays = useMemo(() => {
     const year = selectedMonthStart.getFullYear();
@@ -114,26 +103,26 @@ export default function CalendarScreen() {
     return monthDays.reduce<Record<number, number>>((acc, day) => {
       if (!day) return acc;
 
-      const key = formatDayKey(new Date(selectedMonthStart.getFullYear(), selectedMonthStart.getMonth(), day));
-      acc[day] = (SAMPLE_EXPENSES[key] || []).reduce((sum, item) => sum + item.amount, 0);
+      const key = formatExpenseDateKey(new Date(selectedMonthStart.getFullYear(), selectedMonthStart.getMonth(), day));
+      acc[day] = (expensesByDate[key] || []).reduce((sum, item) => sum + item.amount, 0);
 
       return acc;
     }, {});
-  }, [monthDays, selectedMonthStart]);
+  }, [expensesByDate, monthDays, selectedMonthStart]);
 
   const monthCategorySummaries = useMemo(() => {
     return monthDays.reduce<Record<number, CategorySummary[]>>((acc, day) => {
       if (!day) return acc;
 
-      const key = formatDayKey(new Date(selectedMonthStart.getFullYear(), selectedMonthStart.getMonth(), day));
-      acc[day] = summarizeByCategory(SAMPLE_EXPENSES[key] || []);
+      const key = formatExpenseDateKey(new Date(selectedMonthStart.getFullYear(), selectedMonthStart.getMonth(), day));
+      acc[day] = summarizeByCategory(expensesByDate[key] || []);
 
       return acc;
     }, {});
-  }, [monthDays, selectedMonthStart]);
+  }, [expensesByDate, monthDays, selectedMonthStart]);
 
-  const selectedDayKey = formatDayKey(selectedDate);
-  const selectedExpenses = SAMPLE_EXPENSES[selectedDayKey] || [];
+  const selectedDayKey = formatExpenseDateKey(selectedDate);
+  const selectedExpenses = expensesByDate[selectedDayKey] || [];
   const selectedTotal = selectedExpenses.reduce((sum, item) => sum + item.amount, 0);
   const selectedCategorySummary = summarizeByCategory(selectedExpenses);
 
@@ -181,7 +170,7 @@ export default function CalendarScreen() {
               const isSelected = day === selectedDate.getDate();
               const categorySummary = typeof day === "number" ? monthCategorySummaries[day] || [] : [];
               const primaryCategoryStyle = categorySummary[0]
-                ? getCategoryStyle(categorySummary[0].category)
+                ? getExpenseCategoryStyle(categorySummary[0].category)
                 : DEFAULT_CATEGORY_STYLE;
 
               return (
@@ -206,7 +195,7 @@ export default function CalendarScreen() {
                         categorySummary.slice(0, 3).map((summary) => (
                           <View
                             key={summary.category}
-                            style={[styles.dot, { backgroundColor: getCategoryStyle(summary.category).color }]}
+                            style={[styles.dot, { backgroundColor: getExpenseCategoryStyle(summary.category).color }]}
                           />
                         ))
                       ) : (
@@ -222,7 +211,7 @@ export default function CalendarScreen() {
 
         <View style={styles.legendRow}>
           {CATEGORY_LEGEND.map((category) => {
-            const categoryStyle = getCategoryStyle(category);
+            const categoryStyle = getExpenseCategoryStyle(category);
 
             return (
               <View key={category} style={styles.legendItem}>
@@ -241,7 +230,7 @@ export default function CalendarScreen() {
           {selectedCategorySummary.length > 0 && (
             <View style={styles.categorySummaryRow}>
               {selectedCategorySummary.map((summary) => {
-                const categoryStyle = getCategoryStyle(summary.category);
+                const categoryStyle = getExpenseCategoryStyle(summary.category);
 
                 return (
                   <View
@@ -260,12 +249,16 @@ export default function CalendarScreen() {
             <Text style={styles.emptyText}>선택한 날짜에 지출 내역이 없습니다.</Text>
           ) : (
             selectedExpenses.map((item) => {
-              const categoryStyle = getCategoryStyle(item.category);
+              const categoryStyle = getExpenseCategoryStyle(item.category);
 
               return (
                 <View key={item.id} style={styles.transactionRow}>
                   <View style={[styles.iconCircle, { backgroundColor: categoryStyle.backgroundColor }]}>
-                    <MaterialCommunityIcons name={item.icon} size={20} color={categoryStyle.color} />
+                    <MaterialCommunityIcons
+                      name={item.icon as keyof typeof MaterialCommunityIcons.glyphMap}
+                      size={20}
+                      color={categoryStyle.color}
+                    />
                   </View>
                   <View style={styles.transactionCopy}>
                     <Text style={styles.transactionLabel}>{item.label}</Text>
@@ -309,7 +302,6 @@ const styles = StyleSheet.create({
   dayAmountActive: { color: "#111111", fontWeight: "700" },
   categoryDotRow: { minHeight: 8, flexDirection: "row", justifyContent: "center", gap: 3, marginTop: 6 },
   dot: { width: 6, height: 6, borderRadius: 3, marginTop: 6 },
-  dotActive: { backgroundColor: "#7356E8" },
   dotInactive: { backgroundColor: "#D9D9E3" },
   legendRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 16 },
   legendItem: { minHeight: 28, flexDirection: "row", alignItems: "center", paddingHorizontal: 10, borderRadius: 14, backgroundColor: "#FFFFFF" },
