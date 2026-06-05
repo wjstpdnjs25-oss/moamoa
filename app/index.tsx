@@ -1,3 +1,4 @@
+ feat_spending_compare
 import { useState } from "react";
 import {
   ScrollView,
@@ -59,19 +60,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#F7F7FB",
   },
-/*<<<<<<< HEAD
-});
-import { ThemedView } from '@/components/themed-view';
-import UsageCompareCard from '@/components/UsageCompareCard';
-
-export default function Home() {
-  return (
-    <ThemedView>
-      <UsageCompareCard />
-    </ThemedView>
-  );
-}
-=======*/
   content: {
     padding: 22,
     paddingBottom: 40,
@@ -100,4 +88,8 @@ export default function Home() {
     color: "#3D5AFE",
   },
 });
-//>>>>>>> ebe475a3c98fdfd01301f3753ff902a94b37ea51
+
+
+import LandingScreen from "@/src/features/home/LandingScreen";
+export default LandingScreen;
+ main

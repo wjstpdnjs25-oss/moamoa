@@ -1,0 +1,122 @@
+const express = require('express');
+const cors = require('cors');
+const db = require('./database');
+
+const app = express();
+const PORT = 4000;
+
+app.use(cors());
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', message: 'Moamoa backend is running' });
+});
+
+app.post('/api/auth/signup', (req, res) => {
+  const { email, password, nickname } = req.body;
+  if (!email || !password || !nickname) {
+    return res.status(400).json({ error: 'email, password, nickname are required' });
+  }
+
+  const sql = `INSERT INTO users (email, password, nickname) VALUES (?, ?, ?)`;
+  db.run(sql, [email, password, nickname], function (err) {
+    if (err) {
+      if (err.message.includes('UNIQUE constraint failed: users.email')) {
+        return res.status(409).json({ error: 'Email already exists' });
+      }
+      if (err.message.includes('UNIQUE constraint failed: users.nickname')) {
+        return res.status(409).json({ error: 'ID already exists' });
+      }
+      return res.status(500).json({ error: 'Failed to create user' });
+    }
+
+    res.status(201).json({ id: this.lastID, email, nickname, created_at: new Date().toISOString() });
+  });
+});
+
+app.post('/api/auth/login', (req, res) => {
+  const { identifier, password } = req.body;
+  if (!identifier || !password) {
+    return res.status(400).json({ error: 'identifier and password are required' });
+  }
+
+  const sql = `SELECT id, email, nickname, created_at FROM users WHERE (email = ? OR nickname = ?) AND password = ?`;
+  db.get(sql, [identifier, identifier, password], (err, user) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to login' });
+    }
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid identifier or password' });
+    }
+
+    res.json({ user });
+  });
+});
+
+app.post('/api/expenses', (req, res) => {
+  const { userId, amount, category, date } = req.body;
+  if (!userId || amount == null || !category || !date) {
+    return res.status(400).json({ error: 'userId, amount, category, date are required' });
+  }
+
+  const sql = `INSERT INTO expenses (user_id, amount, category, date) VALUES (?, ?, ?, ?)`;
+  db.run(sql, [userId, amount, category, date], function (err) {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to create expense' });
+    }
+
+    res.status(201).json({ id: this.lastID, userId, amount, category, date, created_at: new Date().toISOString() });
+  });
+});
+
+app.get('/api/expenses', (req, res) => {
+  const sql = `SELECT * FROM expenses ORDER BY date DESC, id DESC`;
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to retrieve expenses' });
+    }
+    res.json({ expenses: rows });
+  });
+});
+
+app.get('/api/expenses/month/:month', (req, res) => {
+  const { month } = req.params;
+  const sql = `SELECT * FROM expenses WHERE date LIKE ? ORDER BY date DESC, id DESC`;
+  db.all(sql, [`${month}-%`], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to retrieve monthly expenses' });
+    }
+    res.json({ expenses: rows });
+  });
+});
+
+app.post('/api/budgets', (req, res) => {
+  const { userId, month, amount } = req.body;
+  if (!userId || !month || amount == null) {
+    return res.status(400).json({ error: 'userId, month, amount are required' });
+  }
+
+  const sql = `INSERT INTO budgets (user_id, month, amount) VALUES (?, ?, ?)
+    ON CONFLICT(user_id, month) DO UPDATE SET amount = excluded.amount`;
+  db.run(sql, [userId, month, amount], function (err) {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to set budget' });
+    }
+    res.status(201).json({ userId, month, amount });
+  });
+});
+
+app.get('/api/budgets/:month', (req, res) => {
+  const { month } = req.params;
+  const sql = `SELECT * FROM budgets WHERE month = ? ORDER BY id DESC`;
+  db.all(sql, [month], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ error: 'Failed to retrieve budgets' });
+    }
+    res.json({ budgets: rows });
+  });
+});
+
+app.listen(PORT, () => {
+  console.log(`Moamoa backend running on http://localhost:${PORT}`);
+});
