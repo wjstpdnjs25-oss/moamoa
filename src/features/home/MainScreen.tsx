@@ -135,7 +135,7 @@ const balance = monthlyBudget - monthlySpent;
           <Text style={styles.appTitle}>{TEXT.appTitle}</Text>
         </View>
 
-        <BalanceCard balance={balance} monthlySpent={monthlySpent} />
+        <BalanceCard />
 
         <QuickExpenseInput onSaveExpense={handleAddExpense} />
 

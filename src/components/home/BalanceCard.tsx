@@ -1,9 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 
-type Props = {
-  balance: number;
-  monthlySpent: number;
-};
+import { useBudget } from "@/contexts/BudgetContext";
+import { useExpense } from "@/contexts/ExpenseContext";
 
 const TEXT = {
   balanceLabel: "남은 예산",
@@ -11,7 +9,26 @@ const TEXT = {
   won: "\u20A9",
 };
 
-export default function BalanceCard({ balance, monthlySpent }: Props) {
+export default function BalanceCard() {
+  const { budgets } = useBudget();
+  const { expenses } = useExpense();
+
+  const monthlyBudget = budgets.reduce(
+    (sum, item) => sum + item.amount,
+    0
+  );
+
+  const today = new Date();
+  const monthPrefix = `${today.getFullYear()}-${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}`;
+
+  const monthlySpent = expenses
+    .filter((expense) => expense.spentDate.startsWith(monthPrefix))
+    .reduce((sum, expense) => sum + expense.amount, 0);
+
+  const balance = monthlyBudget - monthlySpent;
+
   return (
     <View style={styles.card}>
       <Text style={styles.cardLabel}>{TEXT.balanceLabel}</Text>
@@ -32,7 +49,6 @@ export default function BalanceCard({ balance, monthlySpent }: Props) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   card: {
     backgroundColor: "#EEF0FF",
