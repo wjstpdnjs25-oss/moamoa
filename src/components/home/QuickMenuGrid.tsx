@@ -5,7 +5,7 @@ const MENU_ITEMS = [
   "예산 설정",
   "지출 입력",
   "달력",
-  "대시보드",
+  "위시세이브",
 ];
 
 export default function QuickMenuGrid() {
@@ -24,6 +24,11 @@ export default function QuickMenuGrid() {
 
     if (item === "달력") {
       router.push("/calendar" as any);
+      return;
+    }
+
+    if (item === "위시세이브") {
+      router.push("/wishlist" as any);
       return;
     }
   };
