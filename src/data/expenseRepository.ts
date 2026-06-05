@@ -26,6 +26,7 @@ export type CreateExpenseInput = {
 
 const DATABASE_NAME = "moamoa.db";
 let databasePromise: Promise<SQLite.SQLiteDatabase> | null = null;
+let initializationPromise: Promise<void> | null = null;
 
 function getDatabase() {
   if (!databasePromise) {
@@ -53,7 +54,7 @@ function getMonthRange(year: number, monthIndex: number) {
   };
 }
 
-export async function initializeExpenseDatabase() {
+async function createExpenseSchema() {
   const db = await getDatabase();
 
   await db.execAsync(`
@@ -74,6 +75,14 @@ export async function initializeExpenseDatabase() {
     CREATE INDEX IF NOT EXISTS idx_expenses_category
       ON expenses (category);
   `);
+}
+
+export function initializeExpenseDatabase() {
+  if (!initializationPromise) {
+    initializationPromise = createExpenseSchema();
+  }
+
+  return initializationPromise;
 }
 
 function mapExpenseRow(row: {
@@ -99,6 +108,8 @@ function mapExpenseRow(row: {
 }
 
 export async function createExpense(input: CreateExpenseInput) {
+  await initializeExpenseDatabase();
+
   const db = await getDatabase();
   const spentDate = formatExpenseDateKey(input.spentAt);
   const label = input.label?.trim() || input.category;
@@ -134,6 +145,8 @@ export async function createExpense(input: CreateExpenseInput) {
 }
 
 export async function getExpensesByMonth(year: number, monthIndex: number) {
+  await initializeExpenseDatabase();
+
   const db = await getDatabase();
   const { startKey, nextMonthKey } = getMonthRange(year, monthIndex);
   const rows = await db.getAllAsync<{
@@ -157,6 +170,8 @@ export async function getExpensesByMonth(year: number, monthIndex: number) {
 }
 
 export async function getAllExpenses() {
+  await initializeExpenseDatabase();
+
   const db = await getDatabase();
   const rows = await db.getAllAsync<{
     id: number;
@@ -176,6 +191,8 @@ export async function getAllExpenses() {
 }
 
 export async function getMonthlyExpenseTotal(year: number, monthIndex: number) {
+  await initializeExpenseDatabase();
+
   const db = await getDatabase();
   const { startKey, nextMonthKey } = getMonthRange(year, monthIndex);
   const row = await db.getFirstAsync<{ total: number | null }>(

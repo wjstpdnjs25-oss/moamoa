@@ -14,7 +14,7 @@ import {
 } from "@/src/constants/expense";
 
 type Props = {
-  onSaveExpense: (amount: number, category: string) => void;
+  onSaveExpense: (amount: number, category: string) => Promise<void> | void;
 };
 
 const TEXT = {
@@ -37,7 +37,7 @@ export default function QuickExpenseInput({ onSaveExpense }: Props) {
 
   const visibleCategories = showAllCategories ? CATEGORIES : MAIN_CATEGORIES;
 
-  const handleSaveExpense = () => {
+  const handleSaveExpense = async () => {
     const numericAmount = Number(amount);
 
     if (!amount || numericAmount <= 0) {
@@ -45,7 +45,7 @@ export default function QuickExpenseInput({ onSaveExpense }: Props) {
       return;
     }
 
-    onSaveExpense(numericAmount, selectedCategory);
+    await onSaveExpense(numericAmount, selectedCategory);
     setAmount("");
   };
 

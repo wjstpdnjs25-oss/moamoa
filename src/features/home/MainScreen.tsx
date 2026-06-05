@@ -61,6 +61,8 @@ export default function MainScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      void refreshToken;
+
       loadMonthlySpent().catch((error) => {
         console.error("Failed to load monthly expenses", error);
       });

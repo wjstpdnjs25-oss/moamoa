@@ -71,6 +71,8 @@ export default function CalendarScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      void refreshToken;
+
       loadMonthlyExpenses().catch((error) => {
         console.error("Failed to load calendar expenses", error);
       });
