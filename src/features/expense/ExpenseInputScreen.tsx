@@ -38,6 +38,12 @@ type Category = {
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
 };
 
+type SavedExpense = {
+  amount: number;
+  category: string;
+  date: Date;
+};
+
 const CATEGORIES: Category[] = [
   { label: "\uC74C\uC2DD", icon: "silverware-fork-knife" },
   { label: "\uD328\uC158", icon: "tshirt-crew-outline" },
@@ -82,6 +88,7 @@ export default function ExpenseInputScreen() {
   const [customCategory, setCustomCategory] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [savedExpense, setSavedExpense] = useState<SavedExpense | null>(null);
 
   const calendarDays = useMemo(() => {
     const year = selectedDate.getFullYear();
@@ -146,9 +153,11 @@ export default function ExpenseInputScreen() {
       return;
     }
 
-    Alert.alert(TEXT.successTitle, TEXT.successMessage, [
-      { text: "OK", onPress: () => router.back() },
-    ]);
+    setSavedExpense({
+      amount: numericAmount,
+      category: submittedCategory,
+      date: selectedDate,
+    });
   };
 
   return (
@@ -329,6 +338,18 @@ export default function ExpenseInputScreen() {
           <MaterialCommunityIcons name="information-outline" size={20} color={PURPLE} />
           <Text style={styles.helpText}>{TEXT.help}</Text>
         </View>
+
+        {savedExpense && (
+          <View style={styles.successCard}>
+            <View style={styles.successIcon}>
+              <MaterialCommunityIcons name="check" size={22} color="#FFFFFF" />
+            </View>
+            <View style={styles.successCopy}>
+              <Text style={styles.successTitle}>{TEXT.successTitle}</Text>
+              <Text style={styles.successMessage}>{TEXT.successMessage}</Text>
+            </View>
+          </View>
+        )}
 
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={styles.submitText}>{TEXT.submit}</Text>
@@ -565,6 +586,41 @@ const styles = StyleSheet.create({
     color: PURPLE,
     fontSize: 15,
     fontWeight: "700",
+  },
+  successCard: {
+    marginBottom: 18,
+    borderWidth: 1,
+    borderColor: "#CFEAD9",
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    backgroundColor: "#F4FFF8",
+  },
+  successIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: "#28A85A",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  successCopy: {
+    flex: 1,
+    minWidth: 0,
+  },
+  successTitle: {
+    color: "#1F7A42",
+    fontSize: 17,
+    fontWeight: "800",
+  },
+  successMessage: {
+    marginTop: 4,
+    color: "#44514A",
+    fontSize: 14,
+    lineHeight: 20,
+    fontWeight: "600",
   },
   submitButton: {
     minHeight: 72,
