@@ -3,7 +3,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View
 } from "react-native";
@@ -26,8 +25,8 @@ export default function HomeScreen() {
   const [wishTitle, setWishTitle] = useState("");
   const [wishPrice, setWishPrice] = useState("");
   const [isEditing, setIsEditing] = useState(false);
-  const [wishList, setWishList] = useState([...]);
-const [editingId, setEditingId] = useState(null); 
+  const [wishList, setWishList] = useState([]);
+  const [editingId, setEditingId] = useState(null); 
 
   const handleAddExpense = (amount: number) => {
     setMonthlySpent((prev) => prev + amount);
@@ -72,6 +71,9 @@ const [editingId, setEditingId] = useState(null);
       savedAmount={0}
       onEdit={() => setIsEditing(true)}
       onSave={handleSaveWish}
+      onTitleChange={(newTitle) => setWishTitle(newTitle)}
+      onPriceChange={(newPrice) => setWishPrice(newPrice)}
+      onEditDone={() => setIsEditing(false)}
       />
 
       <UsageCompareCard />
