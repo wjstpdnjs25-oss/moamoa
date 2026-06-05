@@ -592,6 +592,16 @@ function CompleteSignup({ info, onLogin }: { info: SignupInfo; onLogin: () => vo
         새로운 회원이 되신 것을 환영합니다.
       </Text>
 
+      <View style={styles.nextStepCard}>
+        <View style={styles.nextStepIcon}>
+          <Ionicons name="sparkles-outline" size={21} color={DEEP_PURPLE} />
+        </View>
+        <View style={styles.nextStepCopy}>
+          <Text style={styles.nextStepTitle}>이제 로그인할 수 있어요</Text>
+          <Text style={styles.nextStepText}>방금 만든 아이디로 계좌 서비스를 시작해보세요.</Text>
+        </View>
+      </View>
+
       <Pressable style={styles.homeButton} onPress={onLogin}>
         <Text style={styles.homeButtonText}>로그인하러 가기</Text>
       </Pressable>
@@ -1354,6 +1364,42 @@ const styles = StyleSheet.create({
     lineHeight: 34,
     marginTop: 52,
     textAlign: 'center',
+  },
+  nextStepCard: {
+    alignItems: 'center',
+    alignSelf: 'stretch',
+    backgroundColor: '#ffffff',
+    borderColor: '#ded6ee',
+    borderRadius: 12,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 28,
+    paddingHorizontal: 16,
+    paddingVertical: 15,
+  },
+  nextStepIcon: {
+    alignItems: 'center',
+    backgroundColor: '#f1edf9',
+    borderRadius: 999,
+    height: 42,
+    justifyContent: 'center',
+    width: 42,
+  },
+  nextStepCopy: {
+    flex: 1,
+  },
+  nextStepTitle: {
+    color: TEXT_BLACK,
+    fontSize: 15,
+    fontWeight: '900',
+  },
+  nextStepText: {
+    color: '#5f5f68',
+    fontSize: 12,
+    fontWeight: '600',
+    lineHeight: 18,
+    marginTop: 4,
   },
   homeButton: {
     alignItems: 'center',
