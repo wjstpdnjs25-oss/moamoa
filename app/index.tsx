@@ -3,7 +3,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View
 } from "react-native";
 
@@ -140,4 +139,47 @@ input: {
     fontWeight: "700",
     color: "#111111",
   },
+  settingButton: {
+    backgroundColor: "#EEF0FF",
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  settingText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#3D5AFE",
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  editContainer: {
+    backgroundColor: '#f9f9f9',
+    padding: 15,
+    borderRadius: 12,
+    marginVertical: 10,
+    borderWidth: 1,
+    borderColor: '#eee',
+  },
+  editButton: {
+    backgroundColor: '#E0E0E0',
+    padding: 8,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  editButtonText: {
+    fontSize: 13,
+    color: '#333',
+    fontWeight: '600',
+  },
+  targetText: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 5,
+  },
 });
+
