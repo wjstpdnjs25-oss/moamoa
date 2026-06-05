@@ -3,6 +3,8 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
+  TouchableOpacity,
   View
 } from "react-native";
 
@@ -23,11 +25,18 @@ export default function HomeScreen() {
   const [monthlySpent, setMonthlySpent] = useState(0);
   const [wishTitle, setWishTitle] = useState("");
   const [wishPrice, setWishPrice] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleAddExpense = (amount: number) => {
     setMonthlySpent((prev) => prev + amount);
     setBalance((prev) => prev - amount);
   };
+  const handleSaveWish = () => {
+  console.log(wishTitle, wishPrice);
+  setIsEditing(false); 
+  setWishTitle("");    
+  setWishPrice("");
+};
  
 
   return (
@@ -65,12 +74,16 @@ export default function HomeScreen() {
     style={styles.input}
     />
 
-    <TouchableOpacity style={styles.addButton}>
+    <TouchableOpacity
+  style={styles.addButton}
+  onPress={() => console.log(wishTitle, wishPrice)}
+>
       <Text style={styles.addButtonText}>
       추가하기
     </Text>
   </TouchableOpacity>
 </View>
+
       <WishSaveCard
   title={wishTitle || "위시 아이템"}
   targetAmount={Number(wishPrice) || 0}
@@ -89,6 +102,15 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  inputContainer: {
+  backgroundColor: '#ffffff',
+  borderRadius: 16,
+  padding: 20,
+  margin: 16,
+  borderWidth: 1,
+  borderColor: '#3D5AFE', 
+  elevation: 3,
+},
   container: {
     flex: 1,
     backgroundColor: "#F7F7FB",
