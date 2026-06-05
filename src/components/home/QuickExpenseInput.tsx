@@ -8,8 +8,13 @@ import {
   View,
 } from "react-native";
 
+import {
+  EXPENSE_CATEGORIES,
+  QUICK_EXPENSE_CATEGORIES,
+} from "@/src/constants/expense";
+
 type Props = {
-  onSaveExpense: (amount: number) => void;
+  onSaveExpense: (amount: number, category: string) => void;
 };
 
 const TEXT = {
@@ -22,20 +27,8 @@ const TEXT = {
   alertMessage: "금액을 입력해주세요.",
 };
 
-const CATEGORIES = [
-  "음식",
-  "패션",
-  "주거",
-  "교통",
-  "카페/간식",
-  "쇼핑",
-  "문화/여가",
-  "교육",
-  "의료/건강",
-  "기타",
-];
-
-const MAIN_CATEGORIES = ["음식", "교통", "카페/간식", "쇼핑"];
+const CATEGORIES = EXPENSE_CATEGORIES.map((category) => category.label);
+const MAIN_CATEGORIES = QUICK_EXPENSE_CATEGORIES;
 
 export default function QuickExpenseInput({ onSaveExpense }: Props) {
   const [amount, setAmount] = useState("");
@@ -52,7 +45,7 @@ export default function QuickExpenseInput({ onSaveExpense }: Props) {
       return;
     }
 
-    onSaveExpense(numericAmount);
+    onSaveExpense(numericAmount, selectedCategory);
     setAmount("");
   };
 
