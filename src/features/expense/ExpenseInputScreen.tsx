@@ -119,15 +119,22 @@ export default function ExpenseInputScreen() {
     ? customCategory.trim()
     : selectedCategory;
 
+  const clearSavedExpense = () => {
+    setSavedExpense(null);
+  };
+
   const handleChangeAmount = (value: string) => {
+    clearSavedExpense();
     setAmount(value.replace(/[^0-9]/g, ""));
   };
 
   const handleAddAmount = (value: number) => {
+    clearSavedExpense();
     setAmount(String(Math.max(0, numericAmount) + value));
   };
 
   const handleSelectDay = (day: number) => {
+    clearSavedExpense();
     setSelectedDate(
       new Date(selectedDate.getFullYear(), selectedDate.getMonth(), day)
     );
@@ -135,6 +142,7 @@ export default function ExpenseInputScreen() {
   };
 
   const handleMoveMonth = (offset: number) => {
+    clearSavedExpense();
     setSelectedDate(
       new Date(
         selectedDate.getFullYear(),
@@ -145,11 +153,17 @@ export default function ExpenseInputScreen() {
   };
 
   const handleSelectCategory = (category: string) => {
+    clearSavedExpense();
     setSelectedCategory(category);
 
     if (category !== CUSTOM_CATEGORY_LABEL) {
       setCustomCategory("");
     }
+  };
+
+  const handleChangeCustomCategory = (value: string) => {
+    clearSavedExpense();
+    setCustomCategory(value);
   };
 
   const handleSubmit = () => {
@@ -214,7 +228,10 @@ export default function ExpenseInputScreen() {
 
             <TouchableOpacity
               style={styles.quickAmountButton}
-              onPress={() => setAmount("")}
+              onPress={() => {
+                clearSavedExpense();
+                setAmount("");
+              }}
             >
               <Text style={styles.quickAmountText}>{TEXT.directInput}</Text>
             </TouchableOpacity>
@@ -257,7 +274,7 @@ export default function ExpenseInputScreen() {
               <TextInput
                 style={styles.customCategoryInput}
                 value={customCategory}
-                onChangeText={setCustomCategory}
+                onChangeText={handleChangeCustomCategory}
                 placeholder={TEXT.customCategoryPlaceholder}
                 placeholderTextColor="#A0A3AD"
                 returnKeyType="done"
