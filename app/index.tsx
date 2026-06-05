@@ -6,15 +6,12 @@ import {
   View
 } from "react-native";
 
-import WishSaveCard from "@/src/components/home/WishSaveCard";
-
 import BalanceCard from "@/src/components/home/BalanceCard";
 import BudgetStatusCard from "@/src/components/home/BudgetStatusCard";
 import QuickExpenseInput from "@/src/components/home/QuickExpenseInput";
 import QuickMenuGrid from "@/src/components/home/QuickMenuGrid";
 import UsageCompareCard from "@/src/components/home/UsageCompareCard";
-
-
+import WishSaveCard from "@/src/components/home/WishSaveCard";
 
 const TEXT = {
   appTitle: "\uB0B4 \uACC4\uC88C",
@@ -24,6 +21,8 @@ const TEXT = {
 export default function HomeScreen() {
   const [balance, setBalance] = useState(0);
   const [monthlySpent, setMonthlySpent] = useState(0);
+  const [wishTitle, setWishTitle] = useState("");
+  const [wishPrice, setWishPrice] = useState("");
 
   const handleAddExpense = (amount: number) => {
     setMonthlySpent((prev) => prev + amount);
@@ -59,7 +58,7 @@ export default function HomeScreen() {
 
       <UsageCompareCard />
 
-      <WishSaveCard />
+  
 
       <QuickMenuGrid />
     </ScrollView>
