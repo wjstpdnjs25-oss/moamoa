@@ -47,20 +47,20 @@ export default function MainScreen() {
   const [targetAmount, setTargetAmount] = useState("");
   const [wishList, setWishList] = useState<WishItem[]>([]);
 
-  const monthlySpent = useMemo(() => {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const monthPrefix = `${year}-${month}`;
-
-    return expenses
-      .filter((expense) => expense.spentDate.startsWith(monthPrefix))
-      .reduce((sum, expense) => sum + expense.amount, 0);
-  }, [expenses]);
-
   const monthlyBudget = budgets.reduce((sum, item) => sum + item.amount, 0);
-  const balance = monthlyBudget - monthlySpent;
 
+const monthlySpent = useMemo(() => {
+  const today = new Date();
+  const monthPrefix = `${today.getFullYear()}-${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}`;
+
+  return expenses
+    .filter((expense) => expense.spentDate.startsWith(monthPrefix))
+    .reduce((sum, expense) => sum + expense.amount, 0);
+}, [expenses]);
+
+const balance = monthlyBudget - monthlySpent;
   const addWish = () => {
     const amount = Number(targetAmount);
 
@@ -135,7 +135,7 @@ export default function MainScreen() {
           <Text style={styles.appTitle}>{TEXT.appTitle}</Text>
         </View>
 
-        <BalanceCard balance={balance} monthlySpent={monthlySpent} />
+        <BalanceCard />
 
         <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
