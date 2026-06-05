@@ -58,6 +58,14 @@ export default function HomeScreen() {
       <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
 
+      <WishSaveCard
+      title={wishTitle || "위시 아이템"}
+      targetAmount={Number(wishPrice) || 0}
+      savedAmount={150000}
+      onDelete={() => console.log("삭제")}
+      onSave={(amount) => console.log(amount)}
+      />
+
   <View style={styles.inputContainer}>
     <TextInput
     placeholder="사고 싶은 물건"
@@ -85,18 +93,7 @@ export default function HomeScreen() {
   </View>
 </View>
 
-      <WishSaveCard
-  title={wishTitle || "위시 아이템"}
-  targetAmount={Number(wishPrice) || 0}
-  savedAmount={150000}
-  onDelete={() => console.log("삭제")}
-  onSave={(amount) => console.log(amount)}
-/>
-
       <UsageCompareCard />
-
-  
-
       <QuickMenuGrid />
     </ScrollView>
   );
@@ -125,7 +122,21 @@ input: {
     fontSize: 15,
     color: '#333',
   },
-  
+  buttonRow: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  addButton: {
+    backgroundColor: '#3D5AFE',
+    borderRadius: 12,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  addButtonText: {
+    color: '#ffffff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
   container: {
     flex: 1,
     backgroundColor: "#F7F7FB",
