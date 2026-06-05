@@ -12,6 +12,14 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { useExpense } from "../../../contexts/ExpenseContext";
+
+import {
+  CUSTOM_EXPENSE_CATEGORY_LABEL,
+  EXPENSE_CATEGORIES,
+  getExpenseCategoryIcon,
+} from "@/src/constants/expense";
+
 const PURPLE = "#7356E8";
 const LIGHT_PURPLE = "#F4F1FF";
 const BORDER = "#E7E7EF";
@@ -34,31 +42,14 @@ const TEXT = {
   successDetailSuffix: "\uC73C\uB85C \uC800\uC7A5\uD588\uC5B4\uC694.",
 };
 
-type Category = {
-  label: string;
-  icon: keyof typeof MaterialCommunityIcons.glyphMap;
-};
-
 type SavedExpense = {
   amount: number;
   category: string;
   date: Date;
 };
 
-const CATEGORIES: Category[] = [
-  { label: "\uC74C\uC2DD", icon: "silverware-fork-knife" },
-  { label: "\uD328\uC158", icon: "tshirt-crew-outline" },
-  { label: "\uC8FC\uAC70", icon: "home-outline" },
-  { label: "\uAD50\uD1B5", icon: "car-outline" },
-  { label: "\uCE74\uD398/\uAC04\uC2DD", icon: "coffee-outline" },
-  { label: "\uC1FC\uD551", icon: "gift-outline" },
-  { label: "\uBB38\uD654/\uC5EC\uAC00", icon: "ticket-percent-outline" },
-  { label: "\uAD50\uC721", icon: "book-open-page-variant-outline" },
-  { label: "\uC758\uB8CC/\uAC74\uAC15", icon: "medical-bag" },
-  { label: "\uAE30\uD0C0", icon: "dots-horizontal-circle-outline" },
-];
-
-const CUSTOM_CATEGORY_LABEL = "\uAE30\uD0C0";
+const CATEGORIES = EXPENSE_CATEGORIES;
+const CUSTOM_CATEGORY_LABEL = CUSTOM_EXPENSE_CATEGORY_LABEL;
 
 const QUICK_AMOUNTS = [
   { label: "+1\uB9CC", value: 10000 },
@@ -88,12 +79,14 @@ function formatSavedExpenseText(expense: SavedExpense) {
 
 export default function ExpenseInputScreen() {
   const router = useRouter();
+  const { addExpense } = useExpense();
   const [amount, setAmount] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0].label);
   const [customCategory, setCustomCategory] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [savedExpense, setSavedExpense] = useState<SavedExpense | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const calendarDays = useMemo(() => {
     const year = selectedDate.getFullYear();
@@ -118,7 +111,7 @@ export default function ExpenseInputScreen() {
   const submittedCategory = isCustomCategory
     ? customCategory.trim()
     : selectedCategory;
-  const canSubmit = numericAmount > 0 && Boolean(submittedCategory) && Boolean(selectedDate);
+  const canSubmit = numericAmount > 0 && Boolean(submittedCategory) && Boolean(selectedDate) && !saving;
 
   const clearSavedExpense = () => {
     setSavedExpense(null);
@@ -167,17 +160,35 @@ export default function ExpenseInputScreen() {
     setCustomCategory(value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!numericAmount || !submittedCategory || !selectedDate) {
       Alert.alert(TEXT.errorTitle, TEXT.errorMessage);
       return;
     }
 
-    setSavedExpense({
-      amount: numericAmount,
-      category: submittedCategory,
-      date: selectedDate,
-    });
+    try {
+      setSaving(true);
+
+      await addExpense({
+        amount: numericAmount,
+        category: submittedCategory,
+        icon: getExpenseCategoryIcon(submittedCategory),
+        label: submittedCategory,
+        source: "manual",
+        spentAt: selectedDate,
+      });
+
+      setSavedExpense({
+        amount: numericAmount,
+        category: submittedCategory,
+        date: selectedDate,
+      });
+    } catch (error) {
+      console.error("Failed to save expense", error);
+      Alert.alert(TEXT.errorTitle, "\uC9C0\uCD9C\uC744 \uC800\uC7A5\uD558\uC9C0 \uBABB\uD588\uC5B4\uC694. \uB2E4\uC2DC \uC2DC\uB3C4\uD574\uC8FC\uC138\uC694.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
