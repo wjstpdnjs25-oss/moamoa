@@ -12,6 +12,9 @@ export default function WishSaveCard({
   onSave,
   isEditing,
   onEdit,
+  onTitleChange, 
+  onPriceChange, 
+  onEditDone
 }) {
   const safeTarget = Number(targetAmount) || 0;
   const safeSaved = Number(savedAmount) || 0;
@@ -44,9 +47,28 @@ export default function WishSaveCard({
     <View style={styles.editContainer}>
     <Text style={{fontWeight: '700', marginBottom: 8}}>정보 수정하기</Text>
 
-  </View>
-  );
-}
+    <TextInput
+      style={styles.amountInput}
+      placeholder="사고 싶은 물건"
+      value={title} 
+      onChangeText={onTitleChange} 
+      />
+
+    <TextInput
+      style={styles.amountInput}
+      placeholder="목표 금액"
+      keyboardType="numeric"
+      value={String(targetAmount)} 
+      onChangeText={onPriceChange} 
+    />
+    <TouchableOpacity 
+      style={[styles.saveSubmitButton, {backgroundColor: '#3D5AFE', marginTop: 15}]} 
+      onPress={onEditDone} // 수정 완료 버튼 
+    >
+      <Text style={styles.saveSubmitButtonText}>수정 완료</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       
      {remaining <= 0 ? (
