@@ -6,8 +6,8 @@ type Props = {
 };
 
 const TEXT = {
-  balanceLabel: "\uCD1D \uC794\uC561",
-  monthlySpentLabel: "\uC774\uBC88 \uB2EC \uC0AC\uC6A9 \uAE08\uC561",
+  balanceLabel: "남은 예산",
+  monthlySpentLabel: "이번 달 사용 금액",
   won: "\u20A9",
 };
 
