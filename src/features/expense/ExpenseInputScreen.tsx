@@ -31,6 +31,7 @@ const TEXT = {
   errorMessage: "\uAE08\uC561\uACFC \uCE74\uD14C\uACE0\uB9AC, \uB0A0\uC9DC\uB97C \uBAA8\uB450 \uC120\uD0DD\uD574\uC8FC\uC138\uC694.",
   successTitle: "\uC800\uC7A5\uB418\uC5C8\uC5B4\uC694",
   successMessage: "\uC9C0\uCD9C \uC785\uB825\uC774 \uC644\uB8CC\uB418\uC5C8\uC2B5\uB2C8\uB2E4.",
+  successDetailSuffix: "\uC73C\uB85C \uC800\uC7A5\uD588\uC5B4\uC694.",
 };
 
 type Category = {
@@ -79,6 +80,10 @@ function formatDate(date: Date) {
 
 function toAmountText(value: number) {
   return value > 0 ? value.toLocaleString() : "0";
+}
+
+function formatSavedExpenseText(expense: SavedExpense) {
+  return `${expense.amount.toLocaleString()}${TEXT.won} \uC9C0\uCD9C\uC744 ${expense.category}${TEXT.successDetailSuffix}`;
 }
 
 export default function ExpenseInputScreen() {
@@ -347,6 +352,10 @@ export default function ExpenseInputScreen() {
             <View style={styles.successCopy}>
               <Text style={styles.successTitle}>{TEXT.successTitle}</Text>
               <Text style={styles.successMessage}>{TEXT.successMessage}</Text>
+              <Text style={styles.successDetail}>
+                {formatSavedExpenseText(savedExpense)}
+              </Text>
+              <Text style={styles.successDate}>{formatDate(savedExpense.date)}</Text>
             </View>
           </View>
         )}
@@ -620,6 +629,19 @@ const styles = StyleSheet.create({
     color: "#44514A",
     fontSize: 14,
     lineHeight: 20,
+    fontWeight: "600",
+  },
+  successDetail: {
+    marginTop: 8,
+    color: "#101014",
+    fontSize: 15,
+    lineHeight: 21,
+    fontWeight: "800",
+  },
+  successDate: {
+    marginTop: 4,
+    color: "#747783",
+    fontSize: 13,
     fontWeight: "600",
   },
   submitButton: {
