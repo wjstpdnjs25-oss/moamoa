@@ -9,24 +9,25 @@ const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 type ExpenseItem = {
   id: string;
   label: string;
+  category: string;
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
   amount: number;
 };
 
 const SAMPLE_EXPENSES: Record<string, ExpenseItem[]> = {
-  "2024-06-02": [{ id: "lunch", label: "점심 식사", icon: "food", amount: 15000 }],
-  "2024-06-04": [{ id: "coffee", label: "카페", icon: "coffee", amount: 12000 }],
-  "2024-06-05": [{ id: "dinner", label: "저녁 식사", icon: "food-variant", amount: 8000 }],
-  "2024-06-07": [{ id: "transport", label: "교통", icon: "bus", amount: 23000 }],
-  "2024-06-08": [{ id: "shopping", label: "의류 쇼핑", icon: "tshirt-crew-outline", amount: 10000 }],
-  "2024-06-10": [{ id: "lunch2", label: "점심 식사", icon: "food", amount: 18000 }],
-  "2024-06-12": [{ id: "market", label: "마트", icon: "cart", amount: 31500 }],
-  "2024-06-13": [{ id: "delivery", label: "배달 음식", icon: "food-variant", amount: 7000 }],
-  "2024-06-14": [{ id: "dessert", label: "디저트", icon: "cupcake", amount: 12000 }],
+  "2024-06-02": [{ id: "lunch", label: "점심 식사", category: "음식", icon: "food", amount: 15000 }],
+  "2024-06-04": [{ id: "coffee", label: "카페", category: "카페/간식", icon: "coffee", amount: 12000 }],
+  "2024-06-05": [{ id: "dinner", label: "저녁 식사", category: "음식", icon: "food-variant", amount: 8000 }],
+  "2024-06-07": [{ id: "transport", label: "교통", category: "교통", icon: "bus", amount: 23000 }],
+  "2024-06-08": [{ id: "shopping", label: "의류 쇼핑", category: "패션", icon: "tshirt-crew-outline", amount: 10000 }],
+  "2024-06-10": [{ id: "lunch2", label: "점심 식사", category: "음식", icon: "food", amount: 18000 }],
+  "2024-06-12": [{ id: "market", label: "마트", category: "쇼핑", icon: "cart", amount: 31500 }],
+  "2024-06-13": [{ id: "delivery", label: "배달 음식", category: "음식", icon: "food-variant", amount: 7000 }],
+  "2024-06-14": [{ id: "dessert", label: "디저트", category: "카페/간식", icon: "cupcake", amount: 12000 }],
   "2024-06-15": [
-    { id: "lunch3", label: "점심 식사", icon: "food", amount: 18000 },
-    { id: "coffee2", label: "카페", icon: "coffee", amount: 6000 },
-    { id: "shopping2", label: "의류 쇼핑", icon: "tshirt-crew-outline", amount: 54000 },
+    { id: "lunch3", label: "점심 식사", category: "음식", icon: "food", amount: 18000 },
+    { id: "coffee2", label: "카페", category: "카페/간식", icon: "coffee", amount: 6000 },
+    { id: "shopping2", label: "의류 쇼핑", category: "패션", icon: "tshirt-crew-outline", amount: 54000 },
   ],
 };
 
