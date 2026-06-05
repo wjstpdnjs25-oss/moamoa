@@ -1,3 +1,4 @@
+ feat_wishsave
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
@@ -16,10 +17,31 @@ import QuickMenuGrid from '@/src/components/home/QuickMenuGrid';
 import UsageCompareCard from '@/src/components/home/UsageCompareCard';
 import WishSaveCard from '@/src/components/home/WishSaveCard';
 
+import { useRouter } from "expo-router";
+import { useState } from "react";
+
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
+
+import { SafeAreaView } from "react-native-safe-area-context";
+
+import { useBudget } from "../../../contexts/BudgetContext";
+
+import BalanceCard from "@/src/components/home/BalanceCard";
+import BudgetStatusCard from "@/src/components/home/BudgetStatusCard";
+import QuickExpenseInput from "@/src/components/home/QuickExpenseInput";
+import QuickMenuGrid from "@/src/components/home/QuickMenuGrid";
+main
+
 const TEXT = {
   appTitle: '내 계좌',
   settings: '설정',
 };
+ feat_wishsave
 const SOFT_PURPLE = '#f5efff';
 const DEEP_PURPLE = '#4f287f';
 
@@ -27,7 +49,21 @@ export default function MainScreen() {
   const router = useRouter();
 
   const [balance, setBalance] = useState(0);
+
+
+
+export default function MainScreen() {
+  const router = useRouter();
+> main
   const [monthlySpent, setMonthlySpent] = useState(0);
+  const { budgets } = useBudget();
+
+  const monthlyBudget = budgets.reduce(
+    (sum, item) => sum + item.amount,
+    0
+  );
+
+  const balance = monthlyBudget - monthlySpent;
 
   const [title, setTitle] = useState('');
   const [targetAmount, setTargetAmount] = useState('');
@@ -53,11 +89,30 @@ export default function MainScreen() {
   };
 
   const handleAddExpense = (amount: number) => {
+feat_wishsave
     setMonthlySpent(prev => prev + amount);
     setBalance(prev => prev - amount);
+
+    setMonthlySpent((prev) => {
+      const nextSpent = prev + amount;
+
+      if (prev <= monthlyBudget && nextSpent > monthlyBudget) {
+        router.push({
+          pathname: '/budget-alert' as any,
+          params: {
+            budget: String(monthlyBudget),
+            spent: String(nextSpent),
+          },
+        });
+      }
+
+      return nextSpent;
+    });
+main
   };
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
@@ -67,9 +122,6 @@ export default function MainScreen() {
       <View style={styles.header}>
         <Text style={styles.appTitle}>{TEXT.appTitle}</Text>
 
-        <TouchableOpacity style={styles.settingButton}>
-          <Text style={styles.settingText}>{TEXT.settings}</Text>
-        </TouchableOpacity>
       </View>
 
       {/* CARDS */}
@@ -127,7 +179,11 @@ export default function MainScreen() {
   <QuickMenuGrid />
 </View>
     </ScrollView>
+ feat_wishsave
     
+
+    </SafeAreaView>
+ main
   );
 }
 
@@ -198,4 +254,12 @@ inputCard: {
     color: '#fff',
     fontWeight: '700',
   },
+ feat_wishsave
 });
+
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FFFFFF",
+  },
+});
+ main

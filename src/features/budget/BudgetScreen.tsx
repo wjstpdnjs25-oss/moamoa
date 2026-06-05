@@ -1,411 +1,403 @@
-import React, { useEffect, useState } from 'react';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { router } from 'expo-router';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { useState } from "react";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const DEEP_PURPLE = '#4f287f';
-const SOFT_PURPLE = '#f5efff';
-const LINE_PURPLE = '#d7c7f0';
-const SPLASH_BACKGROUND = '#f6f1ff';
-const BRAND_BORDER = '#dfd0f4';
-const SUB_TEXT_PURPLE = '#7b6a90';
+import {
+  DEFAULT_CATEGORIES,
+  useBudget,
+} from "../../../contexts/BudgetContext";
+import { useExpense } from "../../../contexts/ExpenseContext";
+
+const PURPLE = "#7356E8";
+const LIGHT_PURPLE = "#F4F1FF";
+const BORDER = "#E7E7EF";
 
 export default function BudgetScreen() {
-  const [showSplash, setShowSplash] = useState(true);
+  const router = useRouter();
+  const { budgets, setBudgetAmount } = useBudget();
+  const { expenses } = useExpense();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 2000);
+  const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORIES[0]);
+  const [draftAmount, setDraftAmount] = useState("");
 
-    return () => clearTimeout(timer);
-  }, []);
+  const totalBudget = budgets.reduce((sum, item) => sum + item.amount, 0);
 
-  if (showSplash) {
-    return (
-      <SafeAreaView style={styles.splashScreen}>
-        <View style={styles.splashLogoFrame}>
-          <Image
-            source={require('@/assets/images/moamoa-splash.png')}
-            style={styles.splashLogo}
-            resizeMode="cover"
-          />
-        </View>
-      </SafeAreaView>
+  const selectedBudget =
+    budgets.find((item) => item.category === selectedCategory)?.amount ?? 0;
+
+  const categorySpent = expenses
+    .filter((expense) => expense.category === selectedCategory)
+    .reduce((sum, expense) => sum + expense.amount, 0);
+
+  const usageRate =
+    selectedBudget === 0
+      ? 0
+      : Math.round((categorySpent / selectedBudget) * 100);
+
+  const handleSelectCategory = (category: string) => {
+    const currentAmount =
+      budgets.find((item) => item.category === category)?.amount ?? 0;
+
+    setSelectedCategory(category);
+    setDraftAmount(currentAmount ? String(currentAmount) : "");
+  };
+
+  const handleSaveBudget = () => {
+    setBudgetAmount(selectedCategory, Number(draftAmount || 0));
+
+    Alert.alert(
+      "저장 완료",
+      `${selectedCategory} 예산이 저장되었습니다.`
     );
-  }
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.brandHeader}>
-          <View style={styles.brandMark}>
-            <Image
-              source={require('@/assets/images/moamoa-splash.png')}
-              style={styles.brandLogo}
-              resizeMode="cover"
+      <KeyboardAvoidingView 
+        style={styles.KeyboardAvoidingView}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        >
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <MaterialCommunityIcons
+              name="chevron-left"
+              size={42}
+              color="#111111"
             />
-          </View>
-          <View>
-            <Text style={styles.brandName}>모아모아 은행</Text>
-            <Text style={styles.brandSubText}>MOAMOA BANK</Text>
-          </View>
+          </TouchableOpacity>
+
+          <Text style={styles.title}>예산 설정</Text>
         </View>
 
-        <View style={styles.illustrationWrap}>
-          <View style={[styles.backCard, styles.leftBackCard]} />
-          <View style={[styles.backCard, styles.rightBackCard]} />
+        <Text style={styles.subtitle}>카테고리별 예산을 설정해주세요.</Text>
 
-          <View style={styles.bankCard}>
-            <MaterialCommunityIcons name="credit-card-outline" size={38} color={DEEP_PURPLE} />
-          </View>
-
-          <View style={styles.moneyCard}>
-            <MaterialCommunityIcons name="sack" size={56} color={DEEP_PURPLE} />
-            <View style={styles.coin}>
-              <Text style={styles.coinText}>$</Text>
-            </View>
-          </View>
-
-          <View style={styles.securityCard}>
-            <MaterialCommunityIcons name="shield-lock-outline" size={58} color={DEEP_PURPLE} />
-          </View>
-
-          <View style={styles.phone}>
-            <View style={styles.phoneTop} />
-            <View style={styles.phoneScreen}>
-              <View style={styles.menuLine} />
-              <View style={styles.accountBox}>
-                <View style={styles.wonCircle}>
-                  <Text style={styles.wonText}>모</Text>
-                </View>
-                <Text style={styles.accountText}>모아모아 계좌</Text>
-              </View>
-              <View style={styles.listRow}>
-                <View style={styles.dot} />
-                <View style={styles.longLine} />
-              </View>
-              <View style={styles.listRow}>
-                <View style={styles.dot} />
-                <View style={styles.midLine} />
-              </View>
-              <View style={styles.sendButton}>
-                <Ionicons name="arrow-forward" size={17} color="#ffffff" />
-                <Text style={styles.sendText}>전송</Text>
-              </View>
-            </View>
-          </View>
+        <View style={styles.summaryCard}>
+          <Text style={styles.summaryLabel}>이번 달 총 예산</Text>
+          <Text style={styles.summaryAmount}>
+            ₩ {totalBudget.toLocaleString()}
+          </Text>
         </View>
 
+        <View style={styles.card}>
+          <Text style={styles.sectionTitle}>카테고리별 예산</Text>
+
+          {budgets.map((item) => {
+            const selected = selectedCategory === item.category;
+
+            const spent = expenses
+            .filter((expenses) => expenses.category === item.category)
+            .reduce((sum, expense) => sum + expense.amount, 0);
+
+ feat_wishsave
         <View style={styles.copy}>
           <Text style={styles.title}>모아모아와 함께하는 간편한 은행</Text>
           <Text style={styles.description}>
             흩어진 금융 생활을 모아,{'/n'}
             나만의 계좌 관리를 시작해보세요.
           </Text>
+
+            const rate =
+            item.amount === 0 ? 0 : Math.round((spent / item.amount) * 100);
+
+            return (
+              <TouchableOpacity
+                key={item.category}
+                style={[styles.budgetRow, selected && styles.selectedBudgetRow]}
+                onPress={() => handleSelectCategory(item.category)}
+              >
+                <View style={styles.rowTop}>
+  <View style={styles.rowLeft}>
+    <View
+      style={[
+        styles.categoryDot,
+        selected && styles.selectedCategoryDot,
+      ]}
+    />
+    <Text
+      style={[
+        styles.categoryName,
+        selected && styles.selectedCategoryName,
+      ]}
+    >
+      {item.category}
+    </Text>
+  </View>
+
+  <Text
+    style={[
+      styles.categoryAmount,
+      selected && styles.selectedCategoryAmount,
+    ]}
+  >
+    ₩ {item.amount.toLocaleString()}
+  </Text>
+</View>
+
+<Text style={styles.rowUsageText}>
+  사용 ₩ {spent.toLocaleString()} · {rate}%
+</Text>
+
+<View style={styles.progressBackground}>
+  <View
+    style={[
+      styles.progressBar,
+      { width: `${Math.min(rate, 100)}%` as any },
+    ]}
+  />
+</View>
+              </TouchableOpacity>
+            );
+          })}
+ main
         </View>
 
-        <View style={styles.actions}>
-          <Pressable style={styles.primaryButton} onPress={() => router.push('/login')}>
-            <Text style={styles.primaryButtonText}>로그인하기</Text>
-          </Pressable>
+        <View style={styles.editCard}>
+          <Text style={styles.editTitle}>{selectedCategory} 예산</Text>
 
-          <Pressable style={styles.secondaryButton} onPress={() => router.push('/signup')}>
-            <Text style={styles.secondaryButtonText}>회원가입하기</Text>
-          </Pressable>
+          <View style={styles.inputBox}>
+            <Text style={styles.currency}>₩</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="0"
+              keyboardType="numeric"
+              value={draftAmount}
+              onChangeText={(text) =>
+                setDraftAmount(text.replace(/[^0-9]/g, ""))
+              }
+            />
+          </View>
+
+          <Text style={styles.currentText}>
+            현재 설정 금액 ₩ {selectedBudget.toLocaleString()}
+          </Text>
+
+          <TouchableOpacity style={styles.saveButton} onPress={handleSaveBudget}>
+            <Text style={styles.saveButtonText}>저장하기</Text>
+          </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
+     </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  splashScreen: {
-    alignItems: 'center',
-    backgroundColor: SPLASH_BACKGROUND,
-    flex: 1,
-    justifyContent: 'center',
-  },
-  splashLogoFrame: {
-    borderRadius: 160,
-    height: 320,
-    overflow: 'hidden',
-    width: 320,
-  },
-  splashLogo: {
-    height: '100%',
-    width: '100%',
-  },
   safeArea: {
     flex: 1,
-    backgroundColor: '#f8f9fc',
+    backgroundColor: "#FFFFFF",
   },
   container: {
     flex: 1,
-    paddingHorizontal: 28,
+    backgroundColor: "#FFFFFF",
+  },
+  content: {
+    paddingHorizontal: 20,
     paddingTop: 12,
-    paddingBottom: 34,
+    paddingBottom: 42,
   },
-  brandHeader: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 12,
-    marginTop: 10,
+  header: {
+    minHeight: 52,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 18,
   },
-  brandMark: {
-    alignItems: 'center',
-    backgroundColor: SPLASH_BACKGROUND,
-    borderRadius: 18,
-    borderWidth: 1,
-    borderColor: BRAND_BORDER,
-    overflow: 'hidden',
-    height: 36,
-    justifyContent: 'center',
-    width: 36,
-  },
-  brandLogo: {
-    height: 36,
-    width: 36,
-  },
-  brandName: {
-    color: DEEP_PURPLE,
-    fontSize: 20,
-    fontWeight: '900',
-    letterSpacing: 0,
-  },
-  brandSubText: {
-    color: SUB_TEXT_PURPLE,
-    fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 0,
-    marginTop: 1,
-  },
-  illustrationWrap: {
-    alignItems: 'center',
-    height: 342,
-    justifyContent: 'center',
-    marginTop: 18,
-    position: 'relative',
-  },
-  backCard: {
-    borderColor: LINE_PURPLE,
-    borderRadius: 10,
-    borderWidth: 2,
-    height: 162,
-    opacity: 0.85,
-    position: 'absolute',
-    width: 168,
-  },
-  leftBackCard: {
-    left: 36,
-    top: 80,
-  },
-  rightBackCard: {
-    right: 28,
-    top: 112,
-  },
-  bankCard: {
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 10,
-    borderWidth: 2,
-    bottom: 54,
-    height: 70,
-    justifyContent: 'center',
-    left: 8,
-    position: 'absolute',
-    shadowColor: DEEP_PURPLE,
-    shadowOffset: { height: 6, width: 0 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    width: 92,
-  },
-  moneyCard: {
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 10,
-    borderWidth: 2,
-    height: 102,
-    justifyContent: 'center',
-    position: 'absolute',
-    right: 42,
-    top: 48,
-    width: 102,
-  },
-  coin: {
-    alignItems: 'center',
-    backgroundColor: SOFT_PURPLE,
-    borderColor: DEEP_PURPLE,
-    borderRadius: 18,
-    borderWidth: 2,
-    bottom: 22,
-    height: 36,
-    justifyContent: 'center',
-    position: 'absolute',
-    right: 14,
-    width: 36,
-  },
-  coinText: {
-    color: DEEP_PURPLE,
-    fontSize: 22,
-    fontWeight: '800',
-  },
-  securityCard: {
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderColor: DEEP_PURPLE,
-    borderRadius: 10,
-    borderWidth: 2,
-    height: 118,
-    justifyContent: 'center',
-    position: 'absolute',
-    bottom: 18,
-    left: 56,
-    width: 118,
-  },
-  phone: {
-    alignItems: 'center',
-    borderRadius: 34,
-    borderWidth: 2,
-    borderColor: '#e9dff8',
-    height: 180,
-    justifyContent: 'center',
-    marginTop: 16,
-    overflow: 'hidden',
-    width: 140,
-  },
-  phoneTop: {
-    backgroundColor: '#f1edf9',
-    height: 12,
-    marginTop: -18,
-    width: '100%',
-  },
-  phoneScreen: {
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderRadius: 26,
-    height: 154,
-    justifyContent: 'center',
-    paddingHorizontal: 10,
-    width: 122,
-  },
-  menuLine: {
-    backgroundColor: '#e4d9f5',
-    borderRadius: 4,
-    height: 5,
-    marginBottom: 10,
-    width: 42,
-  },
-  accountBox: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 12,
-  },
-  wonCircle: {
-    alignItems: 'center',
-    backgroundColor: '#f7f0ff',
-    borderRadius: 12,
-    height: 28,
-    justifyContent: 'center',
-    width: 28,
-  },
-  wonText: {
-    color: DEEP_PURPLE,
-    fontSize: 15,
-    fontWeight: '900',
-  },
-  accountText: {
-    color: '#111111',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  listRow: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 6,
-    width: '100%',
-  },
-  dot: {
-    backgroundColor: '#d9cff5',
-    borderRadius: 999,
-    height: 8,
-    width: 8,
-  },
-  longLine: {
-    backgroundColor: '#f0eafc',
-    borderRadius: 999,
-    flex: 1,
-    height: 8,
-  },
-  midLine: {
-    backgroundColor: '#f0eafc',
-    borderRadius: 999,
-    flex: 0.7,
-    height: 8,
-  },
-  sendButton: {
-    alignItems: 'center',
-    backgroundColor: DEEP_PURPLE,
-    borderRadius: 999,
-    flexDirection: 'row',
-    gap: 8,
-    height: 38,
-    justifyContent: 'center',
-    marginTop: 10,
-    paddingHorizontal: 10,
-  },
-  sendText: {
-    color: '#ffffff',
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  copy: {
-    marginTop: 22,
+  backButton: {
+    position: "absolute",
+    left: -10,
+    width: 52,
+    height: 52,
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
-    color: '#111111',
     fontSize: 24,
-    fontWeight: '800',
+    fontWeight: "800",
+    color: "#101014",
   },
-  description: {
-    color: '#7b6a90',
-    fontSize: 16,
-    marginTop: 14,
-    lineHeight: 24,
+  subtitle: {
+    marginBottom: 26,
+    color: "#747783",
+    fontSize: 17,
+    lineHeight: 25,
+    textAlign: "center",
   },
-  actions: {
-    gap: 14,
-    marginTop: 18,
-  },
-  primaryButton: {
-    alignItems: 'center',
-    backgroundColor: DEEP_PURPLE,
-    borderRadius: 16,
-    height: 64,
-    justifyContent: 'center',
-  },
-  primaryButtonText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  secondaryButton: {
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
+  summaryCard: {
     borderWidth: 1,
-    borderColor: BRAND_BORDER,
-    height: 64,
-    justifyContent: 'center',
+    borderColor: BORDER,
+    borderRadius: 14,
+    padding: 20,
+    marginBottom: 20,
+    backgroundColor: "#FFFFFF",
   },
-  secondaryButtonText: {
-    color: DEEP_PURPLE,
+  summaryLabel: {
+    fontSize: 18,
+    fontWeight: "800",
+    color: "#111111",
+    marginBottom: 12,
+  },
+  summaryAmount: {
+    fontSize: 36,
+    fontWeight: "800",
+    color: PURPLE,
+  },
+  card: {
+    borderWidth: 1,
+    borderColor: BORDER,
+    borderRadius: 14,
+    padding: 18,
+    marginBottom: 20,
+    backgroundColor: "#FFFFFF",
+  },
+  sectionTitle: {
+    color: "#111111",
+    fontSize: 19,
+    fontWeight: "800",
+    marginBottom: 12,
+  },
+  budgetRow: {
+    borderRadius: 12,
+    padding: 14,
+    marginTop: 8,
+    backgroundColor: "#F8F7FC",
+  },
+  selectedBudgetRow: {
+    backgroundColor: LIGHT_PURPLE,
+    borderWidth: 1.5,
+    borderColor: PURPLE,
+  },
+  rowLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  rowTop:{
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  rowUsageText:{
+    fontSize: 12,
+    color: "#666666",
+    marginBlock: 6,
+  },
+  categoryDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 999,
+    backgroundColor: "#D7D3E8",
+  },
+  selectedCategoryDot: {
+    width: 10,
+    height: 10,
+    backgroundColor: PURPLE,
+  },
+  categoryName: {
+    color: "#333333",
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
+  },
+  selectedCategoryName: {
+    color: PURPLE,
+  },
+  categoryAmount: {
+    color: "#747783",
+    fontSize: 15,
+    fontWeight: "700",
+  },
+  selectedCategoryAmount: {
+    color: PURPLE,
+  },
+  editCard: {
+    borderWidth: 1,
+    borderColor: BORDER,
+    borderRadius: 14,
+    padding: 20,
+    marginBottom: 20,
+    backgroundColor: "#FFFFFF",
+  },
+  editTitle: {
+    color: "#111111",
+    fontSize: 19,
+    fontWeight: "800",
+    marginBottom: 18,
+  },
+  inputBox: {
+    height: 50,
+    borderWidth: 1,
+    borderColor: "#E3E3EB",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FDFDFF",
+    marginBottom: 16,
+  },
+  currency: {
+    fontSize: 16,
+    fontWeight: "500",
+    color: "#A0A0A0",
+    marginRight: 4,
+  },
+  input: {
+    flex: 1,
+    color: "#111111",
+    fontSize: 18,
+    fontWeight: "500",
+  },
+  progressBackground: {
+    width: "100%",
+    height: 8,
+    backgroundColor: "#EAEAEA",
+    borderRadius: 999,
+    overflow: "hidden",
+    marginBottom: 8,
+  },
+  progressBar: {
+    height: "100%",
+    backgroundColor: PURPLE,
+  },
+  currentText: {
+    color: "#747783",
+    fontSize: 13,
+    fontWeight: "500",
+    marginBottom: 6,
+  },
+  saveButton: {
+    minHeight: 56,
+    borderRadius: 10,
+    backgroundColor: PURPLE,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 12,
+  },
+  saveButtonText: {
+    color: "#FFFFFF",
+    fontSize: 17,
+    fontWeight: "800",
+  },
+  KeyboardAvoidingView: {
+    flex: 1,
   },
 });
