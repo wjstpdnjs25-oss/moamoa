@@ -3,7 +3,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View
 } from "react-native";
 
@@ -12,6 +11,7 @@ import BudgetStatusCard from "@/src/components/home/BudgetStatusCard";
 import QuickExpenseInput from "@/src/components/home/QuickExpenseInput";
 import QuickMenuGrid from "@/src/components/home/QuickMenuGrid";
 import UsageCompareCard from "@/src/components/home/UsageCompareCard";
+import WishSaveCard from "@/src/components/home/WishSaveCard";
 
 const TEXT = {
   appTitle: "\uB0B4 \uACC4\uC88C",
@@ -21,35 +21,15 @@ const TEXT = {
 export default function HomeScreen() {
   const [balance, setBalance] = useState(0);
   const [monthlySpent, setMonthlySpent] = useState(0);
-  const [wishName, setWishName] = useState("");
-  const [wishPrice, setWishPrice] = useState("");
-  const [wishList, setWishList] = useState([]);
   const [editingId, setEditingId] = useState(null); 
 
   const handleAddExpense = (amount: number) => {
     setMonthlySpent((prev) => prev + amount);
     setBalance((prev) => prev - amount);
   };
-  const handleUpdateWish = (id, updatedFields) => {
-  setWishList(wishList.map(item => 
-    item.id === id ? { ...item, ...updatedFields } : item
-  ));
-};
 
-const handleAddWish = () => {
-  if (!wishName || !wishPrice) return;
 
-  const newWish = {
-    id: Date.now().toString(),
-    name: wishName,
-    price: Number(wishPrice),
-  };
 
-  setWishList((prev) => [newWish, ...prev]); 
-  setWishName("");
-  setWishPrice("");
-  
-};
  
 
   return (
@@ -71,46 +51,17 @@ const handleAddWish = () => {
       <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
 
-      <View style={styles.purpleBox}>
-        <Text style={styles.sectionTitle}>위시템 </Text>
-
-      <View style={styles.inputRow}>
-    <TextInput
-      style={styles.input}
-      placeholder="위시템 (예: 에어팟)"
-      value={wishName}
-      onChangeText={setWishName}
-    />
-
-    <TextInput
-      style={styles.input}
-      placeholder="가격"
-      value={wishPrice}
-      onChangeText={setWishPrice}
-      keyboardType="numeric"
-       />
-  </View>
-
-
-  <TouchableOpacity style={styles.addButton} onPress={handleAddWish}>
-    <Text style={styles.addButtonText}>추가</Text>
-  </TouchableOpacity>
-
-  {wishList.map((item) => (
-    <View key={item.id} style={styles.wishItem}>
-      <Text style={styles.wishText}>
-        {item.name} - {item.price.toLocaleString()}원
-      </Text>
-    </View>
-    ))}
+      <WishSaveCard />
 
       <UsageCompareCard />
+
       <QuickMenuGrid />
-      </View>
-    </ScrollView>
+
+
+  </ScrollView>
+);
   
-   
-  );
+
 }
 
 const styles = StyleSheet.create({
