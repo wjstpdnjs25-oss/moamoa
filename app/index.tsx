@@ -28,6 +28,7 @@ export default function HomeScreen() {
     setMonthlySpent((prev) => prev + amount);
     setBalance((prev) => prev - amount);
   };
+ 
 
   return (
     <ScrollView
@@ -48,9 +49,31 @@ export default function HomeScreen() {
       <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
 
+  <View style={styles.inputContainer}>
+    <TextInput
+    placeholder="사고 싶은 물건"
+    value={wishTitle}
+    onChangeText={setWishTitle}
+    style={styles.input}
+    />
+
+    <TextInput
+    placeholder="목표 금액"
+    keyboardType="numeric"
+    value={wishPrice}
+    onChangeText={setWishPrice}
+    style={styles.input}
+    />
+
+    <TouchableOpacity style={styles.addButton}>
+      <Text style={styles.addButtonText}>
+      추가하기
+    </Text>
+  </TouchableOpacity>
+</View>
       <WishSaveCard
-  title="아이패드"
-  targetAmount={1000000}
+  title={wishTitle || "위시 아이템"}
+  targetAmount={Number(wishPrice) || 0}
   savedAmount={150000}
   onDelete={() => console.log("삭제")}
   onSave={(amount) => console.log(amount)}
