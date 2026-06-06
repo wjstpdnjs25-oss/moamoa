@@ -2,21 +2,33 @@ import { useRouter } from "expo-router";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type Props = {
-  achievementRate: number;
-  compliantDays: number;
-  dailyBudget: number;
-  evaluatedDays: number;
-  title: string;
+  achievementRate?: number | string;
+  compliantDays?: number | string;
+  dailyBudget?: number | string;
+  evaluatedDays?: number | string;
+  title?: string;
+  targetAmount?: number | string;
+  savedAmount?: number | string;
+  isInput?: boolean;
+  onDelete?: () => void;
+  onSave?: (amount: number, title?: string, targetAmount?: number) => void;
 };
 
 export default function WishSaveCard({
-  achievementRate,
-  compliantDays,
-  dailyBudget,
-  evaluatedDays,
-  title,
+  achievementRate = 0,
+  compliantDays = 0,
+  dailyBudget = 0,
+  evaluatedDays = 0,
+  title = "나의 위시템을 등록해보세요",
 }: Props) {
   const router = useRouter();
+  const safeAchievementRate = Math.min(
+    100,
+    Math.max(0, Number(achievementRate ?? 0) || 0)
+  );
+  const safeCompliantDays = Number(compliantDays ?? 0) || 0;
+  const safeDailyBudget = Number(dailyBudget ?? 0) || 0;
+  const safeEvaluatedDays = Number(evaluatedDays ?? 0) || 0;
 
   return (
     <TouchableOpacity
@@ -31,25 +43,26 @@ export default function WishSaveCard({
             {title}
           </Text>
         </View>
-        <Text style={styles.rate}>{achievementRate}% 달성</Text>
+        <Text style={styles.rate}>{safeAchievementRate}% 달성</Text>
       </View>
 
       <View style={styles.dailyBudgetBox}>
         <Text style={styles.dailyBudgetLabel}>위시를 위한 하루 예산</Text>
         <Text style={styles.dailyBudget}>
-          {dailyBudget.toLocaleString()}원
+          {safeDailyBudget.toLocaleString()}원
         </Text>
         <Text style={styles.guide}>오늘은 이 금액 안에서 사용해보세요.</Text>
       </View>
 
       <View style={styles.progressBackground}>
         <View
-          style={[styles.progressFill, { width: `${achievementRate}%` }]}
+          style={[styles.progressFill, { width: `${safeAchievementRate}%` }]}
         />
       </View>
 
       <Text style={styles.progressText}>
-        하루 예산을 지킨 날 {compliantDays}일 / 확인한 날 {evaluatedDays}일
+        하루 예산을 지킨 날 {safeCompliantDays}일 / 확인한 날{" "}
+        {safeEvaluatedDays}일
       </Text>
     </TouchableOpacity>
   );

@@ -18,13 +18,20 @@ const TEXT = {
   settings: "\uC124\uC815",
 };
 
+type LegacyWishItem = {
+  id: number;
+  savedAmount: number;
+  targetAmount: number;
+  title: string;
+};
 
+type LegacyWishInput = Omit<LegacyWishItem, "id"> & { id?: number };
 
 export default function HomeScreen() {
   const [balance, setBalance] = useState(0);
   const [monthlySpent, setMonthlySpent] = useState(0);
   const [editingId, setEditingId] = useState(null); 
-  const [wishList, setWishList] = useState([]);
+  const [wishList, setWishList] = useState<LegacyWishItem[]>([]);
   const [expenses, setExpenses] = useState<{ id: string; amount: number }[]>([]);
   const [mySpending, setMySpending] = useState(0);
 
@@ -33,9 +40,15 @@ export default function HomeScreen() {
     setBalance((prev) => prev - amount);
   };
 
-  const handleAddWish = (item) => {
-  setWishList((prev) => [...prev, item]);
-};
+  const handleAddWish = (item: LegacyWishInput) => {
+    setWishList((prev) => [
+      ...prev,
+      {
+        ...item,
+        id: item.id ?? Date.now(),
+      },
+    ]);
+  };
 
   return (
     <ScrollView
@@ -51,7 +64,7 @@ export default function HomeScreen() {
 
       </View>
 
-      <BalanceCard balance={balance} monthlySpent={monthlySpent} />
+      <BalanceCard />
 
       <BudgetStatusCard />
 
