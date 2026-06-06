@@ -214,7 +214,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 24,
+    marginBottom: 28,
     marginTop: 20,
   },
   appTitle: {
@@ -231,8 +231,8 @@ const styles = StyleSheet.create({
   inputCard: {
     backgroundColor: SOFT_PURPLE,
     borderRadius: 16,
-    marginBottom: 16,
-    marginTop: 10,
+    marginBottom: 20,
+    marginTop: 16,
     padding: 16,
   },
   input: {
@@ -254,10 +254,10 @@ const styles = StyleSheet.create({
   },
   wishList: {
     gap: 12,
-    marginBottom: 24,
+    marginBottom: 40,
   },
   quickMenu: {
-    marginTop: 24,
+    marginTop: 480,
   },
   keyboardAvoidingView: {
     flex: 1,
