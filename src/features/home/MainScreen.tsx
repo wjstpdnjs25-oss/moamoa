@@ -94,19 +94,6 @@ export default function MainScreen() {
     };
   }, [expenses, monthlyBudget, wishPlan]);
 
-  const handleAddExpense = async (amount: number, category: string) => {
-    const today = new Date();
-
-    await addExpense({
-      amount,
-      category,
-      icon: getExpenseCategoryIcon(category),
-      label: category,
-      source: "quick",
-      spentAt: today,
-    });
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
