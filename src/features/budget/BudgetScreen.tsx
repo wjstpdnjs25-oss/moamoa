@@ -198,8 +198,8 @@ export default function BudgetScreen() {
 
           <TouchableOpacity 
             style={styles.saveButton} 
-            onPress={handleSaveBudget}>
-            activeOpacity={0.8}
+            onPress={handleSaveBudget}
+            activeOpacity={0.8}>
             <Text style={styles.saveButtonText}>저장하기</Text>
           </TouchableOpacity>
         </View>
@@ -299,13 +299,13 @@ const styles = StyleSheet.create({
   rowLeft: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 10,
+    gap: 12,
   },
   rowTop:{
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 10,
   },
   rowUsageText:{
     fontSize: 12,
