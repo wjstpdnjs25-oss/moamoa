@@ -32,6 +32,13 @@ export default function BudgetScreen() {
   const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORIES[0]);
   const [draftAmount, setDraftAmount] = useState("");
 
+  const getProgressColor = (rate: number) => {
+    if (rate >= 100) return "#FF3B30";
+    if (rate >= 80) return "#FF9500";
+    if (rate >= 50) return "#FFD60A";
+    return "#34C759";
+  };
+
   const totalBudget = budgets.reduce((sum, item) => sum + item.amount, 0);
 
   const selectedBudget =
@@ -46,7 +53,14 @@ export default function BudgetScreen() {
   };
 
   const handleSaveBudget = () => {
+    const amount = Number(draftAmount || 0);
+
+    if (amount <= 0) {
+      Alert.alert("입력 오류", "1원 이상 입력해주세요.");
+      return;
+    }
     setBudgetAmount(selectedCategory, Number(draftAmount || 0));
+    setDraftAmount("");
 
     Alert.alert(
       "저장 완료",
@@ -145,7 +159,9 @@ export default function BudgetScreen() {
   <View
     style={[
       styles.progressBar,
-      { width: `${Math.min(rate, 100)}%` as any },
+      { width: `${Math.min(rate, 100)}%`,
+        backgroundColor: getProgressColor(rate),
+      },
     ]}
   />
 </View>
@@ -163,10 +179,16 @@ export default function BudgetScreen() {
               style={styles.input}
               placeholder="0"
               keyboardType="numeric"
-              value={draftAmount}
-              onChangeText={(text) =>
-                setDraftAmount(text.replace(/[^0-9]/g, ""))
+              value={
+                draftAmount
+                ? Number(draftAmount).toLocaleString("ko-KR")
+                : ""
               }
+              onChangeText={(text) =>{
+                const numericValue = text.replace(/[0-9]/g, "")
+                setDraftAmount(text.replace(/[^0-9]/g, ""))
+              }}
+              selectTextOnFocus={true}
             />
           </View>
 
