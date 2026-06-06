@@ -127,9 +127,6 @@ export default function MainScreen() {
 
         <BudgetStatusCard />
 
-        <QuickExpenseInput onSaveExpense={handleAddExpense} />
-
-
         {wishPlan && wishProgress && (
           <WishSaveCard
             achievementRate={wishProgress.achievementRate}
