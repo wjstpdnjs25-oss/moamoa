@@ -40,6 +40,7 @@ export default function QuickMenuGrid() {
           key={item}
           style={styles.menuButton}
           onPress={() => handlePressMenu(item)}
+          activeOpacity={0.4}
         >
           <Text style={styles.menuText}>{item}</Text>
         </TouchableOpacity>

@@ -145,9 +145,10 @@ const balance = monthlyBudget - monthlySpent;
 
         <BalanceCard />
 
+        <BudgetStatusCard />
+
         <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
-        <BudgetStatusCard />
 
         <View style={styles.inputCard}>
           <Text style={styles.cardTitle}>{TEXT.wishTitle}</Text>
@@ -206,15 +207,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#F7F7FB",
   },
   content: {
-    padding: 22,
+    paddingTop: 24,
+    paddingHorizontal: 24,
     paddingBottom: 80,
   },
   header: {
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 22,
-    marginTop: 18,
+    marginBottom: 28,
+    marginTop: 20,
   },
   appTitle: {
     color: "#111111",
@@ -230,8 +232,8 @@ const styles = StyleSheet.create({
   inputCard: {
     backgroundColor: SOFT_PURPLE,
     borderRadius: 16,
-    marginBottom: 16,
-    marginTop: 10,
+    marginBottom: 20,
+    marginTop: 16,
     padding: 16,
   },
   input: {
@@ -253,10 +255,10 @@ const styles = StyleSheet.create({
   },
   wishList: {
     gap: 12,
-    marginBottom: 24,
+    marginBottom: 40,
   },
   quickMenu: {
-    marginTop: 24,
+    marginTop: 480,
   },
   keyboardAvoidingView: {
     flex: 1,
