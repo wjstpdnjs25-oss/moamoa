@@ -44,9 +44,10 @@ export default function HomeScreen() {
 
       <BalanceCard balance={balance} monthlySpent={monthlySpent} />
 
+      <BudgetStatusCard />
+
       <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
-      <BudgetStatusCard />
 
       <WishSaveCard
   title="아이패드"
