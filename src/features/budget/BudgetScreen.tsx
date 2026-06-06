@@ -1,8 +1,9 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Alert,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -29,8 +30,17 @@ export default function BudgetScreen() {
   const { budgets, setBudgetAmount } = useBudget();
   const { expenses } = useExpense();
 
+  const scrollViewRef = useRef<ScrollView>(null);
+
   const [selectedCategory, setSelectedCategory] = useState(DEFAULT_CATEGORIES[0]);
   const [draftAmount, setDraftAmount] = useState("");
+
+  const selectedBudget =
+    budgets.find((item) => item.category === selectedCategory)?.amount ?? 0;
+
+  const [isEditing, setIsEditing] = useState(selectedBudget === 0);
+
+  const totalBudget = budgets.reduce((sum, item) => sum + item.amount, 0);
 
   const getProgressColor = (rate: number) => {
     if (rate >= 100) return "#FF3B30";
@@ -39,17 +49,17 @@ export default function BudgetScreen() {
     return "#34C759";
   };
 
-  const totalBudget = budgets.reduce((sum, item) => sum + item.amount, 0);
-
-  const selectedBudget =
-    budgets.find((item) => item.category === selectedCategory)?.amount ?? 0;
-
   const handleSelectCategory = (category: string) => {
     const currentAmount =
       budgets.find((item) => item.category === category)?.amount ?? 0;
 
     setSelectedCategory(category);
     setDraftAmount(currentAmount ? String(currentAmount) : "");
+    setIsEditing(currentAmount === 0);
+
+    setTimeout(() => {
+      scrollViewRef.current?.scrollToEnd({ animated: true });
+    }, 100);
   };
 
   const handleSaveBudget = () => {
@@ -59,149 +69,186 @@ export default function BudgetScreen() {
       Alert.alert("입력 오류", "1원 이상 입력해주세요.");
       return;
     }
-    setBudgetAmount(selectedCategory, Number(draftAmount || 0));
+
+    setBudgetAmount(selectedCategory, amount);
     setDraftAmount("");
+    Keyboard.dismiss();
+    setIsEditing(false);
 
     Alert.alert(
-      "저장 완료",
-      `${selectedCategory} 예산이 저장되었습니다.`
+      selectedBudget > 0 ? "수정 완료" : "저장 완료",
+      `${selectedCategory} 예산이 ${
+        selectedBudget > 0 ? "수정" : "저장"
+      }되었습니다.`
     );
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView 
-        style={styles.KeyboardAvoidingView}
+      <KeyboardAvoidingView
+        style={styles.keyboardAvoidingView}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <MaterialCommunityIcons
-              name="chevron-left"
-              size={42}
-              color="#111111"
-            />
-          </TouchableOpacity>
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.container}
+          contentContainerStyle={styles.content}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.header}>
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => router.back()}
+              activeOpacity={0.7}
+            >
+              <MaterialCommunityIcons
+                name="chevron-left"
+                size={42}
+                color="#111111"
+              />
+            </TouchableOpacity>
 
-          <Text style={styles.title}>예산 설정</Text>
-        </View>
-
-        <Text style={styles.subtitle}>카테고리별 예산을 설정해주세요.</Text>
-
-        <View style={styles.summaryCard}>
-          <Text style={styles.summaryLabel}>이번 달 총 예산</Text>
-          <Text style={styles.summaryAmount}>
-            ₩ {totalBudget.toLocaleString()}
-          </Text>
-        </View>
-
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>카테고리별 예산</Text>
-
-          {budgets.map((item) => {
-            const selected = selectedCategory === item.category;
-
-            const spent = expenses
-              .filter((expense) => expense.category === item.category)
-              .reduce((sum, expense) => sum + expense.amount, 0);
-
-            const rate =
-              item.amount === 0 ? 0 : Math.round((spent / item.amount) * 100);
-
-            return (
-              <TouchableOpacity
-                key={item.category}
-                style={[styles.budgetRow, selected && styles.selectedBudgetRow]}
-                onPress={() => handleSelectCategory(item.category)}
-              >
-                <View style={styles.rowTop}>
-  <View style={styles.rowLeft}>
-    <View
-      style={[
-        styles.categoryDot,
-        selected && styles.selectedCategoryDot,
-      ]}
-    />
-    <Text
-      style={[
-        styles.categoryName,
-        selected && styles.selectedCategoryName,
-      ]}
-    >
-      {item.category}
-    </Text>
-  </View>
-
-  <Text
-    style={[
-      styles.categoryAmount,
-      selected && styles.selectedCategoryAmount,
-    ]}
-  >
-    ₩ {item.amount.toLocaleString()}
-  </Text>
-</View>
-
-<Text style={styles.rowUsageText}>
-  사용 ₩ {spent.toLocaleString()} · {rate}%
-</Text>
-
-<View style={styles.progressBackground}>
-  <View
-    style={[
-      styles.progressBar,
-      { width: `${Math.min(rate, 100)}%`,
-        backgroundColor: getProgressColor(rate),
-      },
-    ]}
-  />
-</View>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-
-        <View style={styles.editCard}>
-          <Text style={styles.editTitle}>{selectedCategory} 예산</Text>
-
-          <View style={styles.inputBox}>
-            <Text style={styles.currency}>₩</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="0"
-              keyboardType="numeric"
-              value={
-                draftAmount
-                ? Number(draftAmount).toLocaleString("ko-KR")
-                : ""
-              }
-              onChangeText={(text) =>{
-                const numericValue = text.replace(/[0-9]/g, "")
-                setDraftAmount(text.replace(/[^0-9]/g, ""))
-              }}
-              selectTextOnFocus={true}
-            />
+            <Text style={styles.title}>예산 설정</Text>
           </View>
 
-          <Text style={styles.currentText}>
-            현재 설정 금액 ₩ {selectedBudget.toLocaleString()}
-          </Text>
+          <Text style={styles.subtitle}>카테고리별 예산을 설정해주세요.</Text>
 
-          <TouchableOpacity style={styles.saveButton} onPress={handleSaveBudget}>
-            <Text style={styles.saveButtonText}>저장하기</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-     </KeyboardAvoidingView>
+          <View style={styles.summaryCard}>
+            <Text style={styles.summaryLabel}>이번 달 총 예산</Text>
+            <Text style={styles.summaryAmount}>
+              ₩ {totalBudget.toLocaleString()}
+            </Text>
+          </View>
+
+          <View style={styles.card}>
+            <Text style={styles.sectionTitle}>카테고리별 예산</Text>
+
+            {budgets.map((item) => {
+              const selected = selectedCategory === item.category;
+
+              const spent = expenses
+                .filter((expense) => expense.category === item.category)
+                .reduce((sum, expense) => sum + expense.amount, 0);
+
+              const rate =
+                item.amount === 0
+                  ? 0
+                  : Math.round((spent / item.amount) * 100);
+
+              return (
+                <TouchableOpacity
+                  key={item.category}
+                  style={[
+                    styles.budgetRow,
+                    selected && styles.selectedBudgetRow,
+                  ]}
+                  onPress={() => handleSelectCategory(item.category)}
+                  activeOpacity={0.7}
+                >
+                  <View style={styles.rowTop}>
+                    <View style={styles.rowLeft}>
+                      <View
+                        style={[
+                          styles.categoryDot,
+                          selected && styles.selectedCategoryDot,
+                        ]}
+                      />
+                      <Text
+                        style={[
+                          styles.categoryName,
+                          selected && styles.selectedCategoryName,
+                        ]}
+                      >
+                        {item.category}
+                      </Text>
+                    </View>
+
+                    <Text
+                      style={[
+                        styles.categoryAmount,
+                        selected && styles.selectedCategoryAmount,
+                      ]}
+                    >
+                      ₩ {item.amount.toLocaleString()}
+                    </Text>
+                  </View>
+
+                  <Text style={styles.rowUsageText}>
+                    사용 ₩ {spent.toLocaleString()} · {rate}%
+                  </Text>
+
+                  <View style={styles.progressBackground}>
+                    <View
+                      style={[
+                        styles.progressBar,
+                        {
+                          width: `${Math.min(rate, 100)}%`,
+                          backgroundColor: getProgressColor(rate),
+                        },
+                      ]}
+                    />
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          <View style={styles.editCard}>
+            <Text style={styles.editTitle}>{selectedCategory} 예산</Text>
+
+            {selectedBudget > 0 && !isEditing ? (
+              <>
+                <Text style={styles.currentText}>
+                  현재 설정 금액 ₩ {selectedBudget.toLocaleString()}
+                </Text>
+
+                <TouchableOpacity
+                  style={styles.saveButton}
+                  onPress={() => setIsEditing(true)}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.saveButtonText}>수정하기</Text>
+                </TouchableOpacity>
+              </>
+            ) : (
+              <>
+                <View style={styles.inputBox}>
+                  <Text style={styles.currency}>₩</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="예산을 입력하세요"
+                    keyboardType="numeric"
+                    value={
+                      draftAmount
+                        ? Number(draftAmount).toLocaleString("ko-KR")
+                        : ""
+                    }
+                    onChangeText={(text) => {
+                      setDraftAmount(text.replace(/[^0-9]/g, ""));
+                    }}
+                    selectTextOnFocus={true}
+                  />
+                </View>
+
+                <TouchableOpacity
+                  style={[
+                    styles.saveButton,
+                    !draftAmount && styles.disabledButton,
+                  ]}
+                  onPress={handleSaveBudget}
+                  disabled={!draftAmount}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.saveButtonText}>
+                    {selectedBudget > 0 ? "수정 완료" : "저장하기"}
+                  </Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -210,6 +257,9 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: "#FFFFFF",
+  },
+  keyboardAvoidingView: {
+    flex: 1,
   },
   container: {
     flex: 1,
@@ -231,6 +281,8 @@ const styles = StyleSheet.create({
     left: -10,
     width: 52,
     height: 52,
+    paddingHorizontal: 8,
+    paddingVertical: 8,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -249,8 +301,8 @@ const styles = StyleSheet.create({
   summaryCard: {
     borderWidth: 1,
     borderColor: BORDER,
-    borderRadius: 14,
-    padding: 20,
+    borderRadius: 16,
+    padding: 22,
     marginBottom: 20,
     backgroundColor: "#FFFFFF",
   },
@@ -261,9 +313,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   summaryAmount: {
-    fontSize: 36,
+    fontSize: 38,
     fontWeight: "800",
     color: PURPLE,
+    letterSpacing: 0.5,
   },
   card: {
     borderWidth: 1,
@@ -275,14 +328,14 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: "#111111",
-    fontSize: 19,
+    fontSize: 20,
     fontWeight: "800",
-    marginBottom: 12,
+    marginBottom: 14,
   },
   budgetRow: {
-    borderRadius: 12,
-    padding: 14,
-    marginTop: 8,
+    borderRadius: 14,
+    padding: 16,
+    marginTop: 10,
     backgroundColor: "#F8F7FC",
   },
   selectedBudgetRow: {
@@ -290,21 +343,21 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: PURPLE,
   },
-  rowLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 10,
-  },
-  rowTop:{
+  rowTop: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 8,
   },
-  rowUsageText:{
+  rowLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  rowUsageText: {
     fontSize: 12,
     color: "#666666",
-    marginBlock: 6,
+    marginVertical: 6,
   },
   categoryDot: {
     width: 8,
@@ -336,8 +389,8 @@ const styles = StyleSheet.create({
   editCard: {
     borderWidth: 1,
     borderColor: BORDER,
-    borderRadius: 14,
-    padding: 20,
+    borderRadius: 16,
+    padding: 22,
     marginBottom: 20,
     backgroundColor: "#FFFFFF",
   },
@@ -370,9 +423,31 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "500",
   },
+  currentText: {
+    color: "#747783",
+    fontSize: 13,
+    fontWeight: "500",
+    marginBottom: 12,
+  },
+  saveButton: {
+    minHeight: 60,
+    borderRadius: 10,
+    backgroundColor: PURPLE,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 12,
+  },
+  disabledButton: {
+    backgroundColor: "#C7C7CC",
+  },
+  saveButtonText: {
+    color: "#FFFFFF",
+    fontSize: 17,
+    fontWeight: "800",
+  },
   progressBackground: {
     width: "100%",
-    height: 8,
+    height: 10,
     backgroundColor: "#EAEAEA",
     borderRadius: 999,
     overflow: "hidden",
@@ -380,28 +455,7 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     height: "100%",
+    borderRadius: 999,
     backgroundColor: PURPLE,
-  },
-  currentText: {
-    color: "#747783",
-    fontSize: 13,
-    fontWeight: "500",
-    marginBottom: 6,
-  },
-  saveButton: {
-    minHeight: 56,
-    borderRadius: 10,
-    backgroundColor: PURPLE,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 12,
-  },
-  saveButtonText: {
-    color: "#FFFFFF",
-    fontSize: 17,
-    fontWeight: "800",
-  },
-  KeyboardAvoidingView: {
-    flex: 1,
   },
 });
