@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 interface WishItem {
   id: string;
@@ -51,7 +51,7 @@ export default function WishSaveScreen({ navigation }: { navigation: any }) {
           placeholderTextColor="#aaa"
           keyboardType="numeric" // 숫자 키패드가 뜨도록 설정
           value={targetAmount}
-          onChangeText={setTargetAmount} 장
+          onChangeText={setTargetAmount}
         />
         
         {/* 등록 완료 버튼 */}
@@ -59,7 +59,21 @@ export default function WishSaveScreen({ navigation }: { navigation: any }) {
           <Text style={styles.buttonText}>등록 완료</Text>
         </TouchableOpacity>
       </View>
-    </View>
+        <View style={{ flex: 1, marginTop: 20 }}>
+        <Text style={{ fontSize: 16, fontWeight: 'bold', marginBottom: 10 }}>📜 나의 위시리스트</Text>
+  <     FlatList
+            data={wishList}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+                <View style={{ padding: 16, backgroundColor: '#fff', marginBottom: 8, borderRadius: 8, flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={{ fontSize: 16 }}>🎁 {item.name}</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#5b21b6' }}>{item.amount.toLocaleString()}원</Text>
+                </View>
+    )}
+  />
+</View>
+
+</View>
   );
 }
 
@@ -74,19 +88,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 20,
-    // 은은한 그림자 효과
+    
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
   },
+
   purpleTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#5b21b6', 
     marginBottom: 16,
   },
+
   input: {
     borderWidth: 1,
     borderColor: '#e2e8f0',
@@ -96,6 +112,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     color: '#333',
   },
+
   purpleButton: {
     backgroundColor: '#5b21b6',
     padding: 14,
