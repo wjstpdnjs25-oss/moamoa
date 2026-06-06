@@ -22,12 +22,16 @@ export default function HomeScreen() {
   const [balance, setBalance] = useState(0);
   const [monthlySpent, setMonthlySpent] = useState(0);
   const [editingId, setEditingId] = useState(null); 
+  const [wishList, setWishList] = useState([]);
 
   const handleAddExpense = (amount: number) => {
     setMonthlySpent((prev) => prev + amount);
     setBalance((prev) => prev - amount);
   };
 
+  const handleAddWish = (item) => {
+  setWishList((prev) => [...prev, item]);
+};
 
 
  
@@ -51,7 +55,25 @@ export default function HomeScreen() {
       <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
 
-      <WishSaveCard />
+      <WishSaveCard
+      isInput
+      onSave={(amount, title, targetAmount) => {
+      handleAddWish({
+      id: Date.now(),
+      title,
+      targetAmount,
+      savedAmount: amount,
+    });
+  }}
+/>
+    {wishList.map((item) => (
+  <WishSaveCard
+    key={item.id}
+    title={item.title}
+    targetAmount={item.targetAmount}
+    savedAmount={item.savedAmount}
+  />
+))}
 
       <UsageCompareCard />
 

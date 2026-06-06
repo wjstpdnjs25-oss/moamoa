@@ -20,6 +20,8 @@ export default function WishSaveCard({
   const [isEditing, setIsEditing] = useState(false);
   const [inputAmount, setInputAmount] = useState('');
   
+  const [localTitle, setLocalTitle] = useState('');
+const [localTarget, setLocalTarget] = useState('');
   const safeTarget = Number(targetAmount) || 0;
   const safeSaved = Number(savedAmount) || 0;
  
