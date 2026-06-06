@@ -177,7 +177,7 @@ export default function BudgetScreen() {
             <Text style={styles.currency}>₩</Text>
             <TextInput
               style={styles.input}
-              placeholder="0"
+              placeholder="예산을 입력하세요"
               keyboardType="numeric"
               value={
                 draftAmount
