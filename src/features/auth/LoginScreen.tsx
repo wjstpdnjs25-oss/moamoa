@@ -4,12 +4,15 @@ import React, { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { useAuth } from '@/contexts/AuthContext';
+
 const DEEP_PURPLE = '#261052';
 const TEXT_BLACK = '#050505';
 const DEFAULT_ID = 'moamoa';
 const DEFAULT_PASSWORD = '1234';
 
 export default function LoginScreen() {
+  const { login } = useAuth();
   const params = useLocalSearchParams<{
     signupId?: string | string[];
     signupPassword?: string | string[];
@@ -32,6 +35,7 @@ export default function LoginScreen() {
 
     if (id === validId && password === validPassword) {
       setErrorMessage('');
+      login(id);
       router.push('/main');
       return;
     }
