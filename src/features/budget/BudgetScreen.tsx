@@ -234,6 +234,8 @@ const styles = StyleSheet.create({
     left: -10,
     width: 52,
     height: 52,
+    paddingHorizontal: 8,
+    paddingVertical: 8,
     alignItems: "center",
     justifyContent: "center",
   },
