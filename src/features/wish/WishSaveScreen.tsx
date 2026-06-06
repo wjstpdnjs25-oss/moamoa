@@ -57,7 +57,12 @@ export default function WishSaveScreen() {
       targetAmount: numericTarget,
       durationDays: numericDuration,
     });
-    Alert.alert("저장 완료", "위시 계획이 메인 화면에 반영되었어요.");
+    Alert.alert("저장 완료", "위시 계획이 메인 화면에 반영되었어요.", [
+      {
+        text: "확인",
+        onPress: () => router.replace("/main"),
+      },
+    ]);
   };
 
   return (

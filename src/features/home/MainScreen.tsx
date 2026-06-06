@@ -24,7 +24,6 @@ import { getExpenseCategoryIcon } from "@/src/constants/expense";
 
 const TEXT = {
   appTitle: "모아모아",
-  emptyWishTitle: "나의 위시템을 등록해보세요",
 };
 
 function formatDateKey(date: Date) {
@@ -157,21 +156,13 @@ const monthlySpent = useMemo(() => {
         <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
 
-        {wishPlan && wishProgress ? (
+        {wishPlan && wishProgress && (
           <WishSaveCard
             achievementRate={wishProgress.achievementRate}
             compliantDays={wishProgress.compliantDays}
             dailyBudget={wishProgress.dailyBudget}
             evaluatedDays={wishProgress.evaluatedDays}
             title={wishPlan.title}
-          />
-        ) : (
-          <WishSaveCard
-            achievementRate={0}
-            compliantDays={0}
-            dailyBudget={0}
-            evaluatedDays={0}
-            title={TEXT.emptyWishTitle}
           />
         )}
 

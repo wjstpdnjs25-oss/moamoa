@@ -1,5 +1,4 @@
-import { useRouter } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
 type Props = {
   achievementRate?: number | string;
@@ -7,11 +6,6 @@ type Props = {
   dailyBudget?: number | string;
   evaluatedDays?: number | string;
   title?: string;
-  targetAmount?: number | string;
-  savedAmount?: number | string;
-  isInput?: boolean;
-  onDelete?: () => void;
-  onSave?: (amount: number, title?: string, targetAmount?: number) => void;
 };
 
 export default function WishSaveCard({
@@ -19,9 +13,8 @@ export default function WishSaveCard({
   compliantDays = 0,
   dailyBudget = 0,
   evaluatedDays = 0,
-  title = "나의 위시템을 등록해보세요",
+  title = "",
 }: Props) {
-  const router = useRouter();
   const safeAchievementRate = Math.min(
     100,
     Math.max(0, Number(achievementRate ?? 0) || 0)
@@ -31,14 +24,9 @@ export default function WishSaveCard({
   const safeEvaluatedDays = Number(evaluatedDays ?? 0) || 0;
 
   return (
-    <TouchableOpacity
-      activeOpacity={0.85}
-      onPress={() => router.push("/wishsave")}
-      style={styles.card}
-    >
+    <View style={styles.card}>
       <View style={styles.header}>
         <View style={styles.titleArea}>
-          <Text style={styles.eyebrow}>나의 위시템</Text>
           <Text numberOfLines={1} style={styles.title}>
             {title}
           </Text>
@@ -64,7 +52,7 @@ export default function WishSaveCard({
         하루 예산을 지킨 날 {safeCompliantDays}일 / 확인한 날{" "}
         {safeEvaluatedDays}일
       </Text>
-    </TouchableOpacity>
+    </View>
   );
 }
 
@@ -84,12 +72,6 @@ const styles = StyleSheet.create({
   titleArea: {
     flex: 1,
     marginRight: 12,
-  },
-  eyebrow: {
-    color: "#666A7A",
-    fontSize: 13,
-    fontWeight: "700",
-    marginBottom: 5,
   },
   title: {
     color: "#22222A",
