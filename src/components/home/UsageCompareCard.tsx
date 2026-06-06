@@ -174,16 +174,17 @@ function FilterButton({
 
 const styles = StyleSheet.create({
   compareBox: {
-    backgroundColor: '#fff',
+    backgroundColor: '#daddfb',
     borderRadius: 8,
-    padding: 16,
+    padding: 20,
     marginTop: 16,
     
     
     width: '100%',        
-    alignSelf: 'stretch',  
+    alignSelf: 'center',  
+    boxSizing: 'border-box',
     
-    marginHorizontal: 0,   
+    
   },
 
   container: {
@@ -195,13 +196,13 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 16,
-    marginTop: 10,
+    padding: 20,
+    marginTop: 12,
     elevation: 2,
   },
 
   title: {
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: 'bold',
     marginBottom: 12,
   },
@@ -216,12 +217,13 @@ const styles = StyleSheet.create({
   rowBetween: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 10,
+    alignItems: 'center',
+    marginBottom: 12,
   },
 
   button: {
-    paddingVertical: 8,
-    paddingHorizontal: 14,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     borderRadius: 20,
     backgroundColor: '#eee',
   },
@@ -234,7 +236,7 @@ const styles = StyleSheet.create({
   dropdownHeader: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 14,
+    padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -250,7 +252,7 @@ const styles = StyleSheet.create({
 
   resultBox: {
     marginTop: 20,
-    padding: 12,
+    padding: 16,
     backgroundColor: '#f5f5f5',
     borderRadius: 10,
   },
