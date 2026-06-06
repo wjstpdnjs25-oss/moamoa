@@ -1,5 +1,4 @@
-import { useRouter } from "expo-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -12,7 +11,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useBudget } from "../../../contexts/BudgetContext";
 import { useExpense } from "../../../contexts/ExpenseContext";
 
 import BalanceCard from "@/src/components/home/BalanceCard";
@@ -42,46 +40,10 @@ type WishItem = {
 };
 
 export default function MainScreen() {
-  const router = useRouter();
-  const { budgets } = useBudget();
   const { addExpense, expenses } = useExpense();
   const [title, setTitle] = useState("");
   const [targetAmount, setTargetAmount] = useState("");
   const [wishList, setWishList] = useState<WishItem[]>([]);
-  const hasShownBudgetAlert = useRef(false);
-
-  const monthlyBudget = budgets.reduce((sum, item) => sum + item.amount, 0);
-
-  const monthlySpent = useMemo(() => {
-    const today = new Date();
-    const monthPrefix = `${today.getFullYear()}-${String(
-      today.getMonth() + 1
-    ).padStart(2, "0")}`;
-
-    return expenses
-      .filter((expense) => expense.spentDate.startsWith(monthPrefix))
-      .reduce((sum, expense) => sum + expense.amount, 0);
-  }, [expenses]);
-
-  useEffect(() => {
-    if (monthlyBudget <= 0 || monthlySpent <= monthlyBudget) {
-      hasShownBudgetAlert.current = false;
-      return;
-    }
-
-    if (hasShownBudgetAlert.current) {
-      return;
-    }
-
-    hasShownBudgetAlert.current = true;
-    router.push({
-      pathname: "/budget-alert" as never,
-      params: {
-        budget: String(monthlyBudget),
-        spent: String(monthlySpent),
-      },
-    });
-  }, [monthlyBudget, monthlySpent, router]);
 
   const addWish = () => {
     const amount = Number(targetAmount);
