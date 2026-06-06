@@ -197,8 +197,12 @@ export default function BudgetScreen() {
           </Text>
 
           <TouchableOpacity 
-            style={styles.saveButton} 
+            style={[
+              styles.saveButton,
+              !draftAmount && styles.disabledButton,
+            ]}
             onPress={handleSaveBudget}
+            disabled={!draftAmount}
             activeOpacity={0.8}>
             <Text style={styles.saveButtonText}>저장하기</Text>
           </TouchableOpacity>
@@ -411,4 +415,7 @@ const styles = StyleSheet.create({
   KeyboardAvoidingView: {
     flex: 1,
   },
+  disabledButton: {
+    backgroundColor: "#C7C7CC",
+  }
 });
