@@ -28,7 +28,7 @@ export default function QuickMenuGrid() {
     }
 
     if (item === "위시세이브") {
-      router.push("/wishlist" as any);
+      router.push("/wishsave" as any);
       return;
     }
   };

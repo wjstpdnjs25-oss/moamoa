@@ -1,302 +1,108 @@
-import { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const SOFT_PURPLE = '#f5efff';
-const DEEP_PURPLE = '#4f287f';
+export default function WishSaveCard({ navigation }: { navigation: any }) {
+  const wishItem = "에어팟 프로";
+  const targetAmount = 300000; // 목표 금액 (30만 원)
+  const currentSaved = 120000;  // 현재 모은 금액 (12만 원)
 
-export default function WishSaveCard({
-  title,
-  targetAmount = 0,
-  savedAmount = 0,
-  isInput = false, 
-  onDelete,
-  onSave,
-  onEdit,
-  onTitleChange,
-  onPriceChange,
-  onEditDone,
-
-
-}) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [inputAmount, setInputAmount] = useState('');
+  // 달성률 계산 (현재 금액 / 목표 금액 * 100)
+  const percentage = Math.min(Math.round((currentSaved / targetAmount) * 100), 100);
+  // 남은 금액 계산
+  const remainingAmount = targetAmount - currentSaved;
   
- const [localTitle, setLocalTitle] = useState('');
-  const [localTarget, setLocalTarget] = useState('');
   
-  const safeTarget = Number(targetAmount) || 0;
-  const safeSaved = Number(savedAmount) || 0;
-  const remaining = safeTarget - safeSaved;
-  const rawProgress = safeTarget > 0 ? (safeSaved / safeTarget) * 100 : 0;
-  const barWidth = Math.min(Math.round(rawProgress), 100);
-  const barPercentText = Math.round(rawProgress);
-
-  if (isInput) {
  return (
-  <View style={styles.card}>
-<Text style={{ fontWeight: '700', marginBottom: 8, color: DEEP_PURPLE }}>
-          위시템 등록하기
-        </Text>
-
-    <TextInput
-          style={styles.amountInput}
-          placeholder="사고 싶은 것(예:에어팟)"
-          value={localTitle}
-          onChangeText={setLocalTitle} // 내부 local 상태에 저장
-        />
-
-        <TextInput
-          style={styles.amountInput}
-          placeholder="목표 금액"
-          keyboardType="numeric"
-          value={localTarget}
-          onChangeText={setLocalTarget} 
-        />
-
-        <TouchableOpacity
-          style={styles.saveSubmitButton}
-          onPress={() => {
-            if (localTitle && localTarget) {
-              // 홈 화면(부모)의 handleAddWish로 데이터 전송 (저축액은 처음엔 0원)
-              onSave(0, localTitle, Number(localTarget));
-              setLocalTitle('');
-              setLocalTarget('');
-            }
-          }}
-        >
-          <Text style={styles.saveSubmitButtonText}>등록 완료</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-  return (
-    <View style={styles.card}>
-      {/* 헤더 */}
-      <View style={styles.headerRow}>
-        <Text style={styles.title}>{title || "위시 아이템"}</Text>
-        <TouchableOpacity onPress={onDelete} style={styles.deleteButton}>
-          <Text style={styles.deleteButtonText}>삭제</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* 보기 / 수정 모드 */}
-      {!isEditing ? (
-        <View>
-          <Text style={styles.targetText}>
-            {safeTarget.toLocaleString()}원 목표 (현재 {safeSaved.toLocaleString()}원 저축)
-          </Text>
-          <View style={styles.progressRow}>
-  <View style={styles.progressContainer}>
-    <View style={[styles.progressBar, { width: `${barWidth}%` }]} />
-  </View>
-  <Text style={styles.progressText}>{barPercentText}%</Text>
-</View>
+    <View style={styles.container}>
     
-        
 
-          {safeTarget > 0 && remaining <= 0 ? (
-            <Text style={styles.achievedText}>🎉 목표 금액 달성!</Text>
-          ) : (
-            <Text style={styles.remaining}>
-              {remaining.toLocaleString()}원 남았어요
-            </Text>
-          )}
+      <TouchableOpacity 
+        style={styles.wishProgressBox}
+        onPress={() => navigation.navigate('WishSave')} // 누르면 등록/수정 화면으로 이동
+        activeOpacity={0.9}
+      >
+        <View style={styles.wishHeader}>
+          <Text style={styles.wishTitle}>🎁 나의 위시템: <Text style={styles.purpleText}>{wishItem}</Text></Text>
+          <Text style={styles.percentText}>{percentage}% 달성</Text>
+        </View>
 
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={() => setIsEditing(true)}
-          >
-            <Text style={styles.editButtonText}>수정하기</Text>
-          </TouchableOpacity>
+        <View style={styles.progressBarBackground}>
+          <View style={[styles.progressBarFill, { width: `${percentage}%` }]} />
         </View>
-      ) : (
-        <View style={styles.editContainer}>
-          <Text style={{ fontWeight: '700', marginBottom: 8 }}>정보 수정하기</Text>
-          <TextInput
-            style={styles.amountInput}
-            placeholder="사고 싶은 것"
-            value={title}
-            onChangeText={onTitleChange}
-          />
-          <TextInput
-            style={styles.amountInput}
-            placeholder="목표 금액"
-            keyboardType="numeric"
-            value={targetAmount ? String(targetAmount) : ''}
-            onChangeText={onPriceChange}
-          />
-          <TouchableOpacity
-            style={styles.saveSubmitButton}
-            onPress={() => {
-              if (onEditDone) onEditDone();
-              setIsEditing(false);
-            }}
-          >
-            <Text style={styles.saveSubmitButtonText}>수정 완료</Text>
-          </TouchableOpacity>
-        </View>
-      )}
 
-      {/* 저축 입력 */}
-      {!isEditing && (
-        <View style={{ marginTop: 12, borderTopWidth: 1, borderColor: '#eee', paddingTop: 12 }}>
-          <TextInput
-            style={styles.amountInput}
-            placeholder="오늘 저축할 금액"
-            keyboardType="numeric"
-            value={inputAmount}
-            onChangeText={setInputAmount}
-          />
-          <TouchableOpacity
-            style={styles.saveSubmitButton}
-            onPress={() => {
-              if (inputAmount) {
-                onSave(Number(inputAmount));
-                setInputAmount('');
-              }
-            }}
-          >
-            <Text style={styles.saveSubmitButtonText}>저축하기</Text>
-          </TouchableOpacity>
+        <View style={styles.wishFooter}>
+          <Text style={styles.amountText}>
+            {currentSaved.toLocaleString()}원 / {targetAmount.toLocaleString()}원
+          </Text>
+          <Text style={styles.remainingText}>
+            앞으로 <Text style={styles.boldText}>{remainingAmount.toLocaleString()}원</Text> 남았어요!
+          </Text>
         </View>
-      )}
+      </TouchableOpacity>
+
     </View>
   );
-} 
-
-
-const styles =  StyleSheet.create({
-  card: {
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: '#fff',
-    marginBottom: 12,
+}
+// 💡 이 styles 정의가 컴포넌트 함수 바깥(맨 아래)에 꼭 존재해야 합니다!
+const styles = StyleSheet.create({
+  container: { 
+    width: '100%' 
   },
-
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 10,
-  },
-
-  title: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-
-  deleteButton: {
-    padding: 6,
-  },
-
-  deleteButtonText: {
-    color: 'red',
-  },
-
-  targetText: {
-    fontSize: 14,
-    marginTop: 8,
-  },
-
-  remaining: {
-    color: '#666',
-    marginTop: 4,
-  },
-
-  achievedText: {
-    color: '#3D5AFE',
-    fontWeight: '700',
-    marginTop: 4,
-  },
-
-  editButton: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: '#eee',
+  wishProgressBox: { 
+    backgroundColor: '#fff', 
+    padding: 16, 
     borderRadius: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
-
-  editButtonText: {
-    textAlign: 'center',
+  wishHeader: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center' 
   },
-
-  editContainer: {
-    marginTop: 10,
+  wishTitle: { 
+    fontSize: 16, 
+    fontWeight: 'bold', 
+    color: '#333' 
   },
-
-  amountInput: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 10,
-    borderRadius: 8,
-    marginTop: 8,
+  purpleText: { 
+    color: '#5b21b6' 
   },
-
-  saveSubmitButton: {
-    padding: 12,
-    borderRadius: 8,
-    backgroundColor: '#4f287f',
-    marginTop: 10,
+  percentText: { 
+    fontWeight: 'bold', 
+    color: '#5b21b6', 
+    fontSize: 16 
   },
-
-  saveSubmitButtonText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontWeight: '600',
+  progressBarBackground: { 
+    height: 12, 
+    backgroundColor: '#e2e8f0', 
+    borderRadius: 6, 
+    marginVertical: 12,
+    overflow: 'hidden'
   },
-    progressRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 4,
+  progressBarFill: { 
+    height: '100%', 
+    backgroundColor: '#5b21b6', 
+    borderRadius: 6 
   },
-  progressContainer: {
-    flex: 1,
-    height: 10,
-    backgroundColor: '#E0E0E0',
-    borderRadius: 5,
-    overflow: 'hidden',
+  wishFooter: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center' 
   },
-  progressBar: {
-    height: '100%',
-    backgroundColor: '#3D5AFE',
-    borderRadius: 5,
+  amountText: { 
+    color: '#64748b', 
+    fontSize: 13 
   },
-  progressText: {
-    marginLeft: 10,
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#3D5AFE',
-    width: 40,
-    textAlign: 'right',
+  remainingText: { 
+    fontSize: 13, 
+    color: '#334155' 
   },
-    // 💡 아래 4개 스타일이 통째로 들어있는지 꼭 확인해 보세요!
-  progressRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 4,
-  },
-  progressContainer: {
-    flex: 1,
-    height: 10,             
-    backgroundColor: '#E0E0E0', 
-    borderRadius: 5,
-    overflow: 'hidden',
-  },
-  progressBar: {
-    height: '100%',         
-    backgroundColor: '#3D5AFE', 
-    borderRadius: 5,
-  },
-  progressText: {
-    marginLeft: 10,
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#3D5AFE',
-    width: 40,
-    textAlign: 'right',
-  },
-
-
-
+  boldText: { 
+    fontWeight: 'bold', 
+    color: '#e11d48' 
+  }
 });
