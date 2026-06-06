@@ -26,8 +26,10 @@ export default function WishSaveCard({
   
   const safeTarget = Number(targetAmount) || 0;
   const safeSaved = Number(savedAmount) || 0;
-
   const remaining = safeTarget - safeSaved;
+  const rawProgress = safeTarget > 0 ? (safeSaved / safeTarget) * 100 : 0;
+  const barWidth = Math.min(Math.round(rawProgress), 100);
+  const barPercentText = Math.round(rawProgress);
 
   if (isInput) {
  return (
@@ -83,6 +85,14 @@ export default function WishSaveCard({
           <Text style={styles.targetText}>
             {safeTarget.toLocaleString()}원 목표 (현재 {safeSaved.toLocaleString()}원 저축)
           </Text>
+          <View style={styles.progressRow}>
+  <View style={styles.progressContainer}>
+    <View style={[styles.progressBar, { width: `${barWidth}%` }]} />
+  </View>
+  <Text style={styles.progressText}>{barPercentText}%</Text>
+</View>
+    
+        
 
           {safeTarget > 0 && remaining <= 0 ? (
             <Text style={styles.achievedText}>🎉 목표 금액 달성!</Text>
@@ -233,4 +243,32 @@ const styles =  StyleSheet.create({
     textAlign: 'center',
     fontWeight: '600',
   },
+    progressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  progressContainer: {
+    flex: 1,
+    height: 10,
+    backgroundColor: '#E0E0E0',
+    borderRadius: 5,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: '100%',
+    backgroundColor: '#3D5AFE',
+    borderRadius: 5,
+  },
+  progressText: {
+    marginLeft: 10,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#3D5AFE',
+    width: 40,
+    textAlign: 'right',
+  },
+
+
 });
