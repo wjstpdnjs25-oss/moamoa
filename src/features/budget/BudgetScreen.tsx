@@ -188,6 +188,7 @@ export default function BudgetScreen() {
                 const numericValue = text.replace(/[0-9]/g, "")
                 setDraftAmount(text.replace(/[^0-9]/g, ""))
               }}
+              selectTextOnFocus={true}
             />
           </View>
 
