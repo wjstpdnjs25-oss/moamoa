@@ -18,7 +18,6 @@ import BudgetStatusCard from "@/src/components/home/BudgetStatusCard";
 import QuickMenuGrid from "@/src/components/home/QuickMenuGrid";
 import UsageCompareCard from "@/src/components/home/UsageCompareCard";
 import WishSaveCard from "@/src/components/home/WishSaveCard";
-import { getExpenseCategoryIcon } from "@/src/constants/expense";
 
 const TEXT = {
   appTitle: "모아모아",
