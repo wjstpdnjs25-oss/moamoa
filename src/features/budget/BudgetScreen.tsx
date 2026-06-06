@@ -281,9 +281,9 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     color: "#111111",
-    fontSize: 19,
+    fontSize: 20,
     fontWeight: "800",
-    marginBottom: 12,
+    marginBottom: 14,
   },
   budgetRow: {
     borderRadius: 14,
