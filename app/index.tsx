@@ -98,9 +98,11 @@ export default function HomeScreen() {
               )
             );
           }}
+          
         />
+        
       ))}
-
+      <View style={{ height: 30 }} />
       <QuickMenuGrid />
 
 

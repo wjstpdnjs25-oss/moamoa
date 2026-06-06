@@ -43,13 +43,12 @@ export default function WishSaveCard({ navigation }: { navigation: any }) {
     </View>
   );
 }
-// 💡 이 styles 정의가 컴포넌트 함수 바깥(맨 아래)에 꼭 존재해야 합니다!
 const styles = StyleSheet.create({
   container: { 
     width: '100%' 
   },
   wishProgressBox: { 
-    backgroundColor: '#fff', 
+    backgroundColor: '#EEF0FF', 
     padding: 16, 
     borderRadius: 8,
     shadowColor: '#000',
