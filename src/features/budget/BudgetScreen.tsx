@@ -285,9 +285,9 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   budgetRow: {
-    borderRadius: 12,
-    padding: 14,
-    marginTop: 8,
+    borderRadius: 14,
+    padding: 16,
+    marginTop: 10,
     backgroundColor: "#F8F7FC",
   },
   selectedBudgetRow: {
