@@ -171,6 +171,15 @@ moamoa/
 
 실명이 실제 팀 명단과 다르면 제출 전에 반드시 수정해야 합니다.
 
+## 코딩 컨벤션 및 로깅
+
+- TypeScript와 React Native 함수형 컴포넌트를 사용합니다.
+- 화면 코드는 `src/features`, 재사용 UI는 `src/components`에 작성합니다.
+- 함수, 클래스, 복잡한 반복문이나 조건문에는 의도를 설명하는 간결한 주석을 작성합니다.
+- 오류와 주요 비동기 작업 실패는 `console.error` 등 일관된 로깅 방식으로 기록합니다.
+- Python 프로젝트가 아니므로 PEP8 대신 ESLint와 TypeScript 설정을 코딩 컨벤션 기준으로 사용합니다.
+- 변경 후 `npm run lint`와 Unit Test를 실행합니다.
+
 ## License
 
 이 프로젝트는 [MIT License](LICENSE)를 따릅니다.
