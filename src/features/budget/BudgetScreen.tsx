@@ -266,9 +266,10 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   summaryAmount: {
-    fontSize: 36,
+    fontSize: 38,
     fontWeight: "800",
     color: PURPLE,
+    letterSpacing: 0.5,
   },
   card: {
     borderWidth: 1,
