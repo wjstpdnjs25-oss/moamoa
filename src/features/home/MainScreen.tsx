@@ -206,15 +206,16 @@ const styles = StyleSheet.create({
     backgroundColor: "#F7F7FB",
   },
   content: {
-    padding: 22,
+    paddingTop: 24,
+    paddingHorizontal: 24,
     paddingBottom: 80,
   },
   header: {
     alignItems: "center",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 22,
-    marginTop: 18,
+    marginBottom: 24,
+    marginTop: 20,
   },
   appTitle: {
     color: "#111111",
