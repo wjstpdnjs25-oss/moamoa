@@ -213,7 +213,9 @@ export default function BudgetScreen() {
             onPress={handleSaveBudget}
             disabled={!draftAmount}
             activeOpacity={0.8}>
-            <Text style={styles.saveButtonText}>저장하기</Text>
+            <Text style={styles.saveButtonText}>
+              {selectedBudget > 0 ? "수정하기" : "저장하기"}
+              </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
