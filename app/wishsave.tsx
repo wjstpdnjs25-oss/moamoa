@@ -1,3 +1,3 @@
-import WishSaveScreen from "@/src/features/wish/WishSaveScreen.tsx";
+import WishSaveScreen from "@/src/features/wish/WishSaveScreen";
 export default WishSaveScreen;
 
