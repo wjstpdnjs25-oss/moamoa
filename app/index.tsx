@@ -55,25 +55,45 @@ export default function HomeScreen() {
       <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
 
+            <BudgetStatusCard />
+
+      
       <WishSaveCard
-      isInput
-      onSave={(amount, title, targetAmount) => {
-      handleAddWish({
-      id: Date.now(),
-      title,
-      targetAmount,
-      savedAmount: amount,
-    });
-  }}
-/>
-    {wishList.map((item) => (
-  <WishSaveCard
-    key={item.id}
-    title={item.title}
-    targetAmount={item.targetAmount}
-    savedAmount={item.savedAmount}
-  />
-))}
+        isInput={true}
+        onSave={(amount, title, targetAmount) => {
+          handleAddWish({
+            id: Date.now(),
+            title: title || "새 위시 아이템",
+            targetAmount: Number(targetAmount) || 0,
+            savedAmount: Number(amount) || 0,
+          });
+        }}
+      />
+
+      {wishList.map((item) => (
+        <WishSaveCard
+          key={item.id}
+          title={item.title}
+          targetAmount={item.targetAmount}
+          savedAmount={item.savedAmount}
+          // 여기에 저축 기능이나 삭제 기능이 동작하도록 추후 연결 예정입니다.
+          onDelete={() => {
+            setWishList((prev) => prev.filter((wish) => wish.id !== item.id));
+          }}
+          onSave={(amount) => {
+            setWishList((prev) =>
+              prev.map((wish) =>
+                wish.id === item.id
+                  ? { ...wish, savedAmount: wish.savedAmount + amount }
+                  : wish
+              )
+            );
+          }}
+        />
+      ))}
+
+      <UsageCompareCard />
+
 
       <UsageCompareCard />
 

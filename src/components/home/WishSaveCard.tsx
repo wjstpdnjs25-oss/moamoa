@@ -17,20 +17,18 @@ export default function WishSaveCard({
 
 
 }) {
+
+  
   const [isEditing, setIsEditing] = useState(false);
   const [inputAmount, setInputAmount] = useState('');
   
-  const [localTitle, setLocalTitle] = useState('');
-const [localTarget, setLocalTarget] = useState('');
+  
   const safeTarget = Number(targetAmount) || 0;
   const safeSaved = Number(savedAmount) || 0;
- 
-  
 
-  const progress =
-    safeTarget > 0 ? (safeSaved / safeTarget) * 100 : 0;
-
+  const progress = safeTarget > 0 ? (safeSaved / safeTarget) * 100 : 0;
   const remaining = safeTarget - safeSaved;
+
   
  return (
   <View style={styles.card}>
