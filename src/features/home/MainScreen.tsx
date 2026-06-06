@@ -35,7 +35,7 @@ function formatDateKey(date: Date) {
 
 export default function MainScreen() {
   const { budgets } = useBudget();
-  const { addExpense, expenses } = useExpense();
+  const { expenses } = useExpense();
   const { wishPlan } = useWish();
 
   const monthlyBudget = budgets.reduce((sum, item) => sum + item.amount, 0);
