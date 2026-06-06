@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import BalanceCard from '@/components/home/BalanceCard';
@@ -18,23 +18,30 @@ export default function MainScreen() {
   const router = useRouter();
   const [balance, setBalance] = useState(0);
   const [monthlySpent, setMonthlySpent] = useState(0);
+  const hasShownBudgetAlert = useRef(false);
+
+  useEffect(() => {
+    if (monthlySpent <= MONTHLY_BUDGET) {
+      hasShownBudgetAlert.current = false;
+      return;
+    }
+
+    if (hasShownBudgetAlert.current) {
+      return;
+    }
+
+    hasShownBudgetAlert.current = true;
+    router.push({
+      pathname: '/budget-alert',
+      params: {
+        budget: String(MONTHLY_BUDGET),
+        spent: String(monthlySpent),
+      },
+    });
+  }, [monthlySpent, router]);
 
   const handleAddExpense = (amount: number) => {
-    setMonthlySpent((prev) => {
-      const nextSpent = prev + amount;
-
-      if (prev <= MONTHLY_BUDGET && nextSpent > MONTHLY_BUDGET) {
-        router.push({
-          pathname: '/budget-alert',
-          params: {
-            budget: String(MONTHLY_BUDGET),
-            spent: String(nextSpent),
-          },
-        });
-      }
-
-      return nextSpent;
-    });
+    setMonthlySpent((prev) => prev + amount);
     setBalance((prev) => prev - amount);
   };
 
