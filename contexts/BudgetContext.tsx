@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 import { useAuth } from "./AuthContext";
 import {
@@ -26,19 +32,14 @@ type BudgetItem = {
 
 type BudgetContextType = {
   budgets: BudgetItem[];
-  setBudgetAmount: (category: string, amount: number) => void;
+  setBudgetAmount: (category: string, amount: number) => Promise<void>;
 };
 
 const BudgetContext = createContext<BudgetContextType | undefined>(undefined);
 
 export function BudgetProvider({ children }: { children: React.ReactNode }) {
   const { currentUserId } = useAuth();
-  const [budgets, setBudgets] = useState<BudgetItem[]>(
-    DEFAULT_CATEGORIES.map((category) => ({
-      category,
-      amount: 0,
-    }))
-  );
+  const [budgets, setBudgets] = useState<BudgetItem[]>(createEmptyBudgets());
 
   useEffect(() => {
     let mounted = true;
@@ -68,19 +69,17 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     };
   }, [currentUserId]);
 
-  const setBudgetAmount = useCallback((category: string, amount: number) => {
-    setBudgets((prev) =>
-      prev.map((item) =>
-        item.category === category ? { ...item, amount } : item
-      )
+  const setBudgetAmount = useCallback(async (category: string, amount: number) => {
+    const nextBudgets = budgets.map((item) =>
+      item.category === category ? { ...item, amount } : item
     );
 
+    setBudgets(nextBudgets);
+
     if (currentUserId) {
-      saveBudgetForUser(currentUserId, category, amount).catch((error) => {
-        console.error("Failed to save budget", error);
-      });
+      await saveBudgetForUser(currentUserId, category, amount);
     }
-  }, [currentUserId]);
+  }, [budgets, currentUserId]);
 
   return (
     <BudgetContext.Provider value={{ budgets, setBudgetAmount }}>

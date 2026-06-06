@@ -15,6 +15,19 @@ export type ExpenseRecord = {
   createdAt: string;
 };
 
+export type BudgetRecord = {
+  categoryName: string;
+  categoryBudget: number;
+  totalBudget: number;
+};
+
+export type WishSaveRecord = {
+  wishItemName: string;
+  wishItemPrice: number;
+  savingPeriod: number;
+  startedAt: string;
+};
+
 export type CreateExpenseInput = {
   amount: number;
   category: string;
@@ -92,12 +105,48 @@ async function createExpenseSchema() {
   `);
 }
 
+async function createBudgetSchema() {
+  const db = await getDatabase();
+
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS budgets (
+      category_name TEXT PRIMARY KEY NOT NULL,
+      category_budget INTEGER NOT NULL,
+      total_budget INTEGER NOT NULL,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+}
+
+async function createWishSaveSchema() {
+  const db = await getDatabase();
+
+  await db.execAsync(`
+    CREATE TABLE IF NOT EXISTS wish_save (
+      id INTEGER PRIMARY KEY NOT NULL,
+      wish_item_name TEXT NOT NULL,
+      wish_item_price INTEGER NOT NULL,
+      saving_period INTEGER NOT NULL,
+      started_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+  `);
+}
+
 export function initializeExpenseDatabase() {
   if (!initializationPromise) {
     initializationPromise = createExpenseSchema();
   }
 
   return initializationPromise;
+}
+
+export async function initializeBudgetDatabase() {
+  await createBudgetSchema();
+}
+
+export async function initializeWishSaveDatabase() {
+  await createWishSaveSchema();
 }
 
 function mapExpenseRow(row: {
@@ -231,4 +280,84 @@ export async function getMonthlyExpenseTotal(
   );
 
   return row?.total ?? 0;
+}
+
+export async function saveBudgets(budgets: BudgetRecord[]) {
+  await initializeBudgetDatabase();
+
+  const db = await getDatabase();
+  await db.runAsync("DELETE FROM budgets");
+
+  for (const budget of budgets) {
+    await db.runAsync(
+      `INSERT INTO budgets (category_name, category_budget, total_budget, updated_at)
+       VALUES (?, ?, ?, CURRENT_TIMESTAMP)`,
+      budget.categoryName,
+      budget.categoryBudget,
+      budget.totalBudget
+    );
+  }
+}
+
+export async function getBudgets() {
+  await initializeBudgetDatabase();
+
+  const db = await getDatabase();
+  const rows = await db.getAllAsync<{
+    category_name: string;
+    category_budget: number;
+    total_budget: number;
+  }>(
+    `SELECT category_name, category_budget, total_budget
+     FROM budgets
+     ORDER BY category_name ASC`
+  );
+
+  return rows.map((row) => ({
+    categoryName: row.category_name,
+    categoryBudget: row.category_budget,
+    totalBudget: row.total_budget,
+  }));
+}
+
+export async function saveWishSave(input: WishSaveRecord) {
+  await initializeWishSaveDatabase();
+
+  const db = await getDatabase();
+  await db.runAsync(
+    `INSERT OR REPLACE INTO wish_save
+       (id, wish_item_name, wish_item_price, saving_period, started_at, updated_at)
+     VALUES (1, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+    input.wishItemName,
+    input.wishItemPrice,
+    input.savingPeriod,
+    input.startedAt
+  );
+}
+
+export async function getWishSave() {
+  await initializeWishSaveDatabase();
+
+  const db = await getDatabase();
+  const row = await db.getFirstAsync<{
+    wish_item_name: string;
+    wish_item_price: number;
+    saving_period: number;
+    started_at: string;
+  }>(
+    `SELECT wish_item_name, wish_item_price, saving_period, started_at
+     FROM wish_save
+     WHERE id = 1`
+  );
+
+  if (!row) {
+    return null;
+  }
+
+  return {
+    wishItemName: row.wish_item_name,
+    wishItemPrice: row.wish_item_price,
+    savingPeriod: row.saving_period,
+    startedAt: row.started_at,
+  };
 }

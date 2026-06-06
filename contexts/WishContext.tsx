@@ -1,4 +1,10 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 import { useAuth } from "./AuthContext";
 import {
@@ -15,7 +21,7 @@ export type WishPlan = {
 
 type WishContextType = {
   wishPlan: WishPlan | null;
-  saveWishPlan: (plan: Omit<WishPlan, "startedAt">) => void;
+  saveWishPlan: (plan: Omit<WishPlan, "startedAt">) => Promise<void>;
 };
 
 const WishContext = createContext<WishContextType | undefined>(undefined);
@@ -52,7 +58,7 @@ export function WishProvider({ children }: { children: React.ReactNode }) {
     };
   }, [currentUserId]);
 
-  const saveWishPlan = useCallback((plan: Omit<WishPlan, "startedAt">) => {
+  const saveWishPlan = useCallback(async (plan: Omit<WishPlan, "startedAt">) => {
     const nextWishPlan = {
       ...plan,
       startedAt: new Date().toISOString(),
@@ -61,9 +67,7 @@ export function WishProvider({ children }: { children: React.ReactNode }) {
     setWishPlan(nextWishPlan);
 
     if (currentUserId) {
-      saveWishPlanForUser(currentUserId, nextWishPlan).catch((error) => {
-        console.error("Failed to save wish plan", error);
-      });
+      await saveWishPlanForUser(currentUserId, nextWishPlan);
     }
   }, [currentUserId]);
 
