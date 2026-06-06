@@ -1,6 +1,6 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Alert,
   Keyboard,
@@ -40,6 +40,8 @@ export default function BudgetScreen() {
     return "#34C759";
   };
 
+  const ScrollViewRef = useRef<ScrollView>(null);
+
   const totalBudget = budgets.reduce((sum, item) => sum + item.amount, 0);
 
   const selectedBudget =
@@ -51,6 +53,10 @@ export default function BudgetScreen() {
 
     setSelectedCategory(category);
     setDraftAmount(currentAmount ? String(currentAmount) : "");
+
+    setTimeout(() => {
+      ScrollViewRef.current?.scrollToEnd({ animated: true});
+    }, 100);
   };
 
   const handleSaveBudget = () => {
@@ -77,6 +83,7 @@ export default function BudgetScreen() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         >
       <ScrollView
+        ref={ScrollViewRef} 
         style={styles.container}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
