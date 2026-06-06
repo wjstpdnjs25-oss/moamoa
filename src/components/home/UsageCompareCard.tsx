@@ -120,10 +120,6 @@ export default function UsageCompareCard() {
           <Text>{jobType}</Text>
 
           <Text>{isLifestyleOpen ? '▲' : '▼'}</Text>
-
-          <Text>
-            {isLifestyleOpen ? '▲' : '▼'}
-          </Text>
         </Pressable>
 
         {isLifestyleOpen && (
@@ -158,12 +154,18 @@ export default function UsageCompareCard() {
         )}
 
         <View style={styles.resultBox}>
-          <Text>
-            선택: {ageGroup} / {jobType}
+  <Text style={{ color: '#4c1d95', fontSize: 14 }}>
+    💡 {ageGroup} {jobType} 평균보다{' '}
+    <Text style={{ fontWeight: 'bold', color: '#7c3aed' }}>
+      {averageSpending - mySpending >= 0 
+        ? `${(averageSpending - mySpending).toLocaleString()}원 덜 썼어요!` 
+        : `${Math.abs(averageSpending - mySpending).toLocaleString()}원 더 썼어요!`}
+          </Text>
           </Text>
         </View>
       </View>
     </View>
+
   );
 }
 
@@ -248,16 +250,6 @@ const styles = StyleSheet.create({
     padding: 12,
     backgroundColor: '#f5f5f5',
     borderRadius: 10,
-  },
-
-  dropdownHeader: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 14,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 8,
   },
 
   dropdownContent: {
