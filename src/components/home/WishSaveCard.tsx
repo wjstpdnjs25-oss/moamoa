@@ -269,6 +269,34 @@ const styles =  StyleSheet.create({
     width: 40,
     textAlign: 'right',
   },
+    // 💡 아래 4개 스타일이 통째로 들어있는지 꼭 확인해 보세요!
+  progressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  progressContainer: {
+    flex: 1,
+    height: 10,             
+    backgroundColor: '#E0E0E0', 
+    borderRadius: 5,
+    overflow: 'hidden',
+  },
+  progressBar: {
+    height: '100%',         
+    backgroundColor: '#3D5AFE', 
+    borderRadius: 5,
+  },
+  progressText: {
+    marginLeft: 10,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#3D5AFE',
+    width: 40,
+    textAlign: 'right',
+  },
+
 
 
 });

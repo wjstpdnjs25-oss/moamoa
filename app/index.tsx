@@ -55,8 +55,6 @@ export default function HomeScreen() {
       <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
 
-            <BudgetStatusCard />
-
       
       <WishSaveCard
         isInput={true}
@@ -76,7 +74,6 @@ export default function HomeScreen() {
           title={item.title}
           targetAmount={item.targetAmount}
           savedAmount={item.savedAmount}
-          // 여기에 저축 기능이나 삭제 기능이 동작하도록 추후 연결 예정입니다.
           onDelete={() => {
             setWishList((prev) => prev.filter((wish) => wish.id !== item.id));
           }}
@@ -91,8 +88,6 @@ export default function HomeScreen() {
           }}
         />
       ))}
-
-      <UsageCompareCard />
 
 
       <UsageCompareCard />
