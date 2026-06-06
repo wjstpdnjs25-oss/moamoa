@@ -1,0 +1,262 @@
+import { useState } from 'react';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+
+const AVERAGE_SPENDING: Record<string, Record<string, number>> = {
+  '20대': {
+    대학생: 550000,
+    자취생: 1450000,
+    회사원: 1650000,
+  },
+
+  '30대': {
+    자취생: 1800000,
+    회사원: 2200000,
+  },
+};
+
+type FilterButtonProps = {
+  text: string;
+  selected: boolean;
+  onPress: () => void;
+};
+
+function FilterButton({
+  text,
+  selected,
+  onPress,
+}: FilterButtonProps) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={[
+        styles.button,
+        selected && styles.buttonSelected,
+      ]}
+    >
+      <Text style={{ color: selected ? '#fff' : '#333' }}>
+        {text}
+      </Text>
+    </Pressable>
+  );
+}
+
+type ExpenseLike = {
+  amount: number;
+};
+
+export default function UsageCompareCard({
+  expenses = [],
+}: {
+  expenses?: ExpenseLike[];
+}) {
+
+  const [ageGroup, setAgeGroup] = useState('20대');
+  const [jobType, setJobType] = useState('자취생');
+
+  const mySpending = expenses.reduce((sum, item) => sum + item.amount, 0);
+
+  const [isAgeOpen, setIsAgeOpen] = useState(false);
+  const [isLifestyleOpen, setIsLifestyleOpen] =
+    useState(false);
+
+  const averageSpending =
+    AVERAGE_SPENDING[ageGroup]?.[jobType] ?? 0;
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.card}>
+        <Text style={styles.title}>소비 비교</Text>
+
+        <View style={styles.rowBetween}>
+          <Text>나의 소비</Text>
+          <Text>{mySpending.toLocaleString()}원</Text>
+        </View>
+
+        <View style={styles.rowBetween}>
+          <Text>평균 소비</Text>
+          <Text>
+            {averageSpending.toLocaleString()}원
+          </Text>
+        </View>
+
+        {/* 연령 */}
+        <Text style={styles.label}>연령</Text>
+
+        <Pressable
+          style={styles.dropdownHeader}
+          onPress={() => setIsAgeOpen(!isAgeOpen)}
+        >
+          <Text>{ageGroup}</Text>
+          <Text>{isAgeOpen ? '▲' : '▼'}</Text>
+        </Pressable>
+
+        {isAgeOpen && (
+          <View style={styles.dropdownContent}>
+            <FilterButton
+              text="20대"
+              selected={ageGroup === '20대'}
+              onPress={() => {
+                setAgeGroup('20대');
+                setIsAgeOpen(false);
+              }}
+            />
+
+            <FilterButton
+              text="30대"
+              selected={ageGroup === '30대'}
+              onPress={() => {
+                setAgeGroup('30대');
+                setIsAgeOpen(false);
+              }}
+            />
+          </View>
+        )}
+
+        {/* 사용자 유형 */}
+        <Text style={styles.label}>사용자 유형</Text>
+
+        <Pressable
+          style={styles.dropdownHeader}
+          onPress={() =>
+            setIsLifestyleOpen(!isLifestyleOpen)
+          }
+        >
+          <Text>{jobType}</Text>
+
+          <Text>{isLifestyleOpen ? '▲' : '▼'}</Text>
+        </Pressable>
+
+        {isLifestyleOpen && (
+          <View style={styles.dropdownContent}>
+            <FilterButton
+              text="자취생"
+              selected={jobType === '자취생'}
+              onPress={() => {
+                setJobType('자취생');
+                setIsLifestyleOpen(false);
+              }}
+            />
+
+            <FilterButton
+              text="대학생"
+              selected={jobType === '대학생'}
+              onPress={() => {
+                setJobType('대학생');
+                setIsLifestyleOpen(false);
+              }}
+            />
+
+            <FilterButton
+              text="회사원"
+              selected={jobType === '회사원'}
+              onPress={() => {
+                setJobType('회사원');
+                setIsLifestyleOpen(false);
+              }}
+            />
+          </View>
+        )}
+
+        <View style={styles.resultBox}>
+  <Text style={{ color: '#4c1d95', fontSize: 14 }}>
+    💡 {ageGroup} {jobType} 평균보다{' '}
+    <Text style={{ fontWeight: 'bold', color: '#7c3aed' }}>
+      {averageSpending - mySpending >= 0 
+        ? `${(averageSpending - mySpending).toLocaleString()}원 덜 썼어요!` 
+        : `${Math.abs(averageSpending - mySpending).toLocaleString()}원 더 썼어요!`}
+          </Text>
+          </Text>
+        </View>
+      </View>
+    </View>
+
+  );
+}
+
+const styles = StyleSheet.create({
+  compareBox: {
+    backgroundColor: '#daddfb',
+    borderRadius: 8,
+    padding: 20,
+    marginTop: 16,
+    
+    
+    width: '100%',        
+    alignSelf: 'center',  
+    boxSizing: 'border-box',
+    
+    
+  },
+
+  container: {
+    marginBottom: 18,
+  },
+
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    padding: 22,
+    elevation: 2,
+  },
+
+  title: {
+    fontSize: 19,
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+
+  label: {
+    fontSize: 16,
+    marginBottom: 8,
+    marginTop: 16,
+    fontWeight: 'bold',
+  },
+
+  rowBetween: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+
+  button: {
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    backgroundColor: '#eee',
+  },
+
+  buttonSelected: {
+    backgroundColor: '#4A90E2',
+  },
+
+
+  dropdownHeader: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+
+  dropdownContent: {
+    marginTop: 8,
+    flexDirection: 'row',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+
+  resultBox: {
+    marginTop: 20,
+    padding: 16,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 10,
+  },
+});

@@ -8,30 +8,36 @@ import {
   View,
 } from "react-native";
 
+import {
+  EXPENSE_CATEGORIES,
+  QUICK_EXPENSE_CATEGORIES,
+} from "@/src/constants/expense";
+
 type Props = {
-  onSaveExpense: (amount: number) => void;
+  onSaveExpense: (amount: number, category: string) => Promise<void> | void;
 };
 
 const TEXT = {
-  title: "\uBE60\uB978 \uC9C0\uCD9C \uC785\uB825",
-  placeholder: "\uAE08\uC561 \uC785\uB825",
-  submit: "\uC785\uB825 \uC644\uB8CC",
-  alertTitle: "\uC785\uB825 \uC624\uB958",
-  alertMessage: "\uAE08\uC561\uC744 \uC785\uB825\uD574\uC8FC\uC138\uC694.",
+  title: "빠른 지출 입력",
+  placeholder: "금액 입력",
+  submit: "입력 완료",
+  showMore: "더보기",
+  hideMore: "접기",
+  alertTitle: "입력 오류",
+  alertMessage: "금액을 입력해주세요.",
 };
 
-const CATEGORIES = [
-  "\uC2DD\uBE44",
-  "\uAD50\uD1B5",
-  "\uC1FC\uD551",
-  "\uCE74\uD398",
-];
+const CATEGORIES = EXPENSE_CATEGORIES.map((category) => category.label);
+const MAIN_CATEGORIES = QUICK_EXPENSE_CATEGORIES;
 
 export default function QuickExpenseInput({ onSaveExpense }: Props) {
   const [amount, setAmount] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState(CATEGORIES[0]);
+  const [selectedCategory, setSelectedCategory] = useState(MAIN_CATEGORIES[0]);
+  const [showAllCategories, setShowAllCategories] = useState(false);
 
-  const handleSaveExpense = () => {
+  const visibleCategories = showAllCategories ? CATEGORIES : MAIN_CATEGORIES;
+
+  const handleSaveExpense = async () => {
     const numericAmount = Number(amount);
 
     if (!amount || numericAmount <= 0) {
@@ -39,8 +45,7 @@ export default function QuickExpenseInput({ onSaveExpense }: Props) {
       return;
     }
 
-    onSaveExpense(numericAmount);
-
+    await onSaveExpense(numericAmount, selectedCategory);
     setAmount("");
   };
 
@@ -54,11 +59,11 @@ export default function QuickExpenseInput({ onSaveExpense }: Props) {
         style={styles.input}
         keyboardType="numeric"
         value={amount}
-        onChangeText={setAmount}
+        onChangeText={(text) => setAmount(text.replace(/[^0-9]/g, ""))}
       />
 
       <View style={styles.categoryContainer}>
-        {CATEGORIES.map((category) => (
+        {visibleCategories.map((category) => (
           <TouchableOpacity
             key={category}
             style={[
@@ -77,6 +82,15 @@ export default function QuickExpenseInput({ onSaveExpense }: Props) {
             </Text>
           </TouchableOpacity>
         ))}
+
+        <TouchableOpacity
+          style={styles.moreChip}
+          onPress={() => setShowAllCategories((prev) => !prev)}
+        >
+          <Text style={styles.moreChipText}>
+            {showAllCategories ? TEXT.hideMore : TEXT.showMore}
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.inputButton} onPress={handleSaveExpense}>
@@ -134,6 +148,21 @@ const styles = StyleSheet.create({
 
   selectedCategoryText: {
     color: "#3D5AFE",
+    fontWeight: "700",
+  },
+
+  moreChip: {
+    backgroundColor: "#F4F1FF",
+    borderRadius: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderWidth: 1,
+    borderColor: "#DDE2FF",
+  },
+
+  moreChipText: {
+    color: "#3D5AFE",
+    fontSize: 14,
     fontWeight: "700",
   },
 

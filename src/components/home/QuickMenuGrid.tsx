@@ -5,7 +5,7 @@ const MENU_ITEMS = [
   "예산 설정",
   "지출 입력",
   "달력",
-  "대시보드",
+  "위시세이브",
 ];
 
 export default function QuickMenuGrid() {
@@ -14,10 +14,22 @@ export default function QuickMenuGrid() {
   const handlePressMenu = (item: string) => {
     if (item === "예산 설정") {
       router.push("/budget");
+      return;
     }
 
     if (item === "지출 입력") {
       router.push("/expense-input" as any);
+      return;
+    }
+
+    if (item === "달력") {
+      router.push("/calendar" as any);
+      return;
+    }
+
+    if (item === "위시세이브") {
+      router.push("/wishsave" as any);
+      return;
     }
   };
 
@@ -28,6 +40,7 @@ export default function QuickMenuGrid() {
           key={item}
           style={styles.menuButton}
           onPress={() => handlePressMenu(item)}
+          activeOpacity={0.4}
         >
           <Text style={styles.menuText}>{item}</Text>
         </TouchableOpacity>

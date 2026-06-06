@@ -1,0 +1,87 @@
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import type { ReactNode } from "react";
+
+import {
+  createExpense,
+  CreateExpenseInput,
+  ExpenseRecord,
+  getAllExpenses,
+  initializeExpenseDatabase,
+} from "@/src/data/expenseRepository";
+
+type ExpenseContextType = {
+  expenses: ExpenseRecord[];
+  isReady: boolean;
+  refreshToken: number;
+  addExpense: (expense: CreateExpenseInput) => Promise<ExpenseRecord>;
+  reloadExpenses: () => Promise<void>;
+};
+
+const ExpenseContext = createContext<ExpenseContextType | undefined>(
+  undefined
+);
+
+export function ExpenseProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
+  const [isReady, setIsReady] = useState(false);
+  const [refreshToken, setRefreshToken] = useState(0);
+
+  const reloadExpenses = useCallback(async () => {
+    const nextExpenses = await getAllExpenses();
+    setExpenses(nextExpenses);
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function prepareDatabase() {
+      await initializeExpenseDatabase();
+
+      if (!mounted) {
+        return;
+      }
+
+      await reloadExpenses();
+      setIsReady(true);
+    }
+
+    prepareDatabase().catch((error) => {
+      console.error("Failed to initialize expense database", error);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [reloadExpenses]);
+
+  const addExpense = useCallback(async (expense: CreateExpenseInput) => {
+    const savedExpense = await createExpense(expense);
+
+    setExpenses((prev) => [savedExpense, ...prev]);
+    setRefreshToken((prev) => prev + 1);
+
+    return savedExpense;
+  }, []);
+
+  return (
+    <ExpenseContext.Provider
+      value={{ expenses, isReady, refreshToken, addExpense, reloadExpenses }}
+    >
+      {children}
+    </ExpenseContext.Provider>
+  );
+}
+
+export function useExpense() {
+  const context = useContext(ExpenseContext);
+
+  if (!context) {
+    throw new Error("useExpense must be used within ExpenseProvider");
+  }
+
+  return context;
+}

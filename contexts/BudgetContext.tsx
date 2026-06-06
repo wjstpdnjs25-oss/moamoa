@@ -1,34 +1,48 @@
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useContext, useState } from "react";
 
-export type BudgetCategory = 'food' | 'transport' | 'shopping' | 'cafe';
+export const DEFAULT_CATEGORIES = [
+  "음식",
+  "패션",
+  "주거",
+  "교통",
+  "카페/간식",
+  "쇼핑",
+  "문화/여가",
+  "교육",
+  "의료/건강",
+  "기타",
+];
 
-type BudgetContextValue = {
-  budgets: Record<BudgetCategory, number>;
-  totalBudget: number;
-  setBudgetAmount: (category: BudgetCategory, amount: number) => void;
+type BudgetItem = {
+  category: string;
+  amount: number;
 };
 
-const BudgetContext = createContext<BudgetContextValue | undefined>(undefined);
+type BudgetContextType = {
+  budgets: BudgetItem[];
+  setBudgetAmount: (category: string, amount: number) => void;
+};
+
+const BudgetContext = createContext<BudgetContextType | undefined>(undefined);
 
 export function BudgetProvider({ children }: { children: React.ReactNode }) {
-  const [budgets, setBudgets] = useState<Record<BudgetCategory, number>>({
-    food: 0,
-    transport: 0,
-    shopping: 0,
-    cafe: 0,
-  });
-
-  const totalBudget = useMemo(
-    () => Object.values(budgets).reduce((sum, amount) => sum + amount, 0),
-    [budgets],
+  const [budgets, setBudgets] = useState<BudgetItem[]>(
+    DEFAULT_CATEGORIES.map((category) => ({
+      category,
+      amount: 0,
+    }))
   );
 
-  const setBudgetAmount = (category: BudgetCategory, amount: number) => {
-    setBudgets((prev) => ({ ...prev, [category]: amount }));
+  const setBudgetAmount = (category: string, amount: number) => {
+    setBudgets((prev) =>
+      prev.map((item) =>
+        item.category === category ? { ...item, amount } : item
+      )
+    );
   };
 
   return (
-    <BudgetContext.Provider value={{ budgets, totalBudget, setBudgetAmount }}>
+    <BudgetContext.Provider value={{ budgets, setBudgetAmount }}>
       {children}
     </BudgetContext.Provider>
   );
@@ -38,7 +52,7 @@ export function useBudget() {
   const context = useContext(BudgetContext);
 
   if (!context) {
-    throw new Error('useBudget must be used within BudgetProvider');
+    throw new Error("useBudget must be used within BudgetProvider");
   }
 
   return context;
