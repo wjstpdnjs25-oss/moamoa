@@ -1,4 +1,10 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+
+import { useAuth } from "./AuthContext";
+import {
+  getBudgetsForUser,
+  saveBudgetForUser,
+} from "@/src/data/accountDataRepository";
 
 export const DEFAULT_CATEGORIES = [
   "음식",
@@ -26,6 +32,7 @@ type BudgetContextType = {
 const BudgetContext = createContext<BudgetContextType | undefined>(undefined);
 
 export function BudgetProvider({ children }: { children: React.ReactNode }) {
+  const { currentUserId } = useAuth();
   const [budgets, setBudgets] = useState<BudgetItem[]>(
     DEFAULT_CATEGORIES.map((category) => ({
       category,
@@ -33,13 +40,47 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     }))
   );
 
-  const setBudgetAmount = (category: string, amount: number) => {
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadBudgets() {
+      if (!currentUserId) {
+        setBudgets(createEmptyBudgets());
+        return;
+      }
+
+      const nextBudgets = await getBudgetsForUser(currentUserId);
+
+      if (mounted) {
+        setBudgets(nextBudgets);
+      }
+    }
+
+    loadBudgets().catch((error) => {
+      console.error("Failed to load budgets", error);
+      if (mounted) {
+        setBudgets(createEmptyBudgets());
+      }
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, [currentUserId]);
+
+  const setBudgetAmount = useCallback((category: string, amount: number) => {
     setBudgets((prev) =>
       prev.map((item) =>
         item.category === category ? { ...item, amount } : item
       )
     );
-  };
+
+    if (currentUserId) {
+      saveBudgetForUser(currentUserId, category, amount).catch((error) => {
+        console.error("Failed to save budget", error);
+      });
+    }
+  }, [currentUserId]);
 
   return (
     <BudgetContext.Provider value={{ budgets, setBudgetAmount }}>
@@ -56,4 +97,11 @@ export function useBudget() {
   }
 
   return context;
+}
+
+function createEmptyBudgets() {
+  return DEFAULT_CATEGORIES.map((category) => ({
+    category,
+    amount: 0,
+  }));
 }
