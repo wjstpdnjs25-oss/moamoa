@@ -1,17 +1,33 @@
 import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
+interface WishItem {
+  id: string;
+  name: string;
+  amount: number;
+}
 export default function WishSaveScreen({ navigation }: { navigation: any }) {
   const [itemName, setItemName] = useState('');
   const [targetAmount, setTargetAmount] = useState('');
+  const [wishList, setWishList] = useState<WishItem[]>([]);
+
 
   const handleRegister = () => {
     if (!itemName.trim() || !targetAmount.trim()) {
       Alert.alert('알림', '사고 싶은 것과 목표 금액을 모두 입력해주세요!');
       return;
     }
-    
-    navigation.goBack(); 
+    const newItem: WishItem = {
+    id: Date.now().toString(),
+    name: itemName,
+    amount: Number(targetAmount),
+  };
+
+  setWishList([newItem, ...wishList]);
+  setItemName('');
+  setTargetAmount('');
+  
+  Alert.alert('성공', '위시템이 리스트에 추가되었습니다!');
   };
 
   return (
@@ -35,7 +51,7 @@ export default function WishSaveScreen({ navigation }: { navigation: any }) {
           placeholderTextColor="#aaa"
           keyboardType="numeric" // 숫자 키패드가 뜨도록 설정
           value={targetAmount}
-          onChangeText={setTargetAmount} // 글자가 바뀔 때마다 targetAmount에 저장
+          onChangeText={setTargetAmount} 장
         />
         
         {/* 등록 완료 버튼 */}
@@ -47,12 +63,11 @@ export default function WishSaveScreen({ navigation }: { navigation: any }) {
   );
 }
 
-// 🎨 화면에 딱 맞는 깔끔한 스타일시트
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9f9fc', // 앱 전체 배경색과 통일
-    justifyContent: 'center',  // 화면 정중앙에 배치
+    backgroundColor: '#f9f9fc', 
+    justifyContent: 'center',  
     padding: 16,
   },
   wishBox: {
@@ -69,7 +84,7 @@ const styles = StyleSheet.create({
   purpleTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#5b21b6', // 메인 보라색 톤
+    color: '#5b21b6', 
     marginBottom: 16,
   },
   input: {
