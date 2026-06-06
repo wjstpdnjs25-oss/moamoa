@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { useState } from "react";
 import {
   Alert,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -61,6 +62,7 @@ export default function BudgetScreen() {
     }
     setBudgetAmount(selectedCategory, Number(draftAmount || 0));
     setDraftAmount("");
+    Keyboard.dismiss();
 
     Alert.alert(
       "저장 완료",
