@@ -6,14 +6,17 @@ import "react-native-reanimated";
 import { BudgetAlertWatcher } from "../contexts/BudgetAlertWatcher";
 import { BudgetProvider } from "../contexts/BudgetContext";
 import { ExpenseProvider } from "../contexts/ExpenseContext";
+import { WishProvider } from "../contexts/WishContext";
 
 export default function RootLayout() {
   return (
     <BudgetProvider>
       <ExpenseProvider>
-        <BudgetAlertWatcher />
-        <Stack screenOptions={{ headerShown: false }} />
-        <StatusBar style="auto" />
+        <WishProvider>
+          <BudgetAlertWatcher />
+          <Stack screenOptions={{ headerShown: false }} />
+          <StatusBar style="auto" />
+        </WishProvider>
       </ExpenseProvider>
     </BudgetProvider>
   );
