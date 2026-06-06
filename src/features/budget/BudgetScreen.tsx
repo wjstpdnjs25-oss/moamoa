@@ -196,7 +196,10 @@ export default function BudgetScreen() {
             현재 설정 금액 ₩ {selectedBudget.toLocaleString()}
           </Text>
 
-          <TouchableOpacity style={styles.saveButton} onPress={handleSaveBudget}>
+          <TouchableOpacity 
+            style={styles.saveButton} 
+            onPress={handleSaveBudget}>
+            activeOpacity={0.8}
             <Text style={styles.saveButtonText}>저장하기</Text>
           </TouchableOpacity>
         </View>
@@ -389,7 +392,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   saveButton: {
-    minHeight: 56,
+    minHeight: 60,
     borderRadius: 10,
     backgroundColor: PURPLE,
     alignItems: "center",
