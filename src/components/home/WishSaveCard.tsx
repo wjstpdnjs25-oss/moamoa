@@ -1,107 +1,130 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from "expo-router";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function WishSaveCard({ navigation }: { navigation: any }) {
-  const wishItem = "에어팟 프로";
-  const targetAmount = 300000; // 목표 금액 (30만 원)
-  const currentSaved = 120000;  // 현재 모은 금액 (12만 원)
+type Props = {
+  achievementRate: number;
+  compliantDays: number;
+  dailyBudget: number;
+  evaluatedDays: number;
+  title: string;
+};
 
-  // 달성률 계산 (현재 금액 / 목표 금액 * 100)
-  const percentage = Math.min(Math.round((currentSaved / targetAmount) * 100), 100);
-  // 남은 금액 계산
-  const remainingAmount = targetAmount - currentSaved;
-  
-  
- return (
-    <View style={styles.container}>
-    
+export default function WishSaveCard({
+  achievementRate,
+  compliantDays,
+  dailyBudget,
+  evaluatedDays,
+  title,
+}: Props) {
+  const router = useRouter();
 
-      <TouchableOpacity 
-        style={styles.wishProgressBox}
-        onPress={() => navigation.navigate('WishSave')} // 누르면 등록/수정 화면으로 이동
-        activeOpacity={0.9}
-      >
-        <View style={styles.wishHeader}>
-          <Text style={styles.wishTitle}>🎁 나의 위시템: <Text style={styles.purpleText}>{wishItem}</Text></Text>
-          <Text style={styles.percentText}>{percentage}% 달성</Text>
-        </View>
-
-        <View style={styles.progressBarBackground}>
-          <View style={[styles.progressBarFill, { width: `${percentage}%` }]} />
-        </View>
-
-        <View style={styles.wishFooter}>
-          <Text style={styles.amountText}>
-            {currentSaved.toLocaleString()}원 / {targetAmount.toLocaleString()}원
-          </Text>
-          <Text style={styles.remainingText}>
-            앞으로 <Text style={styles.boldText}>{remainingAmount.toLocaleString()}원</Text> 남았어요!
+  return (
+    <TouchableOpacity
+      activeOpacity={0.85}
+      onPress={() => router.push("/wishsave")}
+      style={styles.card}
+    >
+      <View style={styles.header}>
+        <View style={styles.titleArea}>
+          <Text style={styles.eyebrow}>나의 위시템</Text>
+          <Text numberOfLines={1} style={styles.title}>
+            {title}
           </Text>
         </View>
-      </TouchableOpacity>
+        <Text style={styles.rate}>{achievementRate}% 달성</Text>
+      </View>
 
-    </View>
+      <View style={styles.dailyBudgetBox}>
+        <Text style={styles.dailyBudgetLabel}>위시를 위한 하루 예산</Text>
+        <Text style={styles.dailyBudget}>
+          {dailyBudget.toLocaleString()}원
+        </Text>
+        <Text style={styles.guide}>오늘은 이 금액 안에서 사용해보세요.</Text>
+      </View>
+
+      <View style={styles.progressBackground}>
+        <View
+          style={[styles.progressFill, { width: `${achievementRate}%` }]}
+        />
+      </View>
+
+      <Text style={styles.progressText}>
+        하루 예산을 지킨 날 {compliantDays}일 / 확인한 날 {evaluatedDays}일
+      </Text>
+    </TouchableOpacity>
   );
 }
+
 const styles = StyleSheet.create({
-  container: { 
-    width: '100%' 
+  card: {
+    backgroundColor: "#EEF0FF",
+    borderRadius: 20,
+    marginBottom: 20,
+    padding: 20,
   },
-  wishProgressBox: { 
-    backgroundColor: '#EEF0FF', 
-    padding: 16, 
-    borderRadius: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
+  header: {
+    alignItems: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 18,
   },
-  wishHeader: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center' 
+  titleArea: {
+    flex: 1,
+    marginRight: 12,
   },
-  wishTitle: { 
-    fontSize: 16, 
-    fontWeight: 'bold', 
-    color: '#333' 
+  eyebrow: {
+    color: "#666A7A",
+    fontSize: 13,
+    fontWeight: "700",
+    marginBottom: 5,
   },
-  purpleText: { 
-    color: '#5b21b6' 
+  title: {
+    color: "#22222A",
+    fontSize: 20,
+    fontWeight: "800",
   },
-  percentText: { 
-    fontWeight: 'bold', 
-    color: '#5b21b6', 
-    fontSize: 16 
+  rate: {
+    color: "#5B21B6",
+    fontSize: 15,
+    fontWeight: "800",
   },
-  progressBarBackground: { 
-    height: 12, 
-    backgroundColor: '#e2e8f0', 
-    borderRadius: 6, 
-    marginVertical: 12,
-    overflow: 'hidden'
+  dailyBudgetBox: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 15,
+    padding: 16,
   },
-  progressBarFill: { 
-    height: '100%', 
-    backgroundColor: '#5b21b6', 
-    borderRadius: 6 
+  dailyBudgetLabel: {
+    color: "#666A7A",
+    fontSize: 14,
+    fontWeight: "700",
   },
-  wishFooter: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center' 
+  dailyBudget: {
+    color: "#5B21B6",
+    fontSize: 27,
+    fontWeight: "900",
+    marginTop: 6,
   },
-  amountText: { 
-    color: '#64748b', 
-    fontSize: 13 
+  guide: {
+    color: "#737687",
+    fontSize: 13,
+    marginTop: 5,
   },
-  remainingText: { 
-    fontSize: 13, 
-    color: '#334155' 
+  progressBackground: {
+    backgroundColor: "#D9DDEF",
+    borderRadius: 6,
+    height: 12,
+    marginTop: 18,
+    overflow: "hidden",
   },
-  boldText: { 
-    fontWeight: 'bold', 
-    color: '#e11d48' 
-  }
+  progressFill: {
+    backgroundColor: "#5B21B6",
+    borderRadius: 6,
+    height: "100%",
+  },
+  progressText: {
+    color: "#555A6C",
+    fontSize: 13,
+    fontWeight: "600",
+    marginTop: 10,
+  },
 });
