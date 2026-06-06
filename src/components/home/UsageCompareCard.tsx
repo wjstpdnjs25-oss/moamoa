@@ -6,8 +6,6 @@ import {
   View,
 } from 'react-native';
 
-const mySpending = 320000;
-
 const AVERAGE_SPENDING: Record<string, Record<string, number>> = {
   '20대': {
     대학생: 550000,
@@ -47,7 +45,15 @@ function FilterButton({
   );
 }
 
- export default function UsageCompareCard({ expenses = [] }: { expenses: { id: string; amount: number }[] }) {
+type ExpenseLike = {
+  amount: number;
+};
+
+export default function UsageCompareCard({
+  expenses = [],
+}: {
+  expenses?: ExpenseLike[];
+}) {
 
   const [ageGroup, setAgeGroup] = useState('20대');
   const [jobType, setJobType] = useState('자취생');
@@ -188,16 +194,13 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    padding: 16,
-    backgroundColor: '#F8F9FA',
-    flex: 1,
+    marginBottom: 18,
   },
 
   card: {
     backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    marginTop: 12,
+    borderRadius: 24,
+    padding: 22,
     elevation: 2,
   },
 
@@ -255,12 +258,5 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#f5f5f5',
     borderRadius: 10,
-  },
-
-  dropdownContent: {
-    marginTop: 8,
-    flexDirection: 'row',
-    gap: 8,
-    flexWrap: 'wrap',
   },
 });
