@@ -15,11 +15,9 @@ import { useWish } from "../../../contexts/WishContext";
 
 import BalanceCard from "@/src/components/home/BalanceCard";
 import BudgetStatusCard from "@/src/components/home/BudgetStatusCard";
-import QuickExpenseInput from "@/src/components/home/QuickExpenseInput";
 import QuickMenuGrid from "@/src/components/home/QuickMenuGrid";
 import UsageCompareCard from "@/src/components/home/UsageCompareCard";
 import WishSaveCard from "@/src/components/home/WishSaveCard";
-import { getExpenseCategoryIcon } from "@/src/constants/expense";
 
 const TEXT = {
   appTitle: "모아모아",
@@ -35,7 +33,7 @@ function formatDateKey(date: Date) {
 
 export default function MainScreen() {
   const { budgets } = useBudget();
-  const { addExpense, expenses } = useExpense();
+  const { expenses } = useExpense();
   const { wishPlan } = useWish();
 
   const monthlyBudget = budgets.reduce((sum, item) => sum + item.amount, 0);
@@ -94,19 +92,6 @@ export default function MainScreen() {
     };
   }, [expenses, monthlyBudget, wishPlan]);
 
-  const handleAddExpense = async (amount: number, category: string) => {
-    const today = new Date();
-
-    await addExpense({
-      amount,
-      category,
-      icon: getExpenseCategoryIcon(category),
-      label: category,
-      source: "quick",
-      spentAt: today,
-    });
-  };
-
   return (
     <SafeAreaView style={styles.safeArea}>
       <KeyboardAvoidingView
@@ -126,9 +111,6 @@ export default function MainScreen() {
         <BalanceCard />
 
         <BudgetStatusCard />
-
-        <QuickExpenseInput onSaveExpense={handleAddExpense} />
-
 
         {wishPlan && wishProgress && (
           <WishSaveCard
