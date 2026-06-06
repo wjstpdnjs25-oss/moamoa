@@ -73,6 +73,7 @@ async function createExpenseSchema() {
   await db.execAsync(`
     CREATE TABLE IF NOT EXISTS expenses (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id TEXT,
       amount INTEGER NOT NULL,
       category TEXT NOT NULL,
       label TEXT NOT NULL,
@@ -87,6 +88,20 @@ async function createExpenseSchema() {
 
     CREATE INDEX IF NOT EXISTS idx_expenses_category
       ON expenses (category);
+  `);
+
+  const columns = await db.getAllAsync<{ name: string }>(
+    "PRAGMA table_info(expenses)"
+  );
+  const hasUserIdColumn = columns.some((column) => column.name === "user_id");
+
+  if (!hasUserIdColumn) {
+    await db.execAsync("ALTER TABLE expenses ADD COLUMN user_id TEXT");
+  }
+
+  await db.execAsync(`
+    CREATE INDEX IF NOT EXISTS idx_expenses_user_spent_date
+      ON expenses (user_id, spent_date);
   `);
 }
 
@@ -156,7 +171,7 @@ function mapExpenseRow(row: {
   };
 }
 
-export async function createExpense(input: CreateExpenseInput) {
+export async function createExpense(userId: string, input: CreateExpenseInput) {
   await initializeExpenseDatabase();
 
   const db = await getDatabase();
@@ -165,8 +180,9 @@ export async function createExpense(input: CreateExpenseInput) {
   const icon = input.icon || getExpenseCategoryIcon(input.category);
 
   const result = await db.runAsync(
-    `INSERT INTO expenses (amount, category, label, icon, spent_date, source)
-     VALUES (?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO expenses (user_id, amount, category, label, icon, spent_date, source)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    userId,
     input.amount,
     input.category,
     label,
@@ -193,7 +209,11 @@ export async function createExpense(input: CreateExpenseInput) {
   return mapExpenseRow(created);
 }
 
-export async function getExpensesByMonth(year: number, monthIndex: number) {
+export async function getExpensesByMonth(
+  userId: string,
+  year: number,
+  monthIndex: number
+) {
   await initializeExpenseDatabase();
 
   const db = await getDatabase();
@@ -209,8 +229,9 @@ export async function getExpensesByMonth(year: number, monthIndex: number) {
     created_at: string;
   }>(
     `SELECT * FROM expenses
-     WHERE spent_date >= ? AND spent_date < ?
+     WHERE user_id = ? AND spent_date >= ? AND spent_date < ?
      ORDER BY spent_date ASC, created_at ASC`,
+    userId,
     startKey,
     nextMonthKey
   );
@@ -218,7 +239,7 @@ export async function getExpensesByMonth(year: number, monthIndex: number) {
   return rows.map(mapExpenseRow);
 }
 
-export async function getAllExpenses() {
+export async function getAllExpenses(userId: string) {
   await initializeExpenseDatabase();
 
   const db = await getDatabase();
@@ -233,20 +254,27 @@ export async function getAllExpenses() {
     created_at: string;
   }>(
     `SELECT * FROM expenses
-     ORDER BY spent_date DESC, created_at DESC`
+     WHERE user_id = ?
+     ORDER BY spent_date DESC, created_at DESC`,
+    userId
   );
 
   return rows.map(mapExpenseRow);
 }
 
-export async function getMonthlyExpenseTotal(year: number, monthIndex: number) {
+export async function getMonthlyExpenseTotal(
+  userId: string,
+  year: number,
+  monthIndex: number
+) {
   await initializeExpenseDatabase();
 
   const db = await getDatabase();
   const { startKey, nextMonthKey } = getMonthRange(year, monthIndex);
   const row = await db.getFirstAsync<{ total: number | null }>(
     `SELECT SUM(amount) AS total FROM expenses
-     WHERE spent_date >= ? AND spent_date < ?`,
+     WHERE user_id = ? AND spent_date >= ? AND spent_date < ?`,
+    userId,
     startKey,
     nextMonthKey
   );

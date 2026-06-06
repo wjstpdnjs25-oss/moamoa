@@ -6,10 +6,11 @@ import {
   useState,
 } from "react";
 
+import { useAuth } from "./AuthContext";
 import {
-  getBudgets,
-  saveBudgets,
-} from "@/src/data/expenseRepository";
+  getBudgetsForUser,
+  saveBudgetForUser,
+} from "@/src/data/accountDataRepository";
 
 export const DEFAULT_CATEGORIES = [
   "음식",
@@ -37,44 +38,36 @@ type BudgetContextType = {
 const BudgetContext = createContext<BudgetContextType | undefined>(undefined);
 
 export function BudgetProvider({ children }: { children: React.ReactNode }) {
-  const [budgets, setBudgets] = useState<BudgetItem[]>(
-    DEFAULT_CATEGORIES.map((category) => ({
-      category,
-      amount: 0,
-    }))
-  );
+  const { currentUserId } = useAuth();
+  const [budgets, setBudgets] = useState<BudgetItem[]>(createEmptyBudgets());
 
   useEffect(() => {
     let mounted = true;
 
     async function loadBudgets() {
-      const savedBudgets = await getBudgets();
-
-      if (!mounted || savedBudgets.length === 0) {
+      if (!currentUserId) {
+        setBudgets(createEmptyBudgets());
         return;
       }
 
-      setBudgets((prev) =>
-        prev.map((item) => {
-          const savedBudget = savedBudgets.find(
-            (budget) => budget.categoryName === item.category
-          );
+      const nextBudgets = await getBudgetsForUser(currentUserId);
 
-          return savedBudget
-            ? { ...item, amount: savedBudget.categoryBudget }
-            : item;
-        })
-      );
+      if (mounted) {
+        setBudgets(nextBudgets);
+      }
     }
 
     loadBudgets().catch((error) => {
-      console.error("Failed to load budget database", error);
+      console.error("Failed to load budgets", error);
+      if (mounted) {
+        setBudgets(createEmptyBudgets());
+      }
     });
 
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [currentUserId]);
 
   const setBudgetAmount = useCallback(async (category: string, amount: number) => {
     const nextBudgets = budgets.map((item) =>
@@ -83,16 +76,10 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
 
     setBudgets(nextBudgets);
 
-    const totalBudget = nextBudgets.reduce((sum, item) => sum + item.amount, 0);
-
-    await saveBudgets(
-      nextBudgets.map((item) => ({
-        categoryName: item.category,
-        categoryBudget: item.amount,
-        totalBudget,
-      }))
-    );
-  }, [budgets]);
+    if (currentUserId) {
+      await saveBudgetForUser(currentUserId, category, amount);
+    }
+  }, [budgets, currentUserId]);
 
   return (
     <BudgetContext.Provider value={{ budgets, setBudgetAmount }}>
@@ -109,4 +96,11 @@ export function useBudget() {
   }
 
   return context;
+}
+
+function createEmptyBudgets() {
+  return DEFAULT_CATEGORIES.map((category) => ({
+    category,
+    amount: 0,
+  }));
 }

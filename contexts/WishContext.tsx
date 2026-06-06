@@ -6,10 +6,11 @@ import {
   useState,
 } from "react";
 
+import { useAuth } from "./AuthContext";
 import {
-  getWishSave,
-  saveWishSave,
-} from "@/src/data/expenseRepository";
+  getWishPlanForUser,
+  saveWishPlanForUser,
+} from "@/src/data/accountDataRepository";
 
 export type WishPlan = {
   title: string;
@@ -26,34 +27,36 @@ type WishContextType = {
 const WishContext = createContext<WishContextType | undefined>(undefined);
 
 export function WishProvider({ children }: { children: React.ReactNode }) {
+  const { currentUserId } = useAuth();
   const [wishPlan, setWishPlan] = useState<WishPlan | null>(null);
 
   useEffect(() => {
     let mounted = true;
 
     async function loadWishPlan() {
-      const savedWishPlan = await getWishSave();
-
-      if (!mounted || !savedWishPlan) {
+      if (!currentUserId) {
+        setWishPlan(null);
         return;
       }
 
-      setWishPlan({
-        title: savedWishPlan.wishItemName,
-        targetAmount: savedWishPlan.wishItemPrice,
-        durationDays: savedWishPlan.savingPeriod,
-        startedAt: savedWishPlan.startedAt,
-      });
+      const nextWishPlan = await getWishPlanForUser(currentUserId);
+
+      if (mounted) {
+        setWishPlan(nextWishPlan);
+      }
     }
 
     loadWishPlan().catch((error) => {
-      console.error("Failed to load wish save database", error);
+      console.error("Failed to load wish plan", error);
+      if (mounted) {
+        setWishPlan(null);
+      }
     });
 
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [currentUserId]);
 
   const saveWishPlan = useCallback(async (plan: Omit<WishPlan, "startedAt">) => {
     const nextWishPlan = {
@@ -63,13 +66,10 @@ export function WishProvider({ children }: { children: React.ReactNode }) {
 
     setWishPlan(nextWishPlan);
 
-    await saveWishSave({
-      wishItemName: nextWishPlan.title,
-      wishItemPrice: nextWishPlan.targetAmount,
-      savingPeriod: nextWishPlan.durationDays,
-      startedAt: nextWishPlan.startedAt,
-    });
-  }, []);
+    if (currentUserId) {
+      await saveWishPlanForUser(currentUserId, nextWishPlan);
+    }
+  }, [currentUserId]);
 
   return (
     <WishContext.Provider value={{ wishPlan, saveWishPlan }}>

@@ -8,6 +8,7 @@ import {
   getAllExpenses,
   initializeExpenseDatabase,
 } from "@/src/data/expenseRepository";
+import { useAuth } from "./AuthContext";
 
 type ExpenseContextType = {
   expenses: ExpenseRecord[];
@@ -26,14 +27,20 @@ export function ExpenseProvider({
 }: {
   children: ReactNode;
 }) {
+  const { currentUserId } = useAuth();
   const [expenses, setExpenses] = useState<ExpenseRecord[]>([]);
   const [isReady, setIsReady] = useState(false);
   const [refreshToken, setRefreshToken] = useState(0);
 
   const reloadExpenses = useCallback(async () => {
-    const nextExpenses = await getAllExpenses();
+    if (!currentUserId) {
+      setExpenses([]);
+      return;
+    }
+
+    const nextExpenses = await getAllExpenses(currentUserId);
     setExpenses(nextExpenses);
-  }, []);
+  }, [currentUserId]);
 
   useEffect(() => {
     let mounted = true;
@@ -59,13 +66,17 @@ export function ExpenseProvider({
   }, [reloadExpenses]);
 
   const addExpense = useCallback(async (expense: CreateExpenseInput) => {
-    const savedExpense = await createExpense(expense);
+    if (!currentUserId) {
+      throw new Error("Cannot save expense without a logged-in user");
+    }
+
+    const savedExpense = await createExpense(currentUserId, expense);
 
     setExpenses((prev) => [savedExpense, ...prev]);
     setRefreshToken((prev) => prev + 1);
 
     return savedExpense;
-  }, []);
+  }, [currentUserId]);
 
   return (
     <ExpenseContext.Provider
