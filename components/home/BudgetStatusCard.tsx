@@ -2,21 +2,29 @@ import { StyleSheet, Text, View } from "react-native";
 
 const TEXT = {
   title: "\uC774\uBC88 \uB2EC \uC608\uC0B0",
-  budget: "\u20A90 \uC911",
-  used: "\u20A90 \uC0AC\uC6A9",
+  unset: "\uC124\uC815\uB41C \uC608\uC0B0\uC774 \uC5C6\uC5B4\uC694",
 };
 
-export default function BudgetStatusCard() {
+type Props = {
+  budget: number;
+  spent: number;
+};
+
+export default function BudgetStatusCard({ budget, spent }: Props) {
+  const progress = budget > 0 ? Math.min((spent / budget) * 100, 100) : 0;
+
   return (
     <View style={styles.card}>
       <Text style={styles.sectionTitle}>{TEXT.title}</Text>
 
-      <Text style={styles.budgetText}>{TEXT.budget}</Text>
+      <Text style={styles.budgetText}>
+        {budget > 0 ? `\u20A9${budget.toLocaleString()} \uC911` : TEXT.unset}
+      </Text>
 
-      <Text style={styles.usedText}>{TEXT.used}</Text>
+      <Text style={styles.usedText}>{`\u20A9${spent.toLocaleString()} \uC0AC\uC6A9`}</Text>
 
       <View style={styles.progressBackground}>
-        <View style={styles.progressFill} />
+        <View style={[styles.progressFill, { width: `${progress}%` }]} />
       </View>
     </View>
   );

@@ -8,26 +8,33 @@ import {
     View,
 } from "react-native";
 
+import { useBudget } from "@/contexts/BudgetContext";
+
 export default function BudgetScreen() {
+  const { budgets, setBudgetAmount } = useBudget();
   const foodInputRef = useRef<TextInput>(null);
   const transportInputRef = useRef<TextInput>(null);
   const shoppingInputRef = useRef<TextInput>(null);
   const cafeInputRef = useRef<TextInput>(null);
 
-  const [food, setFood] = useState("");
-  const [transport, setTransport] = useState("");
-  const [shopping, setShopping] = useState("");
-  const [cafe, setCafe] = useState("");
+  const [food, setFood] = useState(budgets.food ? String(budgets.food) : "");
+  const [transport, setTransport] = useState(
+    budgets.transport ? String(budgets.transport) : "",
+  );
+  const [shopping, setShopping] = useState(
+    budgets.shopping ? String(budgets.shopping) : "",
+  );
+  const [cafe, setCafe] = useState(budgets.cafe ? String(budgets.cafe) : "");
 
-  const [savedFood, setSavedFood] = useState(0);
-  const [savedTransport, setSavedTransport] = useState(0);
-  const [savedShopping, setSavedShopping] = useState(0);
-  const [savedCafe, setSavedCafe] = useState(0);
+  const [savedFood, setSavedFood] = useState(budgets.food);
+  const [savedTransport, setSavedTransport] = useState(budgets.transport);
+  const [savedShopping, setSavedShopping] = useState(budgets.shopping);
+  const [savedCafe, setSavedCafe] = useState(budgets.cafe);
 
-  const [foodSaved, setFoodSaved] = useState(false);
-  const [transportSaved, setTransportSaved] = useState(false);
-  const [shoppingSaved, setShoppingSaved] = useState(false);
-  const [cafeSaved, setCafeSaved] = useState(false);
+  const [foodSaved, setFoodSaved] = useState(budgets.food > 0);
+  const [transportSaved, setTransportSaved] = useState(budgets.transport > 0);
+  const [shoppingSaved, setShoppingSaved] = useState(budgets.shopping > 0);
+  const [cafeSaved, setCafeSaved] = useState(budgets.cafe > 0);
 
   const totalBudget = savedFood + savedTransport + savedShopping + savedCafe;
 
@@ -64,7 +71,9 @@ export default function BudgetScreen() {
               style={[styles.smallButton, foodSaved && styles.disabledButton]}
               disabled={foodSaved}
               onPress={() => {
-                setSavedFood(Number(food || 0));
+                const amount = Number(food || 0);
+                setSavedFood(amount);
+                setBudgetAmount("food", amount);
                 setFoodSaved(true);
               }}
             >
@@ -103,7 +112,9 @@ export default function BudgetScreen() {
               ]}
               disabled={transportSaved}
               onPress={() => {
-                setSavedTransport(Number(transport || 0));
+                const amount = Number(transport || 0);
+                setSavedTransport(amount);
+                setBudgetAmount("transport", amount);
                 setTransportSaved(true);
               }}
             >
@@ -142,7 +153,9 @@ export default function BudgetScreen() {
               ]}
               disabled={shoppingSaved}
               onPress={() => {
-                setSavedShopping(Number(shopping || 0));
+                const amount = Number(shopping || 0);
+                setSavedShopping(amount);
+                setBudgetAmount("shopping", amount);
                 setShoppingSaved(true);
               }}
             >
@@ -178,7 +191,9 @@ export default function BudgetScreen() {
               style={[styles.smallButton, cafeSaved && styles.disabledButton]}
               disabled={cafeSaved}
               onPress={() => {
-                setSavedCafe(Number(cafe || 0));
+                const amount = Number(cafe || 0);
+                setSavedCafe(amount);
+                setBudgetAmount("cafe", amount);
                 setCafeSaved(true);
               }}
             >

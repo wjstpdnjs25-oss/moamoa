@@ -6,22 +6,22 @@ import BalanceCard from '@/components/home/BalanceCard';
 import BudgetStatusCard from '@/components/home/BudgetStatusCard';
 import QuickExpenseInput from '@/components/home/QuickExpenseInput';
 import QuickMenuGrid from '@/components/home/QuickMenuGrid';
+import { useBudget } from '@/contexts/BudgetContext';
 
 const TEXT = {
   appTitle: '내 계좌',
   settings: '설정',
 };
 
-const MONTHLY_BUDGET = 500000;
-
 export default function MainScreen() {
   const router = useRouter();
+  const { totalBudget } = useBudget();
   const [balance, setBalance] = useState(0);
   const [monthlySpent, setMonthlySpent] = useState(0);
   const hasShownBudgetAlert = useRef(false);
 
   useEffect(() => {
-    if (monthlySpent <= MONTHLY_BUDGET) {
+    if (totalBudget <= 0 || monthlySpent <= totalBudget) {
       hasShownBudgetAlert.current = false;
       return;
     }
@@ -34,11 +34,11 @@ export default function MainScreen() {
     router.push({
       pathname: '/budget-alert',
       params: {
-        budget: String(MONTHLY_BUDGET),
+        budget: String(totalBudget),
         spent: String(monthlySpent),
       },
     });
-  }, [monthlySpent, router]);
+  }, [monthlySpent, router, totalBudget]);
 
   const handleAddExpense = (amount: number) => {
     setMonthlySpent((prev) => prev + amount);
@@ -62,7 +62,7 @@ export default function MainScreen() {
 
       <QuickExpenseInput onSaveExpense={handleAddExpense} />
 
-      <BudgetStatusCard />
+      <BudgetStatusCard budget={totalBudget} spent={monthlySpent} />
 
       <QuickMenuGrid />
     </ScrollView>
