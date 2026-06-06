@@ -62,7 +62,6 @@ const monthlySpent = useMemo(() => {
     .reduce((sum, expense) => sum + expense.amount, 0);
 }, [expenses]);
 
-const balance = monthlyBudget - monthlySpent;
   const addWish = () => {
     const amount = Number(targetAmount);
 
@@ -186,11 +185,9 @@ const balance = monthlyBudget - monthlySpent;
           ))}
         </View>
 
-        <UsageCompareCard />
+        <UsageCompareCard expenses={expenses} />
 
-        <View style={styles.quickMenu}>
-          <QuickMenuGrid />
-        </View>
+        <QuickMenuGrid />
       </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -256,9 +253,6 @@ const styles = StyleSheet.create({
   wishList: {
     gap: 12,
     marginBottom: 40,
-  },
-  quickMenu: {
-    marginTop: 480,
   },
   keyboardAvoidingView: {
     flex: 1,
