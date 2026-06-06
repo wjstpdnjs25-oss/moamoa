@@ -168,6 +168,19 @@ export default function UsageCompareCard() {
 }
 
 const styles = StyleSheet.create({
+  compareBox: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    marginTop: 16,
+    
+    
+    width: '100%',        
+    alignSelf: 'stretch',  
+    
+    marginHorizontal: 0,   
+  },
+
   container: {
     padding: 16,
     backgroundColor: '#F8F9FA',
