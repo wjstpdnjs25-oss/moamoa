@@ -35,21 +35,21 @@ export default function WishSaveScreen({ navigation }: { navigation: any }) {
       <View style={styles.wishBox}>
         <Text style={styles.purpleTitle}>위시템 등록하기</Text>
         
-        {/* 사고 싶은 것 입력창 */}
+        
         <TextInput 
           style={styles.input} 
           placeholder="사고 싶은 것 (예: 에어팟)" 
           placeholderTextColor="#aaa"
           value={itemName}
-          onChangeText={setItemName} // 글자가 바뀔 때마다 itemName에 저장
+          onChangeText={setItemName} 
         />
         
-        {/* 목표 금액 입력창 */}
+        
         <TextInput 
           style={styles.input} 
           placeholder="목표 금액" 
           placeholderTextColor="#aaa"
-          keyboardType="numeric" // 숫자 키패드가 뜨도록 설정
+          keyboardType="numeric"
           value={targetAmount}
           onChangeText={setTargetAmount}
         />
@@ -80,14 +80,15 @@ export default function WishSaveScreen({ navigation }: { navigation: any }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f9f9fc', 
+    backgroundColor: "#F7F7FB", 
     justifyContent: 'center',  
     padding: 16,
   },
   wishBox: {
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 20,
+    padding: 30,
+    marginTop: 30,
     
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -99,8 +100,8 @@ const styles = StyleSheet.create({
   purpleTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#5b21b6', 
-    marginBottom: 16,
+    color: '#5137e8', 
+    marginBottom: 22,
   },
 
   input: {
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
   },
 
   purpleButton: {
-    backgroundColor: '#5b21b6',
+    backgroundColor: '#5137e8',
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
