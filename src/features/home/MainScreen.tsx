@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import { useMemo } from "react";
 import {
   KeyboardAvoidingView,
@@ -35,23 +34,11 @@ function formatDateKey(date: Date) {
 }
 
 export default function MainScreen() {
-  const router = useRouter();
   const { budgets } = useBudget();
   const { addExpense, expenses } = useExpense();
   const { wishPlan } = useWish();
 
   const monthlyBudget = budgets.reduce((sum, item) => sum + item.amount, 0);
-
-const monthlySpent = useMemo(() => {
-  const today = new Date();
-  const monthPrefix = `${today.getFullYear()}-${String(
-    today.getMonth() + 1
-  ).padStart(2, "0")}`;
-
-  return expenses
-    .filter((expense) => expense.spentDate.startsWith(monthPrefix))
-    .reduce((sum, expense) => sum + expense.amount, 0);
-}, [expenses]);
 
   const wishProgress = useMemo(() => {
     if (!wishPlan) {
@@ -108,7 +95,6 @@ const monthlySpent = useMemo(() => {
   }, [expenses, monthlyBudget, wishPlan]);
 
   const handleAddExpense = async (amount: number, category: string) => {
-    const previousSpent = monthlySpent;
     const today = new Date();
 
     await addExpense({
@@ -119,18 +105,6 @@ const monthlySpent = useMemo(() => {
       source: "quick",
       spentAt: today,
     });
-
-    const nextSpent = previousSpent + amount;
-
-    if (previousSpent <= monthlyBudget && nextSpent > monthlyBudget) {
-      router.push({
-        pathname: "/budget-alert" as never,
-        params: {
-          budget: String(monthlyBudget),
-          spent: String(nextSpent),
-        },
-      });
-    }
   };
 
   return (

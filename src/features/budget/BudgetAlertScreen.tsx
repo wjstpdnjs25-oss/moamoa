@@ -70,7 +70,7 @@ export default function BudgetAlertScreen() {
           <TouchableOpacity
             activeOpacity={0.86}
             style={styles.primaryButton}
-            onPress={() => router.push('/expense-input')}
+            onPress={() => router.replace('/calendar')}
           >
             <Text style={styles.primaryButtonText}>{TEXT.checkSpending}</Text>
           </TouchableOpacity>
