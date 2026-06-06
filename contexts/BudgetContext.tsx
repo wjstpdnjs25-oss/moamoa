@@ -1,4 +1,15 @@
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  getBudgets,
+  saveBudgets,
+} from "@/src/data/expenseRepository";
 
 export const DEFAULT_CATEGORIES = [
   "음식",
@@ -20,7 +31,7 @@ type BudgetItem = {
 
 type BudgetContextType = {
   budgets: BudgetItem[];
-  setBudgetAmount: (category: string, amount: number) => void;
+  setBudgetAmount: (category: string, amount: number) => Promise<void>;
 };
 
 const BudgetContext = createContext<BudgetContextType | undefined>(undefined);
@@ -33,13 +44,55 @@ export function BudgetProvider({ children }: { children: React.ReactNode }) {
     }))
   );
 
-  const setBudgetAmount = (category: string, amount: number) => {
-    setBudgets((prev) =>
-      prev.map((item) =>
-        item.category === category ? { ...item, amount } : item
-      )
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadBudgets() {
+      const savedBudgets = await getBudgets();
+
+      if (!mounted || savedBudgets.length === 0) {
+        return;
+      }
+
+      setBudgets((prev) =>
+        prev.map((item) => {
+          const savedBudget = savedBudgets.find(
+            (budget) => budget.categoryName === item.category
+          );
+
+          return savedBudget
+            ? { ...item, amount: savedBudget.categoryBudget }
+            : item;
+        })
+      );
+    }
+
+    loadBudgets().catch((error) => {
+      console.error("Failed to load budget database", error);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const setBudgetAmount = useCallback(async (category: string, amount: number) => {
+    const nextBudgets = budgets.map((item) =>
+      item.category === category ? { ...item, amount } : item
     );
-  };
+
+    setBudgets(nextBudgets);
+
+    const totalBudget = nextBudgets.reduce((sum, item) => sum + item.amount, 0);
+
+    await saveBudgets(
+      nextBudgets.map((item) => ({
+        categoryName: item.category,
+        categoryBudget: item.amount,
+        totalBudget,
+      }))
+    );
+  }, [budgets]);
 
   return (
     <BudgetContext.Provider value={{ budgets, setBudgetAmount }}>

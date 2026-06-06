@@ -62,7 +62,7 @@ export default function BudgetScreen() {
     }, 100);
   };
 
-  const handleSaveBudget = () => {
+  const handleSaveBudget = async () => {
     const amount = Number(draftAmount || 0);
 
     if (amount <= 0) {
@@ -70,7 +70,7 @@ export default function BudgetScreen() {
       return;
     }
 
-    setBudgetAmount(selectedCategory, amount);
+    await setBudgetAmount(selectedCategory, amount);
     setDraftAmount("");
     Keyboard.dismiss();
     setIsEditing(false);

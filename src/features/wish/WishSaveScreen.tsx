@@ -40,7 +40,7 @@ export default function WishSaveScreen() {
       ? Math.max(0, Math.floor((totalBudget - numericTarget) / numericDuration))
       : 0;
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (
       !title.trim() ||
       !Number.isFinite(numericTarget) ||
@@ -52,7 +52,7 @@ export default function WishSaveScreen() {
       return;
     }
 
-    saveWishPlan({
+    await saveWishPlan({
       title: title.trim(),
       targetAmount: numericTarget,
       durationDays: numericDuration,

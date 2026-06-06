@@ -1,4 +1,15 @@
-import { createContext, useContext, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  getWishSave,
+  saveWishSave,
+} from "@/src/data/expenseRepository";
 
 export type WishPlan = {
   title: string;
@@ -9,7 +20,7 @@ export type WishPlan = {
 
 type WishContextType = {
   wishPlan: WishPlan | null;
-  saveWishPlan: (plan: Omit<WishPlan, "startedAt">) => void;
+  saveWishPlan: (plan: Omit<WishPlan, "startedAt">) => Promise<void>;
 };
 
 const WishContext = createContext<WishContextType | undefined>(undefined);
@@ -17,12 +28,48 @@ const WishContext = createContext<WishContextType | undefined>(undefined);
 export function WishProvider({ children }: { children: React.ReactNode }) {
   const [wishPlan, setWishPlan] = useState<WishPlan | null>(null);
 
-  const saveWishPlan = (plan: Omit<WishPlan, "startedAt">) => {
-    setWishPlan({
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadWishPlan() {
+      const savedWishPlan = await getWishSave();
+
+      if (!mounted || !savedWishPlan) {
+        return;
+      }
+
+      setWishPlan({
+        title: savedWishPlan.wishItemName,
+        targetAmount: savedWishPlan.wishItemPrice,
+        durationDays: savedWishPlan.savingPeriod,
+        startedAt: savedWishPlan.startedAt,
+      });
+    }
+
+    loadWishPlan().catch((error) => {
+      console.error("Failed to load wish save database", error);
+    });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const saveWishPlan = useCallback(async (plan: Omit<WishPlan, "startedAt">) => {
+    const nextWishPlan = {
       ...plan,
       startedAt: new Date().toISOString(),
+    };
+
+    setWishPlan(nextWishPlan);
+
+    await saveWishSave({
+      wishItemName: nextWishPlan.title,
+      wishItemPrice: nextWishPlan.targetAmount,
+      savingPeriod: nextWishPlan.durationDays,
+      startedAt: nextWishPlan.startedAt,
     });
-  };
+  }, []);
 
   return (
     <WishContext.Provider value={{ wishPlan, saveWishPlan }}>
