@@ -71,8 +71,10 @@ export default function BudgetScreen() {
     Keyboard.dismiss();
 
     Alert.alert(
-      "저장 완료",
-      `${selectedCategory} 예산이 저장되었습니다.`
+      selectedBudget > 0 ? "수정 완료" : "저장 완료",
+      `${selectedCategory} 예산이 ${
+        selectedBudget > 0 ? "수정" : "저장"
+      }되었습니다.`
     );
   };
 
