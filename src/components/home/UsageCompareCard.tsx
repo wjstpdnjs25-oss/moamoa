@@ -47,9 +47,12 @@ function FilterButton({
   );
 }
 
-export default function UsageCompareCard() {
+ export default function UsageCompareCard({ expenses = [] }: { expenses: { id: string; amount: number }[] }) {
+
   const [ageGroup, setAgeGroup] = useState('20대');
   const [jobType, setJobType] = useState('자취생');
+
+  const mySpending = expenses.reduce((sum, item) => sum + item.amount, 0);
 
   const [isAgeOpen, setIsAgeOpen] = useState(false);
   const [isLifestyleOpen, setIsLifestyleOpen] =

@@ -18,11 +18,15 @@ const TEXT = {
   settings: "\uC124\uC815",
 };
 
+
+
 export default function HomeScreen() {
   const [balance, setBalance] = useState(0);
   const [monthlySpent, setMonthlySpent] = useState(0);
   const [editingId, setEditingId] = useState(null); 
   const [wishList, setWishList] = useState([]);
+  const [expenses, setExpenses] = useState<{ id: string; amount: number }[]>([]);
+  const [mySpending, setMySpending] = useState(0);
 
   const handleAddExpense = (amount: number) => {
     setMonthlySpent((prev) => prev + amount);
@@ -33,15 +37,14 @@ export default function HomeScreen() {
   setWishList((prev) => [...prev, item]);
 };
 
-
- 
-
   return (
     <ScrollView
+    
       style={styles.container}
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
+    
       <View style={styles.header}>
         <Text style={styles.appTitle}>{TEXT.appTitle}</Text>
 
@@ -52,7 +55,16 @@ export default function HomeScreen() {
 
       <BudgetStatusCard />
 
-      <QuickExpenseInput onSaveExpense={handleAddExpense} />
+     <QuickExpenseInput 
+  onSaveExpense={(amount, category) => {
+    setExpenses((prev) => [
+      ...prev,
+      { id: Date.now().toString(), amount: amount }
+    ]);
+  }}
+/>
+
+<UsageCompareCard expenses={expenses} />
 
 
       
@@ -88,9 +100,6 @@ export default function HomeScreen() {
           }}
         />
       ))}
-
-
-      <UsageCompareCard />
 
       <QuickMenuGrid />
 
